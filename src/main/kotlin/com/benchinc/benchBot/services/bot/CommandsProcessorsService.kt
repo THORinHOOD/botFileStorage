@@ -19,6 +19,9 @@ class CommandsProcessorsService(processors: List<CommandProcessor>) {
     }
 
     private fun extractCommandName(text: String) : String {
+        if (!text.startsWith("/")) {
+            return text
+        }
         var indexRight = text.indexOf("_")
         if (indexRight == -1) {
             indexRight = text.length
