@@ -4,4 +4,4 @@ docker build --build-arg JAR_FILE=build/libs/benchBot-0.0.1.jar -t thorinhood/be
 
 ### Run docker container
 
-docker run -d -p 8080:8080 -v <path to logs in machine>:/logs thorinhood/benchbot
+docker run -d -p 8080:8080 -v "path to logs in machine":/logs thorinhood/benchbot
