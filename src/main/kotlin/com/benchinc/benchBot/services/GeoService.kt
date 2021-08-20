@@ -18,7 +18,7 @@ class GeoService(val overpassMapDataApi: OverpassMapDataApi) {
     fun findBenchById(id: Long) : Node? {
         val bench = QueryElementsHandler()
         try {
-            overpassMapDataApi.queryElements("[out:json];node($id)[amenity=bench];out;", bench)
+            overpassMapDataApi.queryElements("node($id)[amenity=bench];out;", bench)
         } catch(e: Exception) {
             return null
         }

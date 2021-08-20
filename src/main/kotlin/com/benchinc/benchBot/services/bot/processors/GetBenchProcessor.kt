@@ -1,28 +1,28 @@
 package com.benchinc.benchBot.services.bot.processors
 
 import com.benchinc.benchBot.data.Session
+import com.benchinc.benchBot.services.GeoService
 import com.pengrad.telegrambot.request.AbstractSendRequest
 import com.pengrad.telegrambot.request.SendLocation
 import com.pengrad.telegrambot.request.SendMessage
 import org.springframework.stereotype.Service
 
 @Service
-class GetBenchProcessor : CommandProcessor {
+class GetBenchProcessor(val geoService: GeoService) : CommandProcessor {
 
     override fun getCommandName(): String = "bench"
 
     override fun process(session: Session, text: String): AbstractSendRequest<*> {
-        val benchIndex = text.substring(7).toInt() - 1
-        return session.currentBenches.let { benches ->
-            if (benchIndex >= benches.size || benchIndex < 0) {
-                SendMessage(session.chatId, "Некорректный индекс лавочки")
-            } else {
-                SendLocation(
-                    session.chatId,
-                    benches[benchIndex].node.position.latitude.toFloat(),
-                    benches[benchIndex].node.position.longitude.toFloat()
-                )
-            }
+        val benchId = text.substring(7).toLong()
+        val bench = geoService.findBenchById(benchId)
+        return if (bench == null) {
+            SendMessage(session.chatId, "Некорректный id лавочки")
+        } else {
+            SendLocation(
+                session.chatId,
+                bench.position.latitude.toFloat(),
+                bench.position.longitude.toFloat()
+            )
         }
     }
 

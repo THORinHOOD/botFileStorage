@@ -5,6 +5,7 @@ import com.benchinc.benchBot.services.GeoService
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.UpdatesListener
 import com.pengrad.telegrambot.model.Location
+import com.pengrad.telegrambot.model.Message
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.model.request.*
 import com.pengrad.telegrambot.request.*
@@ -57,11 +58,11 @@ class BenchBot(val telegramBot: TelegramBot,
 
     private fun processCallbacks(update: Update) {
         update.callbackQuery()?.let { callbackQuery ->
-            callbackQuery.message().chat().id().let { chatId ->
-                callbackQuery.message().messageId().let { messageId ->
+            callbackQuery.message()?.let { message ->
+                callbackQuery.message().chat().id().let { chatId ->
                     when(callbackQuery.data()) {
-                        "back" -> backPageCallback(chatId, messageId, callbackQuery.id())
-                        "forward" -> forwardPageCallback(chatId, messageId, callbackQuery.id())
+                        "back" -> backPageCallback(message, callbackQuery.id())
+                        "forward" -> forwardPageCallback(message, callbackQuery.id())
                         else -> telegramBot.execute(SendMessage(chatId, "Неизвестная команда"))
                     }
                 }
@@ -69,13 +70,25 @@ class BenchBot(val telegramBot: TelegramBot,
         }
     }
 
-    private fun forwardPageCallback(chatId: Long, messagePageId: Int, callbackId: String) {
-        sessions.getMessagePage(chatId, messagePageId)?.let { page ->
-            if ((page + 1) * 5 < sessions.getBenches(chatId).size) {
-                sendPageWithBenches(chatId, page + 1, callbackId)
-            } else {
-                telegramBot.execute(AnswerCallbackQuery(callbackId))
-            }
+    private fun extractMessagePageNumber(message: String) : Int =
+        message.substring(message.indexOf("(") + 1, message.indexOf("/")).toInt() - 1
+
+    private fun forwardPageCallback(messagePage: Message, callbackId: String) {
+        val page = extractMessagePageNumber(messagePage.text())
+        val chatId = messagePage.chat().id()
+        if ((page + 1) * 5 < sessions.getBenches(chatId).size) {
+            sendPageWithBenches(chatId, page + 1, callbackId)
+        } else {
+            telegramBot.execute(AnswerCallbackQuery(callbackId))
+        }
+    }
+
+    private fun backPageCallback(messagePage: Message, callbackId: String) {
+        val page = extractMessagePageNumber(messagePage.text())
+        if (page > 0) {
+            sendPageWithBenches(messagePage.chat().id(), page - 1, callbackId)
+        } else {
+            telegramBot.execute(AnswerCallbackQuery(callbackId))
         }
     }
 
@@ -83,16 +96,6 @@ class BenchBot(val telegramBot: TelegramBot,
         update.message()?.location()?.let { location ->
             update.message().chat().id().let { chatId ->
                 findBenches(chatId, location)
-            }
-        }
-    }
-
-    private fun backPageCallback(chatId: Long, messageId: Int, callbackId: String) {
-        sessions.getMessagePage(chatId, messageId)?.let { page ->
-            if (page > 0) {
-                sendPageWithBenches(chatId, page - 1, callbackId)
-            } else {
-                telegramBot.execute(AnswerCallbackQuery(callbackId))
             }
         }
     }
@@ -111,18 +114,19 @@ class BenchBot(val telegramBot: TelegramBot,
 
     private fun sendPageWithBenches(chatId: Long, page: Int, callbackId: String?) {
         sessions.getBenches(chatId).let { benches ->
-            var result = "Найдено <b>${benches.size}</b> лавочек в радиусе <b>${sessions.getRadius(chatId)}</b> " +
+            val pagesCount = benches.size / 5 + (if (benches.size % 5 == 0) 0 else 1)
+            var result = "(${page + 1}/${pagesCount}) Найдено <b>${benches.size}</b> лавочек в радиусе <b>${sessions.getRadius(chatId)}</b> " +
                     "метров\n\n"
             val benchesSubList = benches.subList(page * 5, min(page * 5 + 5, benches.size))
             for ((index, value) in benchesSubList.iterator().withIndex()) {
                 val realIndex = index + 1 + page * 5
-                result += "<b>${realIndex}.</b> $value\nПоказать на карте: /bench_$realIndex\n\n"
+                result += "<b>${realIndex}.</b> $value\nПоказать на карте: /bench_${value.node.id}\n\n"
             }
             callbackId?.let {
                 telegramBot.execute(AnswerCallbackQuery(it))
             }
 
-            val response = telegramBot.execute(
+            telegramBot.execute(
                 SendMessage(chatId, result)
                     .parseMode(ParseMode.HTML)
                     .replyMarkup(
@@ -132,7 +136,6 @@ class BenchBot(val telegramBot: TelegramBot,
                         )
                     )
             )
-            sessions.addMessagePage(chatId, response.message().messageId(), page)
         }
     }
 
