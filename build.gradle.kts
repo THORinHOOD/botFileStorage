@@ -20,6 +20,7 @@ configurations.all {
 }
 
 dependencies {
+	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("com.lmax:disruptor:3.4.2")
 	implementation("org.apache.logging.log4j:log4j-api-kotlin:1.0.0")
 	implementation("org.springframework.boot:spring-boot-starter-log4j2")

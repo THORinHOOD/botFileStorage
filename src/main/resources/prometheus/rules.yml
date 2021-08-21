@@ -1,0 +1,10 @@
+groups:
+  - name: default
+    rules:
+      - alert: MemoryUsed
+        expr: sum(jvm_memory_used_bytes{area="heap"})/1024/1024 / (sum(jvm_memory_max_bytes{area="heap"})/1024/1024) * 100 > 85
+        for: 5m
+        labels:
+          saverity: high
+        annotations:
+          summary: BenchBot use more than 85% of memory
