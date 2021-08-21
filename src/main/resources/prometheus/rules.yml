@@ -1,8 +1,15 @@
 groups:
   - name: default
     rules:
+      - alert: IsAlive
+        expr: up == 0
+        for: 1m
+        labels:
+          saverity: high
+        annotations:
+          summary: BenchBot is not working
       - alert: MemoryUsed
-        expr: sum(jvm_memory_used_bytes{area="heap"})/1024/1024 / (sum(jvm_memory_max_bytes{area="heap"})/1024/1024) * 100 > 85
+        expr: sum(jvm_memory_used_bytes{area="heap"}) / (sum(jvm_memory_max_bytes{area="heap"})) * 100 > 85
         for: 5m
         labels:
           saverity: high
