@@ -1,10 +1,10 @@
-package com.benchinc.benchBot.services.bot.processors
+package com.benchinc.benchBot.services.bot.processors.commands
 
 import com.benchinc.benchBot.data.Session
 import com.pengrad.telegrambot.model.request.KeyboardButton
 import com.pengrad.telegrambot.model.request.ParseMode
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
-import com.pengrad.telegrambot.request.AbstractSendRequest
+import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
 import org.springframework.stereotype.Service
 
@@ -13,8 +13,8 @@ class WelcomeMessageProcessor : CommandProcessor {
 
     override fun getCommandName(): String = "start"
 
-    override fun process(session: Session, text: String): AbstractSendRequest<*> =
-        SendMessage(session.chatId, "Привет")
+    override fun process(session: Session, parameter: String): List<BaseRequest<*, *>> =
+        listOf(SendMessage(session.chatId, "Привет")
             .parseMode(ParseMode.HTML)
             .replyMarkup(
                 ReplyKeyboardMarkup(
@@ -22,6 +22,6 @@ class WelcomeMessageProcessor : CommandProcessor {
                     KeyboardButton("\uD83D\uDCCD Поиск лавочек")
                     .requestLocation(true)),
                 arrayOf(KeyboardButton("\uD83C\uDF10 Изменить радиус поиска"))
-            ).resizeKeyboard(true))
+            ).resizeKeyboard(true)))
 
 }
