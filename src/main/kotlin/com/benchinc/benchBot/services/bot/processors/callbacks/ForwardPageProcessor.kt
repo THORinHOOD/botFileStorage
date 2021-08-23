@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class ForwardPageProcessor(private val benchPageStrategy: BenchPageStrategy) : CallbackProcessor {
 
-    override fun getCallbackName(): String = "forward"
+    override val callbackName: String = "forward"
 
     override fun process(session: Session, parameter: CallbackQuery): List<BaseRequest<*, *>> {
         return parameter.message()?.let { messagePage ->

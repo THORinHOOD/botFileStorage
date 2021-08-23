@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class ChangeRadiusStartMessageProcessor : CommandProcessor {
 
-    override fun getCommandName(): String = "\uD83C\uDF10 Изменить радиус поиска"
+    override val commandName: String = "\uD83C\uDF10 Изменить радиус поиска"
 
     override fun process(session: Session, parameter: String): List<BaseRequest<*, *>> =
         listOf(SendMessage(session.chatId, """

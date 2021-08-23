@@ -1,4 +1,4 @@
-package com.benchinc.benchBot.geo
+package com.benchinc.benchBot.data
 
 import de.westnordost.osmapi.map.data.Node
 import kotlin.math.roundToLong
@@ -26,15 +26,7 @@ data class Bench(val node: Node,
         return result
     }
 
-    private fun orNone(caption: String, value: String?) : String {
-        return if (value != null) {
-            "\n$caption : $value"
-        } else {
-            ""
-        }
-    }
-
-    private fun orNone(caption: String, value: String?, converter: (String) -> String) : String {
+    private fun orNone(caption: String, value: String?, converter: (String) -> String = { it }) : String {
         return if (value != null) {
             "\n$caption : ${converter(value)}"
         } else {

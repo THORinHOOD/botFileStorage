@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class BackPageProcessor(private val benchPageStrategy: BenchPageStrategy) : CallbackProcessor {
 
-    override fun getCallbackName(): String = "back"
+    override val callbackName: String = "back"
 
     override fun process(session: Session, parameter: CallbackQuery): List<BaseRequest<*, *>> {
         return parameter.message()?.let { messagePage ->

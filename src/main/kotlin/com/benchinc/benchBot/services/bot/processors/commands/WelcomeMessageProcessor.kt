@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class WelcomeMessageProcessor : CommandProcessor {
 
-    override fun getCommandName(): String = "start"
+    override val commandName: String = "start"
 
     override fun process(session: Session, parameter: String): List<BaseRequest<*, *>> =
         listOf(SendMessage(session.chatId, "Привет")

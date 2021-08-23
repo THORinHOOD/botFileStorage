@@ -19,12 +19,14 @@ class BenchPageStrategy {
     fun buildPageWithBenches(session: Session, page: Int, callbackId: String?) : List<BaseRequest<*, *>> {
         session.currentBenches.let { benches ->
             val pagesCount = benches.size / 5 + (if (benches.size % 5 == 0) 0 else 1)
-            var result = "(${page + 1}/${pagesCount}) Найдено <b>${benches.size}</b> лавочек в радиусе <b>${session.radius}</b> " +
-                    "метров\n\n"
-            val benchesSubList = benches.subList(page * 5, min(page * 5 + 5, benches.size))
-            for ((index, value) in benchesSubList.iterator().withIndex()) {
-                val realIndex = index + 1 + page * 5
-                result += "<b>${realIndex}.</b> $value\nПоказать на карте: /bench_${value.node.id}\n\n"
+            val result = buildString {
+                append("(${page + 1}/${pagesCount}) Найдено <b>${benches.size}</b> лавочек в радиусе " +
+                        "<b>${session.radius}</b> метров\n\n")
+                val benchesSubList = benches.subList(page * 5, min(page * 5 + 5, benches.size))
+                for ((index, value) in benchesSubList.withIndex()) {
+                    val realIndex = index + 1 + page * 5
+                    append("<b>${realIndex}.</b> $value\nПоказать на карте: /bench_${value.node.id}\n\n")
+                }
             }
             val responses = mutableListOf<BaseRequest<*, *>>()
             callbackId?.let {

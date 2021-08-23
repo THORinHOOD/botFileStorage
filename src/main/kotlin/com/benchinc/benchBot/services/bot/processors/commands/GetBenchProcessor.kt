@@ -13,22 +13,26 @@ import org.springframework.stereotype.Service
 class GetBenchProcessor(val geoService: GeoService,
                         private val requestsCounter: Counter) : CommandProcessor {
 
-    override fun getCommandName(): String = "bench"
+    override val commandName: String = "bench"
 
     override fun process(session: Session, parameter: String): List<BaseRequest<*, *>> {
         requestsCounter.labels("get_bench").inc()
-        val benchId = parameter.substring(7).toLong()
+        val benchId = parameter.substring(7).toLongOrNull() ?:
+            return listOf(incorrectBenchIdMessage(session.chatId))
         val bench = session.currentBenches.find { it.node.id == benchId }
         if (bench != null) {
             return listOf(buildMessageWithBench(session.chatId, bench.node))
         }
         val benchNode = geoService.findBenchById(benchId)
         return listOf( if (benchNode == null) {
-            SendMessage(session.chatId, "Некорректный id лавочки")
+            incorrectBenchIdMessage(session.chatId)
         } else {
             buildMessageWithBench(session.chatId, benchNode)
         })
     }
+
+    private fun incorrectBenchIdMessage(chatId: Long) : SendMessage =
+        SendMessage(chatId, "Некорректный id лавочки")
 
     private fun buildMessageWithBench(chatId: Long, benchNode: Node) : SendLocation =
         SendLocation(

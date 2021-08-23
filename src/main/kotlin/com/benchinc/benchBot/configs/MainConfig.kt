@@ -10,16 +10,11 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class MainConfig {
-
-    @Value("\${telegram.token}")
-    lateinit var telegramBotToken : String
-
-    @Value("\${osm.api.url}")
-    lateinit var osmApiUrl : String
-
-    @Value("\${osm.user.agent}")
-    lateinit var osmUserAgent : String
+class MainConfig(
+    @Value("\${telegram.token}") private val telegramBotToken : String,
+    @Value("\${osm.api.url}") private val osmApiUrl : String,
+    @Value("\${osm.user.agent}") private val osmUserAgent : String
+) {
 
     @Bean
     fun telegramBot() : TelegramBot {

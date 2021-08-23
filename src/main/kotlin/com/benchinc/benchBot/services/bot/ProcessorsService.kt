@@ -17,8 +17,8 @@ class ProcessorsService(commandProcessors: List<CommandProcessor>,
                         val findBenchesProcessor: LocationProcessor,
                         callbackProcessors: List<CallbackProcessor>) {
 
-    val mapCommandProcessors : Map<String, CommandProcessor> = commandProcessors.associateBy { it.getCommandName() }
-    val mapCallbackProcessors : Map<String, CallbackProcessor> = callbackProcessors.associateBy { it.getCallbackName() }
+    val mapCommandProcessors : Map<String, CommandProcessor> = commandProcessors.associateBy { it.commandName }
+    val mapCallbackProcessors : Map<String, CallbackProcessor> = callbackProcessors.associateBy { it.callbackName }
 
     fun <T : AbstractSendRequest<T>> T.addReply(messageId: Int?) : T {
         messageId?.let {
@@ -49,10 +49,7 @@ class ProcessorsService(commandProcessors: List<CommandProcessor>,
         if (!text.startsWith("/")) {
             return text
         }
-        var indexRight = text.indexOf("_")
-        if (indexRight == -1) {
-            indexRight = text.length
-        }
+        val indexRight = text.indexOf("_").takeIf { it != -1 } ?: text.length
         return text.substring(1, indexRight)
     }
 

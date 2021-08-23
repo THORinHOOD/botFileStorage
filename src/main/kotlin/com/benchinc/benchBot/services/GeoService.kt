@@ -1,6 +1,6 @@
 package com.benchinc.benchBot.services
 
-import com.benchinc.benchBot.geo.Bench
+import com.benchinc.benchBot.data.Bench
 import com.benchinc.benchBot.geo.QueryElementsHandler
 import com.peertopark.java.geocalc.DegreeCoordinate
 import com.peertopark.java.geocalc.EarthCalc
@@ -41,7 +41,7 @@ class GeoService(val overpassMapDataApi: OverpassMapDataApi) {
         val center = OsmLatLon(around.latitude().toDouble(), around.longitude().toDouble())
         return benchesHandler.getElements()
             .map { node -> Bench(node, distance(center, node.position)) }
-            .sortedWith { o1, o2 -> o1.distance.compareTo(o2.distance) }
+            .sortedBy { it.distance }
     }
 
     private fun distance(from: LatLon, to: LatLon) : Double {

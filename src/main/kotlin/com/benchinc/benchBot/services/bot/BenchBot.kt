@@ -8,8 +8,8 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 
 @Service
-class BenchBot(val telegramBot: TelegramBot,
-               val processorsService: ProcessorsService
+class BenchBot(private val telegramBot: TelegramBot,
+               private val processorsService: ProcessorsService
 ) : UpdatesListener, Logging {
 
     val sessions : AllSessions = AllSessions()

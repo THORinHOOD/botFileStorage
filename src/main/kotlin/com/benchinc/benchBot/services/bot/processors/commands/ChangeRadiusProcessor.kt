@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class ChangeRadiusProcessor : CommandProcessor {
 
-    override fun getCommandName(): String = "radius"
+    override val commandName: String = "radius"
 
     override fun process(session: Session, parameter: String) : List<BaseRequest<*, *>> {
         session.radius =  parameter.substring(8).toInt()
