@@ -1,7 +1,6 @@
-package com.benchinc.benchBot.services.bot
+package com.benchinc.benchBot.services.bot.processors
 
 import com.benchinc.benchBot.data.Session
-import com.benchinc.benchBot.services.bot.processors.Processor
 import com.benchinc.benchBot.services.bot.processors.callbacks.CallbackProcessor
 import com.benchinc.benchBot.services.bot.processors.commands.CommandProcessor
 import com.benchinc.benchBot.services.bot.processors.location.LocationProcessor
@@ -27,16 +26,16 @@ class ProcessorsService(commandProcessors: List<CommandProcessor>,
         return this
     }
 
-    fun process(session: Session, messageId: Int, text: String) : List<BaseRequest<*, *>> {
+    fun processCommand(session: Session, messageId: Int, text: String) : List<BaseRequest<*, *>> {
         val commandName = extractCommandName(text)
         return process(mapCommandProcessors[commandName], session, text, messageId)
     }
 
-    fun process(session: Session, location: Location) : List<BaseRequest<*, *>> {
+    fun processLocation(session: Session, location: Location) : List<BaseRequest<*, *>> {
         return findBenchesProcessor.process(session, location)
     }
 
-    fun process(session: Session, callbackQuery: CallbackQuery) : List<BaseRequest<*, *>> =
+    fun processCallback(session: Session, callbackQuery: CallbackQuery) : List<BaseRequest<*, *>> =
         process(mapCallbackProcessors[callbackQuery.data()], session, callbackQuery, null)
 
     private fun <P : Processor<ARG>, ARG> process(processor: P?, session : Session, arg: ARG, messageId: Int?)
