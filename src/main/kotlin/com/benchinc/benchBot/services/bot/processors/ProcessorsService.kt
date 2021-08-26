@@ -1,11 +1,17 @@
 package com.benchinc.benchBot.services.bot.processors
 
+import com.benchinc.benchBot.data.AllSessions
 import com.benchinc.benchBot.data.Session
 import com.benchinc.benchBot.services.bot.processors.callbacks.CallbackProcessor
 import com.benchinc.benchBot.services.bot.processors.commands.CommandProcessor
+import com.benchinc.benchBot.services.bot.processors.helpers.extractors.CallbackQueryExtractor
+import com.benchinc.benchBot.services.bot.processors.helpers.extractors.CommandTextExtractor
+import com.benchinc.benchBot.services.bot.processors.helpers.extractors.LocationExtractor
 import com.benchinc.benchBot.services.bot.processors.location.LocationProcessor
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.model.Location
+import com.pengrad.telegrambot.model.Message
+import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.AbstractSendRequest
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
@@ -14,7 +20,10 @@ import org.springframework.stereotype.Service
 @Service
 class ProcessorsService(commandProcessors: List<CommandProcessor>,
                         val findBenchesProcessor: LocationProcessor,
-                        callbackProcessors: List<CallbackProcessor>) {
+                        callbackProcessors: List<CallbackProcessor>,
+                        val callbackQueryExtractor: CallbackQueryExtractor,
+                        val commandTextExtractor: CommandTextExtractor,
+                        val locationExtractor: LocationExtractor) {
 
     val mapCommandProcessors : Map<String, CommandProcessor> = commandProcessors.associateBy { it.commandName }
     val mapCallbackProcessors : Map<String, CallbackProcessor> = callbackProcessors.associateBy { it.callbackName }
@@ -26,9 +35,24 @@ class ProcessorsService(commandProcessors: List<CommandProcessor>,
         return this
     }
 
-    fun processCommand(session: Session, messageId: Int, text: String) : List<BaseRequest<*, *>> {
-        val commandName = extractCommandName(text)
-        return process(mapCommandProcessors[commandName], session, text, messageId)
+    fun process(allSessions: AllSessions, update: Update) : List<BaseRequest<*, *>> {
+        return locationExtractor.extract(update)?.let {
+            processLocation(allSessions.getSession(it.chatId), it.parameter)
+        }
+        ?:
+        commandTextExtractor.extract(update)?.let {
+            processCommand(allSessions.getSession(it.chatId), it.parameter)
+        }
+        ?:
+        callbackQueryExtractor.extract(update)?.let {
+            processCallback(allSessions.getSession(it.chatId), it.parameter)
+        }
+        ?: listOf()
+    }
+
+    fun processCommand(session: Session, message: Message) : List<BaseRequest<*, *>> {
+        val commandName = extractCommandName(message.text())
+        return process(mapCommandProcessors[commandName], session, message.text(), message.messageId())
     }
 
     fun processLocation(session: Session, location: Location) : List<BaseRequest<*, *>> {

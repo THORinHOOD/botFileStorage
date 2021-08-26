@@ -22,41 +22,13 @@ class BenchBot(private val telegramBot: TelegramBot,
     override fun process(updates: MutableList<Update>?): Int {
         updates?.forEach { update ->
             try {
-                processCommands(update)
-                processCallbacks(update)
-                processLocation(update)
+                processorsService.process(sessions, update)
+                    .forEach { telegramBot.execute(it) }
             } catch (e:Exception) {
                 logger.error(e)
             }
         }
         return UpdatesListener.CONFIRMED_UPDATES_ALL
-    }
-
-    private fun processCommands(update: Update) {
-        update.message()?.text()?.let { text ->
-            update.message().chat().id().let { chatId ->
-                processorsService.processCommand(sessions.getSession(chatId), update.message().messageId(), text)
-                    .forEach { telegramBot.execute(it) }
-            }
-        }
-    }
-
-    private fun processLocation(update: Update) {
-        update.message()?.location()?.let { location ->
-            update.message().chat().id().let { chatId ->
-                processorsService.processLocation(sessions.getSession(chatId), location)
-                    .forEach { telegramBot.execute(it) }
-            }
-        }
-    }
-
-    private fun processCallbacks(update: Update) {
-        update.callbackQuery()?.let { callbackQuery ->
-            callbackQuery.message()?.chat()?.id()?.let { chatId ->
-                processorsService.processCallback(sessions.getSession(chatId), callbackQuery)
-                    .forEach { telegramBot.execute(it) }
-            }
-        }
     }
 
 }
