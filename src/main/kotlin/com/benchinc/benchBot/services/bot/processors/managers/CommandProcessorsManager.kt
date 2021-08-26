@@ -20,11 +20,13 @@ class CommandProcessorsManager(private val pipelineStrategy: PipelineStrategy,
 
     override fun process(allSessions: AllSessions, update: Update): List<BaseRequest<*, *>>? =
         update.message()?.let { message ->
-            update.message().chat().id().let { chatId ->
-                allSessions.getSession(chatId).let { session ->
-                    pipelineStrategy.pipeline(session, message.text(), message.messageId(),
-                        mapCommandProcessors, "Необходимо прислать комманду") ?:
-                    processCommand(session, message)
+            update.message()?.text()?.let { text ->
+                update.message().chat().id().let { chatId ->
+                    allSessions.getSession(chatId).let { session ->
+                        pipelineStrategy.pipeline(session, text, message.messageId(),
+                            mapCommandProcessors, "Необходимо прислать комманду") ?:
+                        processCommand(session, message)
+                    }
                 }
             }
         }
