@@ -4,4 +4,5 @@ import com.benchinc.benchBot.services.bot.processors.Processor
 import com.pengrad.telegrambot.model.Location
 
 interface LocationProcessor : Processor<Location> {
+    val locationName : String
 }

@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class ProcessorsServiceImpl(commandProcessors: List<CommandProcessor>,
-                            val findBenchesProcessor: LocationProcessor,
+                            locationProcessors: List<LocationProcessor>,
                             callbackProcessors: List<CallbackProcessor>,
                             val callbackQueryExtractor: CallbackQueryExtractor,
                             val commandTextExtractor: CommandTextExtractor,
@@ -27,6 +27,7 @@ class ProcessorsServiceImpl(commandProcessors: List<CommandProcessor>,
 
     val mapCommandProcessors : Map<String, CommandProcessor> = commandProcessors.associateBy { it.commandName }
     val mapCallbackProcessors : Map<String, CallbackProcessor> = callbackProcessors.associateBy { it.callbackName }
+    val mapLocationProcessors : Map<String, LocationProcessor> = locationProcessors.associateBy { it.locationName }
 
     fun <T : AbstractSendRequest<T>> T.addReply(messageId: Int?) : T {
         messageId?.let {
@@ -36,19 +37,41 @@ class ProcessorsServiceImpl(commandProcessors: List<CommandProcessor>,
     }
 
     override fun process(allSessions: AllSessions, update: Update) : List<BaseRequest<*, *>> {
-        return locationExtractor.extract(update)?.let {
-            processLocation(allSessions.getSession(it.chatId), it.parameter)
+        return locationExtractor.extract(update)?.let { parameter ->
+            allSessions.getSession(parameter.chatId).let { session ->
+                pipeline(session, parameter.value, null, mapLocationProcessors,
+                    "Необходимо прислать локацию") ?:
+                processLocation(session, parameter.value)
+            }
         }
         ?:
-        commandTextExtractor.extract(update)?.let {
-            processCommand(allSessions.getSession(it.chatId), it.parameter)
+        commandTextExtractor.extract(update)?.let { parameter ->
+            allSessions.getSession(parameter.chatId).let { session ->
+                pipeline(session, parameter.value.text(), parameter.value.messageId(), mapCommandProcessors,
+                    "Необходимо прислать команду") ?:
+                processCommand(session, parameter.value)
+            }
         }
         ?:
-        callbackQueryExtractor.extract(update)?.let {
-            processCallback(allSessions.getSession(it.chatId), it.parameter)
+        callbackQueryExtractor.extract(update)?.let { parameter ->
+            allSessions.getSession(parameter.chatId).let { session ->
+                pipeline(session, parameter.value, null, mapCallbackProcessors,
+                    "Необходимо выбрать опцию") ?:
+                processCallback(session, parameter.value)
+            }
         }
         ?:
         listOf()
+    }
+
+    private fun <P : Processor<ARG>, ARG> pipeline(session: Session, arg: ARG, messageId: Int?,
+                                                   processors: Map<String, P>,
+                                                   wrongParameter: String) : List<BaseRequest<*, *>>? {
+        return session.nextProcessor?.let { nextProcessorName ->
+            processors[nextProcessorName]?.let { processor ->
+                process(processor, session, arg, messageId)
+            } ?: listOf(SendMessage(session.chatId, wrongParameter))
+        }
     }
 
     private fun processCommand(session: Session, message: Message) : List<BaseRequest<*, *>> {
@@ -57,7 +80,7 @@ class ProcessorsServiceImpl(commandProcessors: List<CommandProcessor>,
     }
 
     private fun processLocation(session: Session, location: Location) : List<BaseRequest<*, *>> {
-        return findBenchesProcessor.process(session, location)
+        return process(mapLocationProcessors["find_benches"], session, location, null)
     }
 
     private fun processCallback(session: Session, callbackQuery: CallbackQuery) : List<BaseRequest<*, *>> =

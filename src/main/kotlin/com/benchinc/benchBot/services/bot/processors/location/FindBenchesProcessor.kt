@@ -15,6 +15,8 @@ class FindBenchesProcessor(private val geoService: GeoService,
                            private val requestsCounter: Counter
 ) : LocationProcessor {
 
+    override val locationName: String = "find_benches"
+
     override fun process(session: Session, parameter: Location): List<BaseRequest<*, *>> {
         requestsCounter.labels("find_benches").inc()
         session.currentBenches = geoService.findBenches(parameter, session.radius)
