@@ -1,6 +1,8 @@
-package com.benchinc.benchBot.services.bot.processors.helpers.strategies
+package com.benchinc.benchBot.services.bot.helpers.strategies
 
 import com.benchinc.benchBot.data.Session
+import com.benchinc.benchBot.services.bot.processors.default_pipeline.BackPageProcessor
+import com.benchinc.benchBot.services.bot.processors.default_pipeline.ForwardPageProcessor
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
 import com.pengrad.telegrambot.model.request.ParseMode
@@ -36,8 +38,8 @@ class BenchPageStrategyImpl : BenchPageStrategy {
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(
                     InlineKeyboardMarkup(
-                        InlineKeyboardButton("Назад").callbackData("back"),
-                        InlineKeyboardButton("Дальше").callbackData("forward")
+                        InlineKeyboardButton("Назад").callbackData(BackPageProcessor.NAME),
+                        InlineKeyboardButton("Дальше").callbackData(ForwardPageProcessor.NAME)
                     )
                 ))
             return responses
