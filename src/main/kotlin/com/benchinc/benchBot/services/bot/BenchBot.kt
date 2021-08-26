@@ -1,7 +1,7 @@
 package com.benchinc.benchBot.services.bot
 
 import com.benchinc.benchBot.data.AllSessions
-import com.benchinc.benchBot.services.bot.processors.ProcessorsService
+import com.benchinc.benchBot.services.bot.processors.managers.MainProcessorsManager
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.UpdatesListener
 import com.pengrad.telegrambot.model.Update
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class BenchBot(private val telegramBot: TelegramBot,
-               private val processorsService: ProcessorsService
+               private val mainProcessorsManager: MainProcessorsManager
 ) : UpdatesListener, Logging {
 
     val sessions : AllSessions = AllSessions()
@@ -22,7 +22,7 @@ class BenchBot(private val telegramBot: TelegramBot,
     override fun process(updates: MutableList<Update>?): Int {
         updates?.forEach { update ->
             try {
-                processorsService.process(sessions, update)
+                mainProcessorsManager.process(sessions, update)
                     .forEach { telegramBot.execute(it) }
             } catch (e:Exception) {
                 logger.error(e)
