@@ -1,4 +1,4 @@
-package com.benchinc.benchBot.services.bot.processors.helpers
+package com.benchinc.benchBot.services.bot.processors.helpers.strategies
 
 import com.benchinc.benchBot.data.Session
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton

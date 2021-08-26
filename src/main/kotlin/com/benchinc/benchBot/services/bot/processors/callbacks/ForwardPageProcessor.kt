@@ -1,7 +1,7 @@
 package com.benchinc.benchBot.services.bot.processors.callbacks
 
 import com.benchinc.benchBot.data.Session
-import com.benchinc.benchBot.services.bot.processors.helpers.BenchPageStrategy
+import com.benchinc.benchBot.services.bot.processors.helpers.strategies.BenchPageStrategy
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest

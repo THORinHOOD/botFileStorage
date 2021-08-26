@@ -2,7 +2,7 @@ package com.benchinc.benchBot.services.bot.processors.location
 
 import com.benchinc.benchBot.data.Session
 import com.benchinc.benchBot.services.GeoService
-import com.benchinc.benchBot.services.bot.processors.helpers.BenchPageStrategy
+import com.benchinc.benchBot.services.bot.processors.helpers.strategies.BenchPageStrategy
 import com.pengrad.telegrambot.model.Location
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
