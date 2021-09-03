@@ -1,6 +1,7 @@
 package com.benchinc.benchBot.services.bot.processors.default_pipeline
 
 import com.benchinc.benchBot.data.Session
+import com.benchinc.benchBot.data.Point
 import com.benchinc.benchBot.services.GeoService
 import com.benchinc.benchBot.services.bot.processors.Pipeline
 import com.benchinc.benchBot.services.bot.processors.Processor
@@ -8,7 +9,6 @@ import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendLocation
 import com.pengrad.telegrambot.request.SendMessage
-import de.westnordost.osmapi.map.data.Node
 import io.prometheus.client.Counter
 import org.springframework.stereotype.Service
 
@@ -22,20 +22,20 @@ class GetBenchProcessor(val geoService: GeoService,
     override fun process(session: Session, update: Update): List<BaseRequest<*, *>> {
         return update.message()?.text()?.let { text ->
             requestsCounter.labels("get_bench").inc()
-            val benchId = text.substring(7).toLongOrNull() ?:
-                return listOf(incorrectBenchIdMessage(session.chatId))
-            val bench = session.currentBenches.find { it.node.id == benchId }
+            val benchId = text.substring(7)
+            val bench = session.currentBenches.find { it.id == benchId }
             if (bench != null) {
-                return listOf(buildMessageWithBench(session.chatId, bench.node))
+                return listOf(buildMessageWithBench(session.chatId, bench.geometry))
             }
-            val benchNode = geoService.findBenchById(benchId)
-            listOf(
-                if (benchNode == null) {
-                    incorrectBenchIdMessage(session.chatId)
-                } else {
-                    buildMessageWithBench(session.chatId, benchNode)
-                }
-            )
+            return listOf()
+//            val benchNode = geoService.findBenchById(benchId)
+//            listOf(
+//                if (bench == null) {
+//                    incorrectBenchIdMessage(session.chatId)
+//                } else {
+//                    buildMessageWithBench(session.chatId, bench.geometry)
+//                }
+//            )
         } ?: listOf()
     }
 
@@ -45,11 +45,11 @@ class GetBenchProcessor(val geoService: GeoService,
     private fun incorrectBenchIdMessage(chatId: Long) : SendMessage =
         SendMessage(chatId, "Некорректный id лавочки")
 
-    private fun buildMessageWithBench(chatId: Long, benchNode: Node) : SendLocation =
+    private fun buildMessageWithBench(chatId: Long, point: Point) : SendLocation =
         SendLocation(
             chatId,
-            benchNode.position.latitude.toFloat(),
-            benchNode.position.longitude.toFloat()
+            point.coordinates[1].toFloat(),
+            point.coordinates[0].toFloat()
         )
 
     companion object {

@@ -27,7 +27,7 @@ class BenchPageStrategyImpl : BenchPageStrategy {
                 val benchesSubList = benches.subList(page * 5, min(page * 5 + 5, benches.size))
                 for ((index, value) in benchesSubList.withIndex()) {
                     val realIndex = index + 1 + page * 5
-                    append("<b>${realIndex}.</b> $value\nПоказать на карте: /bench_${value.node.id}\n\n")
+                    append("<b>${realIndex}.</b> $value\nПоказать на карте: /bench_${value.id}\n\n")
                 }
             }
             val responses = mutableListOf<BaseRequest<*, *>>()

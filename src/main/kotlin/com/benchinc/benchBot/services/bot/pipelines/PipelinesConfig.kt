@@ -16,7 +16,7 @@ class PipelinesConfig {
 
     @Bean
     fun changeRadiusPipeline(@Pipeline("change_radius") processors: MutableList<Processor>,
-                            cancelPipelineProcessor: CancelPipelineProcessor) : PipelineProcessor {
+                             cancelPipelineProcessor: CancelPipelineProcessor) : PipelineProcessor {
         processors.add(cancelPipelineProcessor)
         return PipelineProcessor("change_radius", processors.associateBy { it.name })
     }

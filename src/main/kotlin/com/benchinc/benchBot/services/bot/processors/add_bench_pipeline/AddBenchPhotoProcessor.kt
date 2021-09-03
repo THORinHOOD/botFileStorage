@@ -6,6 +6,7 @@ import com.benchinc.benchBot.services.bot.processors.Pipeline
 import com.benchinc.benchBot.services.bot.processors.Processor
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.WelcomeMessageProcessor
 import com.pengrad.telegrambot.TelegramBot
+import com.pengrad.telegrambot.model.PhotoSize
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.GetFile

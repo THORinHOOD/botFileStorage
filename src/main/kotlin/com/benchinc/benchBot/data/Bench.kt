@@ -1,14 +1,15 @@
 package com.benchinc.benchBot.data
 
-import de.westnordost.osmapi.map.data.Node
 import kotlin.math.roundToLong
 
-data class Bench(val node: Node,
+data class Bench(val id: String,
+                 val geometry: Point,
+                 val properties: Map<String, String>,
                  val distance: Double) {
 
     override fun toString(): String {
         var result = "Расстояние около ${distance.roundToLong()} метров"
-        result += orNone("спинка", node.tags["backrest"]) {
+        result += orNone("спинка", properties["backrest"]) {
             when (it) {
                 "yes" -> "да"
                 "no" -> "нет"
@@ -16,13 +17,13 @@ data class Bench(val node: Node,
             }
         }
 
-        result += orNone("материал", node.tags["material"])
-        result += orNone("поверхность", node.tags["surface"])
-        result += orNone("цвет", node.tags["colour"])
-        result += orNone("кол-во мест", node.tags["seats"])
-        result += orNone("куда смотрит", node.tags["direction"])
-        result += orNone("владелец", node.tags["operator"])
-        result += orNone("надпись или посвящение", node.tags["inspiration"])
+        result += orNone("материал", properties["material"])
+        result += orNone("поверхность", properties["surface"])
+        result += orNone("цвет", properties["colour"])
+        result += orNone("кол-во мест", properties["seats"])
+        result += orNone("куда смотрит", properties["direction"])
+        result += orNone("владелец", properties["operator"])
+        result += orNone("надпись или посвящение", properties["inspiration"])
         return result
     }
 
