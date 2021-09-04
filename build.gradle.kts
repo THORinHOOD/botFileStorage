@@ -13,9 +13,9 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()
-//	maven {
-//		url = uri("https://raw.github.com/THORinHOOD/benchLib/mvn-repo/")
-//	}
+	maven {
+		url = uri("https://raw.github.com/THORinHOOD/benchLib/mvn-repo/")
+	}
 }
 
 configurations.all {
@@ -23,11 +23,11 @@ configurations.all {
 }
 
 dependencies {
-//	implementation("com.db:benchLib:0.0.1")
+	implementation("com.db:benchLib:0.0.1")
 
-	implementation("io.github.openfeign:feign-okhttp:10.11")
-	implementation("io.github.openfeign:feign-gson:10.11")
-	implementation("io.github.openfeign:feign-slf4j:10.11")
+//	implementation("io.github.openfeign:feign-okhttp:10.11")
+//	implementation("io.github.openfeign:feign-gson:10.11")
+//	implementation("io.github.openfeign:feign-slf4j:10.11")
 
 	///
 	implementation("io.micrometer:micrometer-registry-prometheus")

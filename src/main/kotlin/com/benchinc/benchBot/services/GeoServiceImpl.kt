@@ -1,7 +1,7 @@
 package com.benchinc.benchBot.services
 
-import com.benchinc.benchBot.configs.clients.BenchesServiceClient
-import com.benchinc.benchBot.data.Bench
+import com.db.benchLib.clients.BenchesServiceClient
+import com.db.benchLib.data.Bench
 import com.peertopark.java.geocalc.DegreeCoordinate
 import com.peertopark.java.geocalc.EarthCalc
 import com.peertopark.java.geocalc.Point
@@ -18,7 +18,10 @@ class GeoServiceImpl(val benchesServiceClient: BenchesServiceClient) : GeoServic
     }
 
     override fun findBenches(around : Location, radius: Int) : List<Bench> {
-        return benchesServiceClient.findBenchesNear(around.longitude(), around.latitude(), radius.toFloat()/1000)
+        return benchesServiceClient.findBenchesNear(
+            around.longitude().toDouble(),
+            around.latitude().toDouble(),
+            radius.toDouble()/1000)
     }
 
     private fun distance(from: LatLon, to: LatLon) : Double {

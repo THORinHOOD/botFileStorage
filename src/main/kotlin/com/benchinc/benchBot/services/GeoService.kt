@@ -1,6 +1,6 @@
 package com.benchinc.benchBot.services
 
-import com.benchinc.benchBot.data.Bench
+import com.db.benchLib.data.Bench
 import com.pengrad.telegrambot.model.Location
 
 interface GeoService {

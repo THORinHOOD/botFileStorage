@@ -1,10 +1,10 @@
 package com.benchinc.benchBot.services.bot.processors.default_pipeline
 
 import com.benchinc.benchBot.data.Session
-import com.benchinc.benchBot.data.Point
 import com.benchinc.benchBot.services.GeoService
 import com.benchinc.benchBot.services.bot.processors.Pipeline
 import com.benchinc.benchBot.services.bot.processors.Processor
+import com.db.benchLib.data.PointGeo
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendLocation
@@ -45,7 +45,7 @@ class GetBenchProcessor(val geoService: GeoService,
     private fun incorrectBenchIdMessage(chatId: Long) : SendMessage =
         SendMessage(chatId, "Некорректный id лавочки")
 
-    private fun buildMessageWithBench(chatId: Long, point: Point) : SendLocation =
+    private fun buildMessageWithBench(chatId: Long, point: PointGeo) : SendLocation =
         SendLocation(
             chatId,
             point.coordinates[1].toFloat(),
