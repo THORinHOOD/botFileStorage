@@ -23,21 +23,13 @@ configurations.all {
 }
 
 dependencies {
-	implementation("com.db:benchLib:0.0.1")
-
-//	implementation("io.github.openfeign:feign-okhttp:10.11")
-//	implementation("io.github.openfeign:feign-gson:10.11")
-//	implementation("io.github.openfeign:feign-slf4j:10.11")
-
-	///
+	implementation("com.db:benchLib:0.0.10")
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("com.lmax:disruptor:3.4.2")
 	implementation("org.apache.logging.log4j:log4j-api-kotlin:1.0.0")
 	implementation("org.springframework.boot:spring-boot-starter-log4j2")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("com.peertopark.java:geocalc:1.1.0")
 	implementation("com.github.pengrad:java-telegram-bot-api:5.2.0")
-	implementation("de.westnordost:osmapi-overpass:2.0")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")

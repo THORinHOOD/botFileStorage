@@ -1,9 +1,10 @@
 package com.benchinc.benchBot.services.bot.helpers.strategies
 
-import com.benchinc.benchBot.data.Session
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.BackPageProcessor
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.ForwardPageProcessor
-import com.db.benchLib.data.Bench
+import com.db.benchLib.data.BenchWithDistance
+import com.db.benchLib.data.dto.BenchesNearResponse
+import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
 import com.pengrad.telegrambot.model.request.ParseMode
@@ -11,7 +12,6 @@ import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
 import org.springframework.stereotype.Service
-import kotlin.math.min
 
 @Service
 class BenchPageStrategyImpl : BenchPageStrategy {
@@ -19,37 +19,75 @@ class BenchPageStrategyImpl : BenchPageStrategy {
     override fun extractMessagePageNumber(message: String) : Int =
         message.substring(message.indexOf("(") + 1, message.indexOf("/")).toInt() - 1
 
-    override fun buildPageWithBenches(session: Session, page: Int, callbackId: String?) : List<BaseRequest<*, *>> {
-        session.currentBenches.let { benches ->
-            val pagesCount = benches.size / 5 + (if (benches.size % 5 == 0) 0 else 1)
-            val result = buildString {
-                append("(${page + 1}/${pagesCount}) Найдено <b>${benches.size}</b> лавочек в радиусе " +
-                        "<b>${session.radius}</b> метров\n\n")
-                val benchesSubList = benches.subList(page * 5, min(page * 5 + 5, benches.size))
-                for ((index, value) in benchesSubList.withIndex()) {
-                    val realIndex = index + 1 + page * 5
-                    append("<b>${realIndex}.</b> ${value.description()} \nПоказать на карте: /bench_${value.id}\n\n")
+    override fun buildPageWithBenches(benchesNearResponse: BenchesNearResponse, chatId: Long, callbackId: String?) : List<BaseRequest<*, *>> {
+        benchesNearResponse.page.let { page ->
+            benchesNearResponse.pagesCount.let { pagesCount ->
+                benchesNearResponse.pageSize.let { pageSize ->
+                    val result = buildString {
+                        append("(${page + 1}/${pagesCount}) " +
+                                "Найдено <b>${benchesNearResponse.benchesCount}</b> лавочек в радиусе " +
+                                "<b>${(benchesNearResponse.radius * 1000).toInt()}</b> метров\n\n")
+                        for ((index, value) in benchesNearResponse.benches.withIndex()) {
+                            val realIndex = index + 1 + page * pageSize
+                            append("<b>${realIndex}.</b> ${value.description()} \nПоказать на карте:\n/bench_${value.id}\n\n")
+                        }
+                    }
+                    val responses = mutableListOf<BaseRequest<*, *>>()
+                    callbackId?.let {
+                        responses.add(AnswerCallbackQuery(it))
+                    }
+
+                    val pageInfo = buildCurrentPageInfo(
+                        page,
+                        pageSize,
+                        benchesNearResponse.lat,
+                        benchesNearResponse.lon,
+                        benchesNearResponse.radius
+                    )
+                    responses.add(SendMessage(chatId, result)
+                        .parseMode(ParseMode.HTML)
+                        .replyMarkup(
+                            InlineKeyboardMarkup(
+                                InlineKeyboardButton("Назад").callbackData(
+                                    BackPageProcessor.NAME + "_" + if (page == 0) "stop" else pageInfo
+                                ),
+                                InlineKeyboardButton("Дальше").callbackData(
+                                    ForwardPageProcessor.NAME + "_" +
+                                            if (page + 1 == pagesCount) "stop" else pageInfo
+                                )
+                            )
+                        ))
+                    return responses
                 }
             }
-            val responses = mutableListOf<BaseRequest<*, *>>()
-            callbackId?.let {
-                responses.add(AnswerCallbackQuery(it))
-            }
-            responses.add(SendMessage(session.chatId, result)
-                .parseMode(ParseMode.HTML)
-                .replyMarkup(
-                    InlineKeyboardMarkup(
-                        InlineKeyboardButton("Назад").callbackData(BackPageProcessor.NAME),
-                        InlineKeyboardButton("Дальше").callbackData(ForwardPageProcessor.NAME)
-                    )
-                ))
-            return responses
         }
     }
 
-    fun Bench.description() : String {
-        val distance = 0
-        var result = "Расстояние около $distance метров"
+    override fun withCallbackData(callbackQuery: CallbackQuery,
+                                  chatId: Long,
+                                  dataProcessor: (Long, String, Int, Int, Double, Double, Double) -> List<BaseRequest<*, *>>)
+                 : List<BaseRequest<*, *>> {
+        val data = callbackQuery.data().split("_")
+        if (data[1] == "stop") {
+            return listOf(AnswerCallbackQuery(callbackQuery.id()))
+        }
+        return dataProcessor.invoke(
+            chatId,
+            callbackQuery.id(),
+            data[1].toInt(),
+            data[2].toInt(),
+            data[3].toDouble(),
+            data[4].toDouble(),
+            data[5].toDouble()
+        )
+    }
+
+    private fun buildCurrentPageInfo(page: Int, pageSize: Int, lat: Double, lon: Double, radius: Double) : String {
+        return "${page}_${pageSize}_${lat}_${lon}_${radius}"
+    }
+
+    fun BenchWithDistance.description() : String {
+        var result = "Расстояние около ${distance.toInt()} метров"
         result += orNone("спинка", properties["backrest"]) {
             when (it) {
                 "yes" -> "да"

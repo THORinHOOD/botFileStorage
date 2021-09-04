@@ -1,10 +1,10 @@
 package com.benchinc.benchBot.services.bot.processors.default_pipeline
 
 import com.benchinc.benchBot.data.Session
-import com.benchinc.benchBot.services.GeoService
 import com.benchinc.benchBot.services.bot.helpers.strategies.BenchPageStrategy
 import com.benchinc.benchBot.services.bot.processors.Pipeline
 import com.benchinc.benchBot.services.bot.processors.Processor
+import com.db.benchLib.clients.BenchesServiceClient
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @Pipeline("default")
-class FindBenchesProcessor(private val geoService: GeoService,
+class FindBenchesProcessor(private val benchesServiceClient: BenchesServiceClient,
                            private val benchPageStrategy: BenchPageStrategy,
                            private val requestsCounter: Counter
 ) : Processor {
@@ -23,8 +23,12 @@ class FindBenchesProcessor(private val geoService: GeoService,
     override fun process(session: Session, update: Update): List<BaseRequest<*, *>> {
         return update.message()?.location()?.let { location ->
             requestsCounter.labels("find_benches").inc()
-            session.currentBenches = geoService.findBenches(location, session.radius)
-            if (session.currentBenches.isEmpty()) {
+            val response = benchesServiceClient.findBenchesNear(
+                location.longitude().toDouble(),
+                location.latitude().toDouble(),
+                session.radius.toDouble()/1000,
+                0, 5)
+            if (response.benches.isEmpty()) {
                 listOf(
                     SendMessage(
                         session.chatId, "В радиусе ${session.radius} метров " +
@@ -32,7 +36,7 @@ class FindBenchesProcessor(private val geoService: GeoService,
                     )
                 )
             } else {
-                benchPageStrategy.buildPageWithBenches(session, 0, null)
+                benchPageStrategy.buildPageWithBenches(response, session.chatId, null)
             }
         } ?: listOf()
     }
