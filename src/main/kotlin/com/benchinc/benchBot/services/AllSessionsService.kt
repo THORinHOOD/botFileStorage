@@ -1,4 +1,4 @@
-package com.benchinc.benchBot.services.bot
+package com.benchinc.benchBot.services
 
 import com.benchinc.benchBot.data.AllSessions
 import com.benchinc.benchBot.data.Session

@@ -1,7 +1,7 @@
 package com.benchinc.benchBot.services.bot.processors.add_bench_pipeline
 
 import com.benchinc.benchBot.data.Session
-import com.benchinc.benchBot.services.bot.RequestsService
+import com.benchinc.benchBot.services.RequestsServiceLocal
 import com.benchinc.benchBot.services.bot.processors.CancelPipelineProcessor
 import com.benchinc.benchBot.services.bot.processors.Pipeline
 import com.benchinc.benchBot.services.bot.processors.Processor
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service
 
 @Service
 @Pipeline("add_bench")
-class AddBenchLocationProcessor(private val requestsService: RequestsService) : Processor {
+class AddBenchLocationProcessor(private val requestsServiceLocal: RequestsServiceLocal) : Processor {
     override val name: String = NAME
 
     override fun process(session: Session, update: Update): List<BaseRequest<*, *>> {
         return update.message()?.location()?.let { location ->
-            requestsService.addRequest(session.chatId, location)
+            requestsServiceLocal.addRequest(session.chatId, location)
             session.currentPipelineInfo.pipelineName = "add_bench"
             session.currentPipelineInfo.step = AddBenchPhotoProcessor.NAME
             listOf(SendMessage(session.chatId, "Теперь пришли её фотографию, чтобы мы могли проверить " +

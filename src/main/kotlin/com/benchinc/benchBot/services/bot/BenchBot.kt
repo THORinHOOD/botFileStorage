@@ -1,5 +1,6 @@
 package com.benchinc.benchBot.services.bot
 
+import com.benchinc.benchBot.services.AllSessionsService
 import com.benchinc.benchBot.services.bot.pipelines.PipelinesManager
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.UpdatesListener

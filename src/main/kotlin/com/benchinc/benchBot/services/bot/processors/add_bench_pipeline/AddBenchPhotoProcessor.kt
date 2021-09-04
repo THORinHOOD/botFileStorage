@@ -1,12 +1,14 @@
 package com.benchinc.benchBot.services.bot.processors.add_bench_pipeline
 
 import com.benchinc.benchBot.data.Session
-import com.benchinc.benchBot.services.bot.RequestsService
+import com.benchinc.benchBot.services.RequestsServiceLocal
 import com.benchinc.benchBot.services.bot.processors.Pipeline
 import com.benchinc.benchBot.services.bot.processors.Processor
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.WelcomeMessageProcessor
+import com.db.benchLib.clients.RequestsServiceClient
+import com.db.benchLib.data.Request
+import com.db.benchLib.services.MultipartFileService
 import com.pengrad.telegrambot.TelegramBot
-import com.pengrad.telegrambot.model.PhotoSize
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.GetFile
@@ -15,7 +17,9 @@ import org.springframework.stereotype.Service
 
 @Service
 @Pipeline("add_bench")
-class AddBenchPhotoProcessor(private val requestsService: RequestsService,
+class AddBenchPhotoProcessor(private val multipartFileService: MultipartFileService,
+                             private val requestsServiceClient: RequestsServiceClient,
+                             private val requestsServiceLocal: RequestsServiceLocal,
                              private val telegramBot: TelegramBot) : Processor {
     override val name: String = NAME
 
@@ -24,7 +28,14 @@ class AddBenchPhotoProcessor(private val requestsService: RequestsService,
             arrayOfPhotoSizes.toList().maxByOrNull { it.fileSize() }?.let { photoSize ->
                 val response = telegramBot.execute(GetFile(photoSize.fileId()))
                 val photo = telegramBot.getFileContent(response.file())
-                requestsService.addPhotoToRequest(session.chatId, photo)
+
+                val photoMultipart = multipartFileService.buildFromPhoto(photo)
+                val request = requestsServiceLocal.getRequest(session.chatId)
+                requestsServiceClient.addRequest(photoMultipart, Request.builder()
+                    .location(request.location)
+                    .properties(mapOf())
+                    .build())
+
                 session.currentPipelineInfo.pipelineName = "default"
                 session.currentPipelineInfo.step = "?"
                 listOf(
