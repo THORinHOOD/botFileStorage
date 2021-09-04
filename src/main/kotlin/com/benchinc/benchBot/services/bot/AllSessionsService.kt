@@ -18,6 +18,4 @@ class AllSessionsService {
             throw IllegalArgumentException("Can't find chat id in update"))
     }
 
-    fun getSession(chatId: Long) : Session = sessions.getSession(chatId)
-
 }
