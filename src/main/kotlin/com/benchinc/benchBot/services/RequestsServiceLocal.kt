@@ -1,6 +1,6 @@
 package com.benchinc.benchBot.services
 
-import com.benchinc.benchBot.data.Request
+import com.benchinc.benchBot.data.RequestLocal
 import com.db.benchLib.data.PointGeo
 import com.pengrad.telegrambot.model.Location
 import org.springframework.stereotype.Service
@@ -8,16 +8,16 @@ import org.springframework.stereotype.Service
 @Service
 class RequestsServiceLocal {
 
-    private val requests: MutableMap<Long, Request> = mutableMapOf()
+    private val requests: MutableMap<Long, RequestLocal> = mutableMapOf()
 
     fun addRequest(chatId: Long, location: Location) {
-        requests[chatId] = Request(chatId, PointGeo("Point", listOf(
+        requests[chatId] = RequestLocal(chatId, PointGeo("Point", listOf(
             location.longitude().toDouble(),
             location.latitude().toDouble()
         )))
     }
 
-    fun getRequest(chatId: Long) : Request {
+    fun getRequest(chatId: Long) : RequestLocal {
         if (!requests.containsKey(chatId)) {
             throw IllegalArgumentException("Can't find $chatId request")
         }
