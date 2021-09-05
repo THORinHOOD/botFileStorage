@@ -22,13 +22,14 @@ class StartAddingBench : Processor {
         session.currentPipelineInfo.pipelineName = "add_bench"
         session.currentPipelineInfo.step = AddBenchLocationProcessor.NAME
         return listOf(
-            SendMessage(session.chatId, "Чтобы добавить лавочку в OpenStreetMap пришли её геолокацию")
+            SendMessage(session.chatId, """
+                   Пришлите геопозицию лавочки 📎.
+                   Убедитесь, что вы выбрали правильную и точную геопозицию.
+                   Не выбирайте просто ту, которая автоматически выбирается, обязательно перепроверьте её.
+            """.trimIndent())
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(
                     ReplyKeyboardMarkup(
-                        arrayOf(
-                            KeyboardButton(AddBenchLocationProcessor.NAME)
-                                .requestLocation(true)),
                         arrayOf(KeyboardButton(CancelPipelineProcessor.NAME))
                     ).resizeKeyboard(true)))
     }

@@ -2,7 +2,6 @@ package com.benchinc.benchBot.services.bot.helpers.strategies
 
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.BackPageProcessor
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.ForwardPageProcessor
-import com.db.benchLib.data.bench.BenchInfoWithDistance
 import com.db.benchLib.data.bench.BenchesNearResponse
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
@@ -14,7 +13,7 @@ import com.pengrad.telegrambot.request.SendMessage
 import org.springframework.stereotype.Service
 
 @Service
-class BenchPageStrategyImpl : BenchPageStrategy {
+class BenchPageStrategyImpl(private val benchInfoStrategy: BenchInfoStrategy) : BenchPageStrategy {
 
     override fun extractMessagePageNumber(message: String) : Int =
         message.substring(message.indexOf("(") + 1, message.indexOf("/")).toInt() - 1
@@ -29,7 +28,7 @@ class BenchPageStrategyImpl : BenchPageStrategy {
                                 "<b>${(benchesNearResponse.radius * 1000).toInt()}</b> метров\n\n")
                         for ((index, value) in benchesNearResponse.benches.withIndex()) {
                             val realIndex = index + 1 + page * pageSize
-                            append("<b>${realIndex}.</b> ${value.description()} \nПоказать на карте:\n/bench_${value.id}\n\n")
+                            append("<b>${realIndex}.</b> ${benchInfoStrategy.description(value)} \nПоказать на карте:\n/bench_${value.id}\n\n")
                         }
                     }
                     val responses = mutableListOf<BaseRequest<*, *>>()
@@ -86,31 +85,4 @@ class BenchPageStrategyImpl : BenchPageStrategy {
         return "${page}_${pageSize}_${lat}_${lon}_${radius}"
     }
 
-    fun BenchInfoWithDistance.description() : String {
-        var result = "Расстояние около ${distance.toInt()} метров"
-        result += orNone("спинка", properties["backrest"]) {
-            when (it) {
-                "yes" -> "да"
-                "no" -> "нет"
-                else -> "неизвестно"
-            }
-        }
-
-        result += orNone("материал", properties["material"])
-        result += orNone("поверхность", properties["surface"])
-        result += orNone("цвет", properties["colour"])
-        result += orNone("кол-во мест", properties["seats"])
-        result += orNone("куда смотрит", properties["direction"])
-        result += orNone("владелец", properties["operator"])
-        result += orNone("надпись или посвящение", properties["inspiration"])
-        return result
-    }
-
-    private fun orNone(caption: String, value: String?, converter: (String) -> String = { it }) : String {
-        return if (value != null) {
-            "\n$caption : ${converter(value)}"
-        } else {
-            ""
-        }
-    }
 }
