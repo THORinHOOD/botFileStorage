@@ -6,7 +6,7 @@ import com.benchinc.benchBot.services.bot.processors.Pipeline
 import com.benchinc.benchBot.services.bot.processors.Processor
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.WelcomeMessageProcessor
 import com.db.benchLib.clients.RequestsServiceClient
-import com.db.benchLib.data.Request
+import com.db.benchLib.data.request.NewRequestDto
 import com.db.benchLib.services.MultipartFileService
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
@@ -31,7 +31,7 @@ class AddBenchPhotoProcessor(private val multipartFileService: MultipartFileServ
 
                 val photoMultipart = multipartFileService.buildFromPhoto(photo)
                 val request = requestsServiceLocal.getRequest(session.chatId)
-                requestsServiceClient.addRequest(photoMultipart, Request.builder()
+                requestsServiceClient.addRequest(photoMultipart, NewRequestDto.builder()
                     .location(request.location)
                     .properties(mapOf())
                     .build())

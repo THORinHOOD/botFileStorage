@@ -2,8 +2,8 @@ package com.benchinc.benchBot.services.bot.helpers.strategies
 
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.BackPageProcessor
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.ForwardPageProcessor
-import com.db.benchLib.data.BenchWithDistance
-import com.db.benchLib.data.dto.BenchesNearResponse
+import com.db.benchLib.data.bench.BenchInfoWithDistance
+import com.db.benchLib.data.bench.BenchesNearResponse
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
@@ -86,7 +86,7 @@ class BenchPageStrategyImpl : BenchPageStrategy {
         return "${page}_${pageSize}_${lat}_${lon}_${radius}"
     }
 
-    fun BenchWithDistance.description() : String {
+    fun BenchInfoWithDistance.description() : String {
         var result = "Расстояние около ${distance.toInt()} метров"
         result += orNone("спинка", properties["backrest"]) {
             when (it) {

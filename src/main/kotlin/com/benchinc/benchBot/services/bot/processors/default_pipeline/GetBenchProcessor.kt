@@ -8,7 +8,9 @@ import com.db.benchLib.data.PointGeo
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendLocation
+import com.pengrad.telegrambot.request.SendPhoto
 import io.prometheus.client.Counter
+import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service
 class GetBenchProcessor(
     private val benchesServiceClient: BenchesServiceClient,
     private val requestsCounter: Counter
-) : Processor {
+) : Processor, Logging {
 
     override val name: String = NAME
 
@@ -25,10 +27,19 @@ class GetBenchProcessor(
             requestsCounter.labels("get_bench").inc()
             val benchId = text.substring(7)
             val bench = benchesServiceClient.findBenchById(benchId)
+            val messages: MutableList<BaseRequest<*, *>> = mutableListOf()
             if (bench != null) {
-                return listOf(buildMessageWithBench(session.chatId, bench.geometry))
+                try {
+                    val photo = benchesServiceClient.getBenchPhoto(benchId)
+                    if (photo != null) {
+                        messages.add(SendPhoto(session.chatId, photo))
+                    }
+                } catch (e:Exception) {
+                    logger.error(e)
+                }
+                messages.add(buildMessageWithBench(session.chatId, bench.geometry))
             }
-            return listOf()
+            return messages
         } ?: listOf()
     }
 

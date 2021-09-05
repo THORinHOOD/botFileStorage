@@ -1,6 +1,6 @@
 package com.benchinc.benchBot.services.bot.helpers.strategies
 
-import com.db.benchLib.data.dto.BenchesNearResponse
+import com.db.benchLib.data.bench.BenchesNearResponse
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 
