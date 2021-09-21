@@ -1,9 +1,9 @@
 package com.benchinc.benchBot.services.bot.helpers.strategies
 
-import com.db.benchLib.data.bench.BenchDto
-import com.db.benchLib.data.bench.BenchInfoWithDistance
+import com.thorinhood.benchLib.proto.bench.BenchInfo
+import com.thorinhood.benchLib.proto.bench.BenchInfoWithDistance
 
 interface BenchInfoStrategy {
-    fun description(benchDto: BenchDto) : String
-    fun description(benchInfoWithDistance: BenchInfoWithDistance) : String
+    fun description(benchInfo: BenchInfo): String
+    fun description(benchInfoWithDistance: BenchInfoWithDistance): String
 }

@@ -1,23 +1,23 @@
 package com.benchinc.benchBot.services.bot.helpers.strategies
 
-import com.db.benchLib.data.bench.BenchDto
-import com.db.benchLib.data.bench.BenchInfoWithDistance
+import com.thorinhood.benchLib.proto.bench.BenchInfo
+import com.thorinhood.benchLib.proto.bench.BenchInfoWithDistance
 import org.springframework.stereotype.Service
 
 @Service
 class BenchInfoStrategyImpl : BenchInfoStrategy {
 
-    override fun description(benchDto: BenchDto): String {
-        return propertiesDescription(benchDto.properties)
+    override fun description(benchInfo: BenchInfo): String {
+        return propertiesDescription(benchInfo.propertiesMap)
     }
 
     override fun description(benchInfoWithDistance: BenchInfoWithDistance): String {
         var result = "Расстояние около ${benchInfoWithDistance.distance.toInt()} метров"
-        result += propertiesDescription(benchInfoWithDistance.properties)
+        result += propertiesDescription(benchInfoWithDistance.benchInfo.propertiesMap)
         return result
     }
 
-    private fun propertiesDescription(properties: Map<String, String>) : String {
+    private fun propertiesDescription(properties: Map<String, String>): String {
         var result = ""
         result += orNone("спинка", properties["backrest"]) {
             when (it) {
@@ -36,7 +36,7 @@ class BenchInfoStrategyImpl : BenchInfoStrategy {
         return result
     }
 
-    private fun orNone(caption: String, value: String?, converter: (String) -> String = { it }) : String {
+    private fun orNone(caption: String, value: String?, converter: (String) -> String = { it }): String {
         return if (value != null) {
             "\n$caption : ${converter(value)}"
         } else {

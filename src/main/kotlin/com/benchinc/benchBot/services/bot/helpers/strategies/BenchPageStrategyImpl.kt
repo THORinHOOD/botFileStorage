@@ -2,7 +2,6 @@ package com.benchinc.benchBot.services.bot.helpers.strategies
 
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.BackPageProcessor
 import com.benchinc.benchBot.services.bot.processors.default_pipeline.ForwardPageProcessor
-import com.db.benchLib.data.bench.BenchesNearResponse
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
@@ -10,6 +9,7 @@ import com.pengrad.telegrambot.model.request.ParseMode
 import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.benchLib.proto.services.FindBenchesNearResponse
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,48 +18,46 @@ class BenchPageStrategyImpl(private val benchInfoStrategy: BenchInfoStrategy) : 
     override fun extractMessagePageNumber(message: String) : Int =
         message.substring(message.indexOf("(") + 1, message.indexOf("/")).toInt() - 1
 
-    override fun buildPageWithBenches(benchesNearResponse: BenchesNearResponse, chatId: Long, callbackId: String?) : List<BaseRequest<*, *>> {
-        benchesNearResponse.page.let { page ->
-            benchesNearResponse.pagesCount.let { pagesCount ->
-                benchesNearResponse.pageSize.let { pageSize ->
-                    val result = buildString {
-                        append("(${page + 1}/${pagesCount}) " +
-                                "Найдено <b>${benchesNearResponse.benchesCount}</b> лавочек в радиусе " +
-                                "<b>${(benchesNearResponse.radius * 1000).toInt()}</b> метров\n\n")
-                        for ((index, value) in benchesNearResponse.benches.withIndex()) {
-                            val realIndex = index + 1 + page * pageSize
-                            append("<b>${realIndex}.</b> ${benchInfoStrategy.description(value)} \nПоказать на карте:\n/bench_${value.id}\n\n")
-                        }
-                    }
-                    val responses = mutableListOf<BaseRequest<*, *>>()
-                    callbackId?.let {
-                        responses.add(AnswerCallbackQuery(it))
-                    }
+    override fun buildPageWithBenches(response: FindBenchesNearResponse, chatId: Long,
+                                      callbackId: String?) : List<BaseRequest<*, *>> {
+        val paginationInfo = response.paginationInfo
 
-                    val pageInfo = buildCurrentPageInfo(
-                        page,
-                        pageSize,
-                        benchesNearResponse.lat,
-                        benchesNearResponse.lon,
-                        benchesNearResponse.radius
-                    )
-                    responses.add(SendMessage(chatId, result)
-                        .parseMode(ParseMode.HTML)
-                        .replyMarkup(
-                            InlineKeyboardMarkup(
-                                InlineKeyboardButton("Назад").callbackData(
-                                    BackPageProcessor.NAME + "_" + if (page == 0) "stop" else pageInfo
-                                ),
-                                InlineKeyboardButton("Дальше").callbackData(
-                                    ForwardPageProcessor.NAME + "_" +
-                                            if (page + 1 == pagesCount) "stop" else pageInfo
-                                )
-                            )
-                        ))
-                    return responses
-                }
+        val result = buildString {
+            append("(${paginationInfo.pageInfo.index + 1}/${paginationInfo.pagesCount}) " +
+                    "Найдено <b>${paginationInfo.elementsCount}</b> лавочек в радиусе " +
+                    "<b>${(response.radius * 1000).toInt()}</b> метров\n\n")
+            for ((index, value) in response.benchesList.withIndex()) {
+                val realIndex = index + 1 + paginationInfo.pageInfo.index * paginationInfo.pageInfo.size
+                append("<b>${realIndex}.</b> ${benchInfoStrategy.description(value)} \nПоказать на карте:\n" +
+                       "/bench_${value.benchInfo.id}\n\n")
             }
         }
+        val responses = mutableListOf<BaseRequest<*, *>>()
+        callbackId?.let {
+            responses.add(AnswerCallbackQuery(it))
+        }
+
+        val pageInfo = buildCurrentPageInfo(
+            paginationInfo.pageInfo.index,
+            paginationInfo.pageInfo.size,
+            response.location.lat,
+            response.location.lon,
+            response.radius
+        )
+        responses.add(SendMessage(chatId, result)
+            .parseMode(ParseMode.HTML)
+            .replyMarkup(
+                InlineKeyboardMarkup(
+                    InlineKeyboardButton("Назад").callbackData(
+            BackPageProcessor.NAME + "_" + if (paginationInfo.pageInfo.index == 0) "stop" else pageInfo
+                    ),
+                    InlineKeyboardButton("Дальше").callbackData(
+             ForwardPageProcessor.NAME + "_" +
+                        if (paginationInfo.pageInfo.index + 1 == paginationInfo.pagesCount) "stop" else pageInfo
+                    )
+                )
+            ))
+        return responses
     }
 
     override fun withCallbackData(callbackQuery: CallbackQuery,
