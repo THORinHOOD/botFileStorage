@@ -1,4 +1,4 @@
-package com.geokittens.benchBot.services.bot.helpers.strategies
+package com.geokittens.benchBot.services.bot.pagination
 
 import com.thorinhood.benchLib.proto.bench.BenchInfo
 import com.thorinhood.benchLib.proto.bench.BenchInfoWithDistance

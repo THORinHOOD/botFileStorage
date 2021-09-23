@@ -1,19 +1,13 @@
 package com.geokittens.benchBot.services.bot.processors.default_pipeline
 
 import com.geokittens.benchBot.data.Session
-import com.geokittens.benchBot.services.bot.helpers.strategies.BenchPageStrategy
-import com.geokittens.benchBot.services.bot.helpers.strategies.PaginationType
+import com.geokittens.benchBot.services.bot.pagination.BenchPageStrategy
+import com.geokittens.benchBot.services.bot.pagination.PaginationType
 import com.geokittens.benchBot.services.bot.processors.Pipeline
 import com.geokittens.benchBot.services.bot.processors.Processor
-import com.geokittens.benchBot.services.bot.util.PageCallback
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
-import com.thorinhood.benchLib.proto.services.BenchServiceGrpc
-import com.thorinhood.benchLib.proto.services.FindBenchesNearRequest
 import org.springframework.stereotype.Service
-import com.thorinhood.benchLib.proto.common.Location
-import com.thorinhood.benchLib.proto.common.PageInfo
 
 @Service
 @Pipeline("default")

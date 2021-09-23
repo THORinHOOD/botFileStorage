@@ -1,8 +1,7 @@
-package com.geokittens.benchBot.services.bot.helpers.strategies
+package com.geokittens.benchBot.services.bot.pagination
 
 import com.geokittens.benchBot.services.bot.processors.default_pipeline.BackPageProcessor
 import com.geokittens.benchBot.services.bot.processors.default_pipeline.ForwardPageProcessor
-import com.geokittens.benchBot.services.bot.util.PageCallback
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
@@ -34,14 +33,7 @@ class BenchPageStrategyImpl(
         if (data[1] == "stop") {
             return listOf(AnswerCallbackQuery(callbackQuery.id()))
         }
-
-        val pageCallback = PageCallback(
-            data[1].toInt(),
-            data[2].toInt(),
-            data[3].toDouble(),
-            data[4].toDouble(),
-            data[5].toDouble()
-        )
+        val pageCallback = PageCallback.fromList(data)
         val response = benchServiceStub.findBenchesNear(
             FindBenchesNearRequest.newBuilder()
                 .setLocation(

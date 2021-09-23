@@ -1,4 +1,4 @@
-package com.geokittens.benchBot.services.bot.helpers.strategies
+package com.geokittens.benchBot.services.bot.pagination
 
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest

@@ -1,7 +1,7 @@
 package com.geokittens.benchBot.services.bot.processors.default_pipeline
 
 import com.geokittens.benchBot.data.Session
-import com.geokittens.benchBot.services.bot.helpers.strategies.BenchPageStrategy
+import com.geokittens.benchBot.services.bot.pagination.BenchPageStrategy
 import com.geokittens.benchBot.services.bot.processors.Pipeline
 import com.geokittens.benchBot.services.bot.processors.Processor
 import com.pengrad.telegrambot.model.Update
