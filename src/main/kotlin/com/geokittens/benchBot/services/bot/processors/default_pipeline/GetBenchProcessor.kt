@@ -1,7 +1,7 @@
 package com.geokittens.benchBot.services.bot.processors.default_pipeline
 
 import com.geokittens.benchBot.data.Session
-import com.geokittens.benchBot.services.bot.pagination.BenchInfoStrategy
+import com.geokittens.benchBot.services.bot.description.BenchDescriptionStrategy
 import com.geokittens.benchBot.services.bot.processors.Pipeline
 import com.geokittens.benchBot.services.bot.processors.Processor
 import com.pengrad.telegrambot.model.Update
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service
 class GetBenchProcessor(
     private val benchServiceStub: BenchServiceGrpc.BenchServiceBlockingStub,
     private val requestsCounter: Counter,
-    private val benchInfoStrategy: BenchInfoStrategy
+    private val benchDescriptionStrategy: BenchDescriptionStrategy
 ) : Processor, Logging {
 
     override val name: String = NAME
@@ -40,12 +40,12 @@ class GetBenchProcessor(
             if (bench.photo != null && !bench.photo.isEmpty) {
                 messages.add(
                     SendPhoto(session.chatId, bench.photo.toByteArray())
-                        .caption(benchInfoStrategy.description(bench.benchInfo))
+                        .caption(benchDescriptionStrategy.description(bench.benchInfo))
                 )
             } else {
                 messages.add(
                     SendMessage(
-                        session.chatId, "Нет фотографии\n" + benchInfoStrategy.description(bench.benchInfo)
+                        session.chatId, "Нет фотографии\n" + benchDescriptionStrategy.description(bench.benchInfo)
                     )
                 )
             }

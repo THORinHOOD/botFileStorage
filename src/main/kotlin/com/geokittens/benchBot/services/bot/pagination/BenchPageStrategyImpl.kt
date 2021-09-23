@@ -1,5 +1,6 @@
 package com.geokittens.benchBot.services.bot.pagination
 
+import com.geokittens.benchBot.services.bot.description.BenchDescriptionStrategy
 import com.geokittens.benchBot.services.bot.processors.default_pipeline.BackPageProcessor
 import com.geokittens.benchBot.services.bot.processors.default_pipeline.ForwardPageProcessor
 import com.pengrad.telegrambot.model.CallbackQuery
@@ -20,7 +21,7 @@ import java.util.function.Predicate
 
 @Service
 class BenchPageStrategyImpl(
-    private val benchInfoStrategy: BenchInfoStrategy,
+    private val benchDescriptionStrategy: BenchDescriptionStrategy,
     private val benchServiceStub: BenchServiceGrpc.BenchServiceBlockingStub
 ) : BenchPageStrategy {
 
@@ -80,7 +81,7 @@ class BenchPageStrategyImpl(
             for ((index, value) in response.benchesList.withIndex()) {
                 val realIndex = index + 1 + paginationInfo.pageInfo.index * paginationInfo.pageInfo.size
                 append(
-                    "<b>${realIndex}.</b> ${benchInfoStrategy.description(value)} \nПоказать на карте:\n" +
+                    "<b>${realIndex}.</b> ${benchDescriptionStrategy.description(value)} \nПоказать на карте:\n" +
                             "/bench_${value.benchInfo.id}\n\n"
                 )
             }

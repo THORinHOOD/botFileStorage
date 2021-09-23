@@ -1,11 +1,11 @@
-package com.geokittens.benchBot.services.bot.pagination
+package com.geokittens.benchBot.services.bot.description
 
 import com.thorinhood.benchLib.proto.bench.BenchInfo
 import com.thorinhood.benchLib.proto.bench.BenchInfoWithDistance
 import org.springframework.stereotype.Service
 
 @Service
-class BenchInfoStrategyImpl : BenchInfoStrategy {
+class BenchDescriptionStrategyImpl : BenchDescriptionStrategy {
 
     override fun description(benchInfo: BenchInfo): String {
         return propertiesDescription(benchInfo.propertiesMap)
