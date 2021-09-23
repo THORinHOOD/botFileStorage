@@ -53,10 +53,9 @@ class BenchPageStrategyImpl(
                 .setPageInfo(
                     PageInfo.newBuilder()
                         .setIndex(
-                            pageCallback.page + if (paginationType == PaginationType.FORWARD) {
-                                1
-                            } else {
-                                -1
+                            when (paginationType) {
+                                PaginationType.FORWARD -> pageCallback.page + 1
+                                PaginationType.BACK -> pageCallback.page - 1
                             }
                         )
                         .setSize(pageCallback.pageSize)
@@ -136,8 +135,10 @@ class BenchPageStrategyImpl(
                 }
             )
 
-    private fun buttonInfo(name: String, pageCallback: PageCallback, paginationInfo: PaginationInfo,
-                           isStop: Predicate<PaginationInfo>): String =
+    private fun buttonInfo(
+        name: String, pageCallback: PageCallback, paginationInfo: PaginationInfo,
+        isStop: Predicate<PaginationInfo>
+    ): String =
         name + "_" + if (isStop.test(paginationInfo)) {
             "stop"
         } else {
