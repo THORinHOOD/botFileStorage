@@ -23,7 +23,7 @@ configurations.all {
 }
 
 dependencies {
-	implementation("com.db:benchLib:0.0.36")
+//	implementation("com.db:benchLib:0.0.36")
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("com.lmax:disruptor:3.4.2")
 	implementation("org.apache.logging.log4j:log4j-api-kotlin:1.0.0")
