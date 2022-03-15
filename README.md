@@ -1,10 +1,10 @@
 ### Build docker image
 
-docker build --build-arg JAR_FILE=build/libs/benchBot-0.0.1.jar -t thorinhood/benchbot .
+docker build --build-arg JAR_FILE=build/libs/fileBot-0.0.1.jar -t thorinhood/fileBot .
 
 ### Run docker container
 
-docker run -d -p 8080:8080 -p 8090:8090 -v "path to logs in machine":/logs thorinhood/benchbot
+docker run -d -p 8080:8080 -p 8090:8090 -v "path to logs in machine":/logs thorinhood/fileBot
 
 ### Run prometheus container
 

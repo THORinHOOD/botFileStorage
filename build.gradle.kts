@@ -7,7 +7,7 @@ plugins {
 	kotlin("plugin.spring") version "1.5.21"
 }
 
-group = "com.geokittens"
+group = "com.thorinhood"
 version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_11
 

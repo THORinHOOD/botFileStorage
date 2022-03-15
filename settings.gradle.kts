@@ -1,1 +1,1 @@
-rootProject.name = "benchBot"
+rootProject.name = "fileBot"
