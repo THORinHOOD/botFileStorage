@@ -9,7 +9,6 @@ import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.model.request.ParseMode
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.WelcomeMessageProcessor
 import org.springframework.stereotype.Service
 
 @Service
