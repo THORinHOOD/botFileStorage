@@ -10,7 +10,7 @@ import com.pengrad.telegrambot.request.BaseRequest
 import org.springframework.stereotype.Service
 
 @Service
-@Pipeline("default")
+@Pipeline("file_tree")
 class ForwardPageProcessor(
     private val storagePageStrategy: StoragePageStrategy
 ) : Processor {
@@ -22,7 +22,7 @@ class ForwardPageProcessor(
             storagePageStrategy.paginate(callbackQuery, session, PaginationType.FORWARD)
         } ?: listOf()
 
-    override fun isThisProcessorMessage(update: Update): Boolean =
+    override fun isThisProcessorMessage(session: Session, update: Update): Boolean =
         update.callbackQuery()?.let { callbackQuery ->
             callbackQuery.data().split("_")[0] == NAME
         } ?: false

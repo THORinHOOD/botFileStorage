@@ -21,7 +21,9 @@ class PipelineProcessor(val name : String,
         if (update.message()?.text()?.equals("Отмена") == true && mapProcessors.containsKey("Отмена")) {
             mapProcessors["Отмена"]!!.process(session, update)
         } else if (session.currentPipelineInfo.step == "?") {
-            val foundProcessors = mapProcessors.filter { (_, processor) -> processor.isThisProcessorMessage(update) }
+            val foundProcessors = mapProcessors.filter { (_, processor) ->
+                processor.isThisProcessorMessage(session, update)
+            }
             if (foundProcessors.size > 1) {
                 throw IllegalArgumentException("More than 1 processors of pipeline $name can take message")
             } else if (foundProcessors.size == 1) {

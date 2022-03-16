@@ -25,7 +25,7 @@ class CancelPipelineProcessor(
             .replyMarkup(keyboardService.getDefaultKeyboard(session)))
     }
 
-    override fun isThisProcessorMessage(update: Update): Boolean =
+    override fun isThisProcessorMessage(session: Session, update: Update): Boolean =
         update.message()?.text()?.equals(NAME) ?: false
 
     companion object {

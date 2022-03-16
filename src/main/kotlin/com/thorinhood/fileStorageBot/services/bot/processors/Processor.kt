@@ -8,5 +8,5 @@ interface Processor {
     val name: String
 
     fun process(session: Session, update: Update) : List<BaseRequest<*, *>>
-    fun isThisProcessorMessage(update: Update) : Boolean
+    fun isThisProcessorMessage(session: Session, update: Update) : Boolean
 }

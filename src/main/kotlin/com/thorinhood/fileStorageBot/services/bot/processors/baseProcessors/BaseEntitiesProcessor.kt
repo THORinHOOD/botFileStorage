@@ -2,6 +2,7 @@ package com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors
 
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.fileStorageBot.data.PaginationInfo
 import com.thorinhood.fileStorageBot.data.Session
 import com.thorinhood.fileStorageBot.services.api.FileStorageService
 import com.thorinhood.fileStorageBot.services.bot.KeyboardService
@@ -23,7 +24,7 @@ abstract class BaseEntitiesProcessor(
                 ).replyMarkup(KeyboardService.FILE_TREE_KEYBOARD)
             )
         } else {
-            storagePageStrategy.buildPageWithEntities(response, session.chatId, null)
+            storagePageStrategy.buildPageWithEntities(response, session, null)
         }
     }
 

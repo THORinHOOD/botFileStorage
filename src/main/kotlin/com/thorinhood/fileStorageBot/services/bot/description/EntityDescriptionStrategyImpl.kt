@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service
 @Service
 class EntityDescriptionStrategyImpl : EntityDescriptionStrategy {
 
-    override fun description(entity: Entity): String =
-        when (entity.type) {
-            "file" -> "[${entity.type}] <a href=\"${entity.href}\">${entity.name}</a>"
-            "dir" -> "[${entity.type}] /${entity.name}"
-            else -> "[${entity.type}] ${entity.name}"
+    override fun description(index: Int, entityInfo: Entity): String =
+        when (entityInfo.type) {
+            "file" -> "<b>/${index}.</b> [${entityInfo.type}] <a href=\"${entityInfo.href}\">${entityInfo.name}</a>"
+            "dir" -> "<b>/${index}.</b> [${entityInfo.type}] ${entityInfo.name}"
+            else -> "[${entityInfo.type}] ${entityInfo.name}"
         }
 
     private fun orNone(caption: String, value: String?, converter: (String) -> String = { it }): String {

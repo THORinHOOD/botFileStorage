@@ -7,6 +7,7 @@ import com.thorinhood.fileStorageBot.services.bot.processors.Processor
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.fileStorageBot.data.PaginationInfo
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
 import com.thorinhood.fileStorageBot.services.bot.KeyboardService
 import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.BaseEntitiesProcessor
@@ -25,10 +26,15 @@ class StartEntitiesProcessor(
 
     override fun process(session: Session, update: Update): List<BaseRequest<*, *>> {
 //        requestsCounter.labels("find_benches").inc()
-        return getEntities(session, 0, 10)
+        val response = mutableListOf<BaseRequest<*, *>>(
+            SendMessage(session.chatId, "Переходим к файлам на вашем Яндекс Диске")
+                .replyMarkup(KeyboardService.FILE_TREE_KEYBOARD)
+        )
+        response.addAll(getEntities(session, 0, 10))
+        return response
     }
 
-    override fun isThisProcessorMessage(update: Update): Boolean =
+    override fun isThisProcessorMessage(session: Session, update: Update): Boolean =
         update.message()?.text()?.contains(NAME) ?: false
 
     companion object {

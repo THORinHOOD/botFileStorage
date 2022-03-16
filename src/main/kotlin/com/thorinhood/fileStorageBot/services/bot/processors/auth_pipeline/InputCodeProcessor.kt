@@ -28,7 +28,7 @@ class InputCodeProcessor(
                 .replyMarkup(keyboardService.getDefaultKeyboard(session)))
         } ?: listOf()
 
-    override fun isThisProcessorMessage(update: Update): Boolean =
+    override fun isThisProcessorMessage(session: Session, update: Update): Boolean =
         true
 
     companion object {

@@ -22,15 +22,15 @@ class PrevFolderProcessor(
     override val name: String = NAME
     override fun process(session: Session, update: Update): List<BaseRequest<*, *>> {
         val currentPath = session.currentPath
-        if (currentPath.equals("disk:/")) {
+        if (currentPath == "disk:/") {
             return listOf(SendMessage(session.chatId, "Вы уже в корневой папке").parseMode(ParseMode.HTML))
         }
-        val lastSlash = currentPath.lastIndexOf("/")
-        session.currentPath = currentPath.substring(0, lastSlash)
+        val s = currentPath.substring(0, currentPath.lastIndexOf("/"))
+        session.currentPath = s.substring(0, s.lastIndexOf("/") + 1)
         return getEntities(session, 0, 10)
     }
 
-    override fun isThisProcessorMessage(update: Update): Boolean =
+    override fun isThisProcessorMessage(session: Session, update: Update): Boolean =
         update.message()?.text()?.let {
              it.contains(NAME)
         } ?: false

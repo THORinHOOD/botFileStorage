@@ -7,5 +7,5 @@ import com.thorinhood.fileStorageBot.data.Session
 
 interface StoragePageStrategy {
     fun paginate(callbackQuery: CallbackQuery, session: Session, paginationType: PaginationType): List<BaseRequest<*, *>>
-    fun buildPageWithEntities(response: EntitiesListResponse, chatId: Long, callbackId: String?): List<BaseRequest<*, *>>
+    fun buildPageWithEntities(response: EntitiesListResponse, session: Session, callbackId: String?): List<BaseRequest<*, *>>
 }

@@ -11,9 +11,11 @@ import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.data.EntitiesListResponse
+import com.thorinhood.fileStorageBot.data.Entity
 import com.thorinhood.fileStorageBot.data.PaginationInfo
 import com.thorinhood.fileStorageBot.data.Session
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
+import com.thorinhood.fileStorageBot.services.bot.KeyboardService
 import org.springframework.stereotype.Service
 import java.util.function.Predicate
 import kotlin.math.roundToInt
@@ -21,7 +23,8 @@ import kotlin.math.roundToInt
 @Service
 class StoragePageStrategyImpl(
     private val entityDescriptionStrategy: EntityDescriptionStrategy,
-    private val yandexDisk: YandexDisk
+    private val yandexDisk: YandexDisk,
+    private val keyboardService: KeyboardService
 ) : StoragePageStrategy {
 
     override fun paginate(
@@ -45,18 +48,22 @@ class StoragePageStrategyImpl(
         return if (response.entities.isEmpty()) {
             listOf(AnswerCallbackQuery(callbackQuery.id()))
         } else {
-            buildPageWithEntities(response, session.chatId, callbackQuery.id())
+            buildPageWithEntities(response, session, callbackQuery.id())
         }
     }
 
     override fun buildPageWithEntities(
         response: EntitiesListResponse,
-        chatId: Long,
+        session: Session,
         callbackId: String?
     ): List<BaseRequest<*, *>> {
-
-        val pagesCount = (response.total.toDouble()/response.limit).roundToInt()
+        var pagesCount = (response.total.toDouble()/response.limit).roundToInt()
+        if (pagesCount == 0) {
+            pagesCount = 1
+        }
         val currentPage = response.offset/response.limit + 1
+        val paginationInfo = PaginationInfo(currentPage - 1, pagesCount)
+        session.indexToEntity.clear()
         val result = buildString {
             append(
                 "Объектов в папке [<b>${response.path}</b>] : <b>${response.total}</b>\n" +
@@ -65,8 +72,9 @@ class StoragePageStrategyImpl(
             for ((index, value) in response.entities.withIndex()) {
                 val realIndex = index + 1 + (currentPage - 1) * response.limit
                 append(
-                    "<b>${realIndex}.</b> ${entityDescriptionStrategy.description(value)} \n"
+                    "${entityDescriptionStrategy.description(realIndex, value)} \n"
                 )
+                session.indexToEntity["/${realIndex}"] = value
             }
         }
         val responses = mutableListOf<BaseRequest<*, *>>()
@@ -75,10 +83,9 @@ class StoragePageStrategyImpl(
         }
 
         val pageCallback = PageCallback(currentPage - 1, response.limit)
-        val paginationInfo = PaginationInfo(currentPage - 1, pagesCount)
 
         responses.add(
-            SendMessage(chatId, result)
+            SendMessage(session.chatId, result)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(
                     InlineKeyboardMarkup(
