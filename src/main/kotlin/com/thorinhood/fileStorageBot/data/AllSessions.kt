@@ -6,7 +6,18 @@ class AllSessions {
 
     fun getSession(chatId : Long) : Session =
         sessions.getOrPut(chatId) {
-            Session(chatId, null,  "disk:/", PipelineInfo("default", "?"), mutableMapOf())
+            Session(
+                chatId,
+                null,
+                PipelineInfo("default", "?"),
+                FileTreeInfo(
+                    "disk:/",
+                    mutableMapOf(),
+                    0,
+                    10
+                ),
+                null
+            )
         }
 
 }

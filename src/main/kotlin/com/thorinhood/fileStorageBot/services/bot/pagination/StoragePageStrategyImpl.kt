@@ -1,8 +1,8 @@
 package com.thorinhood.fileStorageBot.services.bot.pagination
 
 import com.thorinhood.fileStorageBot.services.bot.description.EntityDescriptionStrategy
-import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.BackPageProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.ForwardPageProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.BackPageProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.ForwardPageProcessor
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
@@ -11,7 +11,6 @@ import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.data.EntitiesListResponse
-import com.thorinhood.fileStorageBot.data.Entity
 import com.thorinhood.fileStorageBot.data.PaginationInfo
 import com.thorinhood.fileStorageBot.data.Session
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
@@ -23,8 +22,7 @@ import kotlin.math.roundToInt
 @Service
 class StoragePageStrategyImpl(
     private val entityDescriptionStrategy: EntityDescriptionStrategy,
-    private val yandexDisk: YandexDisk,
-    private val keyboardService: KeyboardService
+    private val yandexDisk: YandexDisk
 ) : StoragePageStrategy {
 
     override fun paginate(
@@ -39,7 +37,7 @@ class StoragePageStrategyImpl(
 
         val pageCallback = PageCallback.fromList(data)
 
-        val response = yandexDisk.getEntities(session.token!!, session.currentPath,
+        val response = yandexDisk.getEntities(session.token!!, session.fileTreeInfo.currentPath,
             when (paginationType) {
                 PaginationType.FORWARD -> pageCallback.page + 1
                 PaginationType.BACK -> pageCallback.page - 1
@@ -63,7 +61,7 @@ class StoragePageStrategyImpl(
         }
         val currentPage = response.offset/response.limit + 1
         val paginationInfo = PaginationInfo(currentPage - 1, pagesCount)
-        session.indexToEntity.clear()
+        session.fileTreeInfo.indexToEntity.clear()
         val result = buildString {
             append(
                 "Объектов в папке [<b>${response.path}</b>] : <b>${response.total}</b>\n" +
@@ -74,7 +72,7 @@ class StoragePageStrategyImpl(
                 append(
                     "${entityDescriptionStrategy.description(realIndex, value)} \n"
                 )
-                session.indexToEntity["/${realIndex}"] = value
+                session.fileTreeInfo.indexToEntity["/${realIndex}"] = value
             }
         }
         val responses = mutableListOf<BaseRequest<*, *>>()
@@ -94,6 +92,8 @@ class StoragePageStrategyImpl(
                     )
                 )
         )
+        session.fileTreeInfo.offset = response.offset
+        session.fileTreeInfo.limit = response.limit
         return responses
     }
 

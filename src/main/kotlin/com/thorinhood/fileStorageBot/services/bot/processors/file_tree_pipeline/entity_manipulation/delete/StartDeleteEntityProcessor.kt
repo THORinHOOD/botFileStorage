@@ -1,4 +1,4 @@
-package com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline
+package com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.entity_manipulation.delete
 
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
@@ -11,24 +11,18 @@ import org.springframework.stereotype.Service
 
 @Service
 @Pipeline("file_tree")
-class MoveToMainProcessor(
-    private val keyboardService: KeyboardService
-) : Processor {
+class StartDeleteEntityProcessor : Processor {
 
     override val name: String = NAME
-
     override fun process(session: Session, update: Update): List<BaseRequest<*, *>> {
-        session.fileTreeInfo.currentPath = "disk:/"
-        session.currentPipelineInfo.pipelineName = "default"
-        session.currentPipelineInfo.step = "?"
-        return listOf(SendMessage(session.chatId, "Возвращаемся на главную страницу")
-            .replyMarkup(keyboardService.getDefaultKeyboard(session)))
+        return listOf(SendMessage(session.chatId, "Удалить перманентно или переместить в корзину?")
+            .replyMarkup(KeyboardService.FILE_TREE_DELETE_CHOICE))
     }
 
     override fun isThisProcessorMessage(session: Session, update: Update): Boolean =
-        update.message()?.text()?.contains(NAME) ?: false
+        update.message()?.text()?.let { it == NAME } ?: false
 
     companion object {
-        const val NAME = "Главная"
+        const val NAME = "Удалить"
     }
 }

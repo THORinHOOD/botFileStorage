@@ -30,15 +30,14 @@ class StartEntitiesProcessor(
             SendMessage(session.chatId, "Переходим к файлам на вашем Яндекс Диске")
                 .replyMarkup(KeyboardService.FILE_TREE_KEYBOARD)
         )
-        response.addAll(getEntities(session, 0, 10))
+        response.addAll(getEntities(session))
         return response
     }
 
     override fun isThisProcessorMessage(session: Session, update: Update): Boolean =
-        update.message()?.text()?.contains(NAME) ?: false
+        update.message()?.text()?.let { it == NAME } ?: false
 
     companion object {
         const val NAME = "Список файлов"
     }
-
 }

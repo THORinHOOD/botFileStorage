@@ -2,6 +2,6 @@ package com.thorinhood.fileStorageBot.data
 
 class Session(var chatId: Long,
               var token: String?,
-              var currentPath: String,
               var currentPipelineInfo: PipelineInfo,
-              val indexToEntity: MutableMap<String, Entity>)
+              val fileTreeInfo: FileTreeInfo,
+              var argument: String?)

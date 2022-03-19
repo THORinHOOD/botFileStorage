@@ -1,4 +1,4 @@
-package com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline
+package com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline
 
 import com.thorinhood.fileStorageBot.data.Session
 import com.thorinhood.fileStorageBot.services.bot.pagination.StoragePageStrategy
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @Pipeline("file_tree")
-class ForwardPageProcessor(
+class BackPageProcessor(
     private val storagePageStrategy: StoragePageStrategy
 ) : Processor {
 
@@ -19,7 +19,7 @@ class ForwardPageProcessor(
 
     override fun process(session: Session, update: Update): List<BaseRequest<*, *>> =
         update.callbackQuery()?.let { callbackQuery ->
-            storagePageStrategy.paginate(callbackQuery, session, PaginationType.FORWARD)
+            storagePageStrategy.paginate(callbackQuery, session, PaginationType.BACK)
         } ?: listOf()
 
     override fun isThisProcessorMessage(session: Session, update: Update): Boolean =
@@ -28,6 +28,6 @@ class ForwardPageProcessor(
         } ?: false
 
     companion object {
-        const val NAME = "forward"
+        const val NAME = "back"
     }
 }
