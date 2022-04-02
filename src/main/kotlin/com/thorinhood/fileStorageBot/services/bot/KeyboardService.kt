@@ -2,19 +2,19 @@ package com.thorinhood.fileStorageBot.services.bot
 
 import com.pengrad.telegrambot.model.request.KeyboardButton
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
-import com.thorinhood.fileStorageBot.data.Session
-import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.BaseCancelProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions.StartEntitiesProcessor
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseCancelProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions.StartFileTreeProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions.StartAuthProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.MoveToMainProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.PrevFolderProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.ShowEntitiesProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.create_folder.StartCreateFolderProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.entity_manipulation.CancelEntityManipulationProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.entity_manipulation.GetFileProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.entity_manipulation.NextFolderProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.entity_manipulation.delete.DeleteEntityProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.entity_manipulation.delete.StartDeleteEntityProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.MoveToMainProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.PrevFolderProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.ShowEntitiesProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.transitions.StartCreateFolderProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.GetFileProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.NextFolderProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.delete.CancelDeleteEntityProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.delete.DeleteEntityProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.transitions.StartDeleteEntityProcessor
 import org.springframework.stereotype.Service
 
 @Service
@@ -27,35 +27,35 @@ class KeyboardService {
 
     companion object {
         private val UNAUTH_KEYBOARD: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
-            arrayOf(KeyboardButton(StartAuthProcessor.NAME))
+            arrayOf(KeyboardButton(StartAuthProcessor.LABEL))
         ).resizeKeyboard(true)
         private val DEFAULT_KEYBOARD: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
-            arrayOf(KeyboardButton(StartEntitiesProcessor.NAME))
+            arrayOf(KeyboardButton(StartFileTreeProcessor.LABEL))
         ).resizeKeyboard(true)
 
         val FILE_TREE_KEYBOARD: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
-            arrayOf(KeyboardButton(PrevFolderProcessor.NAME)),
-            arrayOf(KeyboardButton(ShowEntitiesProcessor.NAME)),
-            arrayOf(KeyboardButton(StartCreateFolderProcessor.NAME)),
-            arrayOf(KeyboardButton(MoveToMainProcessor.NAME))
+            arrayOf(KeyboardButton(PrevFolderProcessor.LABEL)),
+            arrayOf(KeyboardButton(ShowEntitiesProcessor.LABEL)),
+            arrayOf(KeyboardButton(StartCreateFolderProcessor.LABEL)),
+            arrayOf(KeyboardButton(MoveToMainProcessor.LABEL))
         )
         val FILE_TREE_CREATE_FOLDER_KEYBOARD: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
-            arrayOf(KeyboardButton(BaseCancelProcessor.NAME))
+            arrayOf(KeyboardButton(BaseCancelProcessor.LABEL))
         )
         val FILE_TREE_FILE_MANIPULATION: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
-            arrayOf(KeyboardButton(GetFileProcessor.NAME)),
-            arrayOf(KeyboardButton(StartDeleteEntityProcessor.NAME)),
-            arrayOf(KeyboardButton(BaseCancelProcessor.NAME))
+            arrayOf(KeyboardButton(GetFileProcessor.LABEL)),
+            arrayOf(KeyboardButton(StartDeleteEntityProcessor.LABEL)),
+            arrayOf(KeyboardButton(BaseCancelProcessor.LABEL))
         )
         val FILE_TREE_FOLDER_MANIPULATION: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
-            arrayOf(KeyboardButton(NextFolderProcessor.NAME)),
-            arrayOf(KeyboardButton(StartDeleteEntityProcessor.NAME)),
-            arrayOf(KeyboardButton(BaseCancelProcessor.NAME))
+            arrayOf(KeyboardButton(NextFolderProcessor.LABEL)),
+            arrayOf(KeyboardButton(StartDeleteEntityProcessor.LABEL)),
+            arrayOf(KeyboardButton(BaseCancelProcessor.LABEL))
         )
         val FILE_TREE_DELETE_CHOICE: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
             arrayOf(KeyboardButton(DeleteEntityProcessor.IN_STASH)),
             arrayOf(KeyboardButton(DeleteEntityProcessor.PERMANENTLY)),
-            arrayOf(KeyboardButton(BaseCancelProcessor.NAME))
+            arrayOf(KeyboardButton(CancelDeleteEntityProcessor.LABEL))
         )
     }
 

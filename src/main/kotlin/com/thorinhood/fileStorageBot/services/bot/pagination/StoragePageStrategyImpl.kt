@@ -1,8 +1,6 @@
 package com.thorinhood.fileStorageBot.services.bot.pagination
 
 import com.thorinhood.fileStorageBot.services.bot.description.EntityDescriptionStrategy
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.BackPageProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree_pipeline.ForwardPageProcessor
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
@@ -11,10 +9,8 @@ import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.data.EntitiesListResponse
-import com.thorinhood.fileStorageBot.data.PaginationInfo
-import com.thorinhood.fileStorageBot.data.Session
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
-import com.thorinhood.fileStorageBot.services.bot.KeyboardService
 import org.springframework.stereotype.Service
 import java.util.function.Predicate
 import kotlin.math.roundToInt
@@ -100,7 +96,7 @@ class StoragePageStrategyImpl(
     private fun forwardButton(paginationInfo: PaginationInfo, pageCallback: PageCallback): InlineKeyboardButton =
         InlineKeyboardButton("Дальше")
             .callbackData(
-                buttonInfo(ForwardPageProcessor.NAME, pageCallback, paginationInfo) {
+                buttonInfo("forward", pageCallback, paginationInfo) {
                     paginationInfo.currentPage + 1 == paginationInfo.totalPages
                 }
             )
@@ -108,7 +104,7 @@ class StoragePageStrategyImpl(
     private fun backButton(paginationInfo: PaginationInfo, pageCallback: PageCallback): InlineKeyboardButton =
         InlineKeyboardButton("Назад")
             .callbackData(
-                buttonInfo(BackPageProcessor.NAME, pageCallback, paginationInfo) {
+                buttonInfo("back", pageCallback, paginationInfo) {
                     it.currentPage == 0
                 }
             )

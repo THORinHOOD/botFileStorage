@@ -3,7 +3,7 @@ package com.thorinhood.fileStorageBot.services.bot.pagination
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.thorinhood.fileStorageBot.data.EntitiesListResponse
-import com.thorinhood.fileStorageBot.data.Session
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 interface StoragePageStrategy {
     fun paginate(callbackQuery: CallbackQuery, session: Session, paginationType: PaginationType): List<BaseRequest<*, *>>

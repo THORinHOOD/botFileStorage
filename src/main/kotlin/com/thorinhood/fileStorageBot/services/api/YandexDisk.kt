@@ -5,8 +5,6 @@ import com.thorinhood.fileStorageBot.data.EntitiesListResponse
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RequestCallback
-import org.springframework.web.client.ResponseExtractor
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 

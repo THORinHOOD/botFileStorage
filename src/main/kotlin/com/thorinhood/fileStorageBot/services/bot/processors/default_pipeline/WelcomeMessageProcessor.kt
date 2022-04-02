@@ -1,41 +1,34 @@
 package com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline
 
-import com.thorinhood.fileStorageBot.data.Session
-import com.thorinhood.fileStorageBot.services.bot.processors.Pipeline
-import com.thorinhood.fileStorageBot.services.bot.processors.Processor
-import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions.StartAuthProcessor
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.model.request.KeyboardButton
-import com.pengrad.telegrambot.model.request.ParseMode
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
-import com.pengrad.telegrambot.request.BaseRequest
-import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
+import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.services.bot.KeyboardService
-import org.springframework.stereotype.Service
+import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
+import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
 
-@Service
-@Pipeline("default")
+@Processor
 class WelcomeMessageProcessor(
     private val keyboardService: KeyboardService
-) : Processor {
+) : BaseProcessor(
+    "welcome",
+    ""
+) {
 
-    override val name: String = NAME
-
-    override fun process(session: Session, update: Update): List<BaseRequest<*, *>> {
-        session.currentPipelineInfo.pipelineName = "default"
-        session.currentPipelineInfo.step = "?"
-        return listOf(
-            SendMessage(session.chatId, "Привет")
-                .parseMode(ParseMode.HTML)
-                .replyMarkup(keyboardService.getDefaultKeyboard(session))
+    override fun processInner(
+        session: Session,
+        update: Update
+    ): ProcessResult {
+        return ProcessResult(null,
+            Transition("default", "Привет", keyboardService.getDefaultKeyboard(session))
         )
     }
 
-    override fun isThisProcessorMessage(session: Session, update: Update): Boolean =
-        update.message()?.text()?.equals(NAME) ?: false
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+        isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {
-        const val NAME = "/start"
+        const val LABEL = "/start"
     }
-
 }

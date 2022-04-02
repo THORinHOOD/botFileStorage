@@ -1,28 +1,29 @@
-package com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions
+package com.thorinhood.fileStorageBot.services.bot.processors.file_tree
 
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
-import com.thorinhood.fileStorageBot.services.api.YandexDisk
 import com.pengrad.telegrambot.model.Update
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
+import com.thorinhood.fileStorageBot.services.bot.KeyboardService
 
 @Processor
-class StartAuthProcessor(
-    private val yandexDisk: YandexDisk
+class MoveToMainProcessor(
+    private val keyboardService: KeyboardService
 ) : BaseProcessor(
-    "startAuth",
-    "default"
+    "moveToMain",
+    "file_tree"
 ) {
 
     override fun processInner(
         session: Session,
         update: Update
     ): ProcessResult {
-        val link = yandexDisk.getAuthLink()
-        return ProcessResult(null,
-            Transition("auth", "Перейдите по <a href=\"$link\">ссылке</a> и пришлите код")
+        session.fileTreeInfo.currentPath = "disk:/"
+        return ProcessResult(
+            null,
+            Transition("default", "Возвращаемся на главную страницу", keyboardService.getDefaultKeyboard(session))
         )
     }
 
@@ -30,7 +31,6 @@ class StartAuthProcessor(
         isUpdateMessageContainsLabel(update, LABEL)
 
     companion object {
-        const val LABEL = "Авторизация"
+        const val LABEL = "Главная"
     }
-
 }
