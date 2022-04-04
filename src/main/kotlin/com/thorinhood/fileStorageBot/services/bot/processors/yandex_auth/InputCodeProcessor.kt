@@ -4,11 +4,12 @@ import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.fileStorageBot.chatBotEngine.pagination.PaginationContext
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
-import com.thorinhood.fileStorageBot.data.FileTreeInfo
+import com.thorinhood.fileStorageBot.services.api.YandexEntity
 import com.thorinhood.fileStorageBot.services.bot.KeyboardService
 import org.springframework.stereotype.Service
 
@@ -30,11 +31,8 @@ class InputCodeProcessor(
             val token = yandexDisk.getToken(message)
             session.args["yandex_token"] = token
             session.args.putIfAbsent(
-                "yandex_file_tree_info", FileTreeInfo(
-                    "disk:/",
-                    mutableMapOf(),
-                    0,
-                    10
+                "yandex_pagination_context", PaginationContext<YandexEntity>(
+                    mutableMapOf("currentPath" to "disk:/")
                 )
             )
             listOf(SendMessage(session.chatId, "Полученный токен: $token")

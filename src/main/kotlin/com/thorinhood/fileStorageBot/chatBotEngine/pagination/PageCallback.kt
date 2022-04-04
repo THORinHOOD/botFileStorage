@@ -1,4 +1,4 @@
-package com.thorinhood.fileStorageBot.services.bot.pagination
+package com.thorinhood.fileStorageBot.chatBotEngine.pagination
 
 data class PageCallback(
     val page: Int,

@@ -7,8 +7,8 @@ import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
-import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.bot.KeyboardService
+import com.thorinhood.fileStorageBot.services.bot.yandex.YandexUtils
 
 @Processor
 class StartEntityManipulationProcessor : BaseProcessor(
@@ -20,9 +20,10 @@ class StartEntityManipulationProcessor : BaseProcessor(
         session: Session,
         update: Update
     ): ProcessResult {
-        val entityName = (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity[update.message()?.text()]?.name ?: return ProcessResult.EMPTY_RESULT
+        val entityName = YandexUtils.getContext(session).elementsMap[update.message()?.text()]?.name
+            ?: return ProcessResult.EMPTY_RESULT
         val entityType = update.message()?.text()?.let {
-            (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity[it]?.type
+            YandexUtils.getContext(session).elementsMap[it]?.type
         } ?: return ProcessResult.EMPTY_RESULT
         val arg = mutableMapOf<String, Any>("entity" to (update.message()?.text() ?: return ProcessResult.EMPTY_RESULT),
             "entity_type" to entityType,
@@ -50,8 +51,8 @@ class StartEntityManipulationProcessor : BaseProcessor(
 
     private fun isEntity(session: Session, update: Update, types: Set<String>) : Boolean =
         update.message()?.text()?.let { text ->
-            text.startsWith("/") && (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity.contains(text) &&
-                    types.contains((session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity[text]?.type)
+            text.startsWith("/") && YandexUtils.getContext(session).elementsMap.contains(text) &&
+                    types.contains(YandexUtils.getContext(session).elementsMap[text]?.type)
         } ?: false
 
 }

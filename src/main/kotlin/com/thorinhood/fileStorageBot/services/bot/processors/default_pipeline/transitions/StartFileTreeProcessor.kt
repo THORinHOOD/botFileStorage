@@ -1,20 +1,20 @@
 package com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions
 
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
-import com.thorinhood.fileStorageBot.services.bot.pagination.StoragePageStrategy
 import com.pengrad.telegrambot.model.Update
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
-import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.BaseEntitiesProcessor
+import com.thorinhood.fileStorageBot.services.bot.pagination.yandex.YandexEntityPageStrategy
+import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.YandexBaseEntitiesProcessor
 
 @Processor
 class StartFileTreeProcessor(
     yandexDisk: YandexDisk,
-    storagePageStrategy: StoragePageStrategy
-) : BaseEntitiesProcessor(
+    yandexEntityPageStrategy: YandexEntityPageStrategy
+) : YandexBaseEntitiesProcessor(
     yandexDisk,
-    storagePageStrategy,
+    yandexEntityPageStrategy,
 "startFileTree",
     "default"
 ) {

@@ -1,6 +1,5 @@
-package com.thorinhood.fileStorageBot.services.bot.pagination
+package com.thorinhood.fileStorageBot.chatBotEngine.pagination
 
-import com.thorinhood.fileStorageBot.services.bot.description.EntityDescriptionStrategy
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
@@ -8,19 +7,13 @@ import com.pengrad.telegrambot.model.request.ParseMode
 import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.fileStorageBot.data.FileTreeInfo
-import com.thorinhood.fileStorageBot.data.EntitiesListResponse
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
-import com.thorinhood.fileStorageBot.services.api.YandexDisk
-import org.springframework.stereotype.Service
 import java.util.function.Predicate
 import kotlin.math.roundToInt
 
-@Service
-class StoragePageStrategyImpl(
-    private val entityDescriptionStrategy: EntityDescriptionStrategy,
-    private val yandexDisk: YandexDisk
-) : StoragePageStrategy {
+abstract class BasePageStrategy<T : Entity>(
+    private val elementDescriptionStrategy: ElementDescriptionStrategy<T>
+): PageStrategy<T> {
 
     override fun paginate(
         callbackQuery: CallbackQuery,
@@ -31,26 +24,16 @@ class StoragePageStrategyImpl(
         if (data[1] == "stop") {
             return listOf(AnswerCallbackQuery(callbackQuery.id()))
         }
-
-        val pageCallback = PageCallback.fromList(data)
-
-        val response = yandexDisk.getEntities(
-            session.args["yandex_token"] as String,
-            (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath,
-            when (paginationType) {
-                PaginationType.FORWARD -> pageCallback.page + 1
-                PaginationType.BACK -> pageCallback.page - 1
-            } * pageCallback.pageSize, pageCallback.pageSize)
-
+        val response = getElements(session, PageCallback.fromList(data), paginationType)
         return if (response.entities.isEmpty()) {
             listOf(AnswerCallbackQuery(callbackQuery.id()))
         } else {
-            buildPageWithEntities(response, session, callbackQuery.id())
+            buildPage(response, session, callbackQuery.id())
         }
     }
 
-    override fun buildPageWithEntities(
-        response: EntitiesListResponse,
+    override fun buildPage(
+        response: ElementsResponse<T>,
         session: Session,
         callbackId: String?
     ): List<BaseRequest<*, *>> {
@@ -60,18 +43,19 @@ class StoragePageStrategyImpl(
         }
         val currentPage = response.offset/response.limit + 1
         val paginationInfo = PaginationInfo(currentPage - 1, pagesCount)
-        (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity.clear()
+        val paginationContext = paginationContextExtract(session)
+        paginationContext.elementsMap.clear()
         val result = buildString {
             append(
                 "Объектов в папке [<b>${response.path}</b>] : <b>${response.total}</b>\n" +
-                "(${currentPage}/${pagesCount})\n\n"
+                        "(${currentPage}/${pagesCount})\n\n"
             )
             for ((index, value) in response.entities.withIndex()) {
                 val realIndex = index + 1 + (currentPage - 1) * response.limit
                 append(
-                    "${entityDescriptionStrategy.description(realIndex, value)} \n"
+                    "${elementDescriptionStrategy.description(realIndex, value)} \n"
                 )
-                (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity["/${realIndex}"] = value
+                paginationContext.elementsMap["/${realIndex}"] = value
             }
         }
         val responses = mutableListOf<BaseRequest<*, *>>()
@@ -91,10 +75,13 @@ class StoragePageStrategyImpl(
                     )
                 )
         )
-        (session.args["yandex_file_tree_info"] as FileTreeInfo).offset = response.offset
-        (session.args["yandex_file_tree_info"] as FileTreeInfo).limit = response.limit
+        paginationContext.offset = response.offset
+        paginationContext.limit = response.limit
         return responses
     }
+
+    protected abstract fun paginationContextExtract(session: Session) : PaginationContext<T>
+    protected abstract fun getElements(session: Session, pageCallback: PageCallback, paginationType: PaginationType) : ElementsResponse<T>
 
     private fun forwardButton(paginationInfo: PaginationInfo, pageCallback: PageCallback): InlineKeyboardButton =
         InlineKeyboardButton("Дальше")
@@ -123,4 +110,9 @@ class StoragePageStrategyImpl(
         } else {
             pageCallback.buildCallbackInfo()
         }
+
+    data class PaginationInfo (
+        val currentPage: Int,
+        val totalPages: Int
+    )
 }

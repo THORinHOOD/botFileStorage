@@ -4,18 +4,18 @@ import com.pengrad.telegrambot.model.Update
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
-import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
-import com.thorinhood.fileStorageBot.services.bot.pagination.StoragePageStrategy
-import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.BaseEntitiesProcessor
+import com.thorinhood.fileStorageBot.services.bot.pagination.yandex.YandexEntityPageStrategy
+import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.YandexBaseEntitiesProcessor
+import com.thorinhood.fileStorageBot.services.bot.yandex.YandexUtils
 
 @Processor
-class NextFolderProcessor(
+class NextFolderProcessorBase(
     yandexDisk: YandexDisk,
-    storagePageStrategy: StoragePageStrategy
-) : BaseEntitiesProcessor(
+    yandexEntityPageStrategy: YandexEntityPageStrategy,
+) : YandexBaseEntitiesProcessor(
     yandexDisk,
-    storagePageStrategy,
+    yandexEntityPageStrategy,
     "nextFolder",
     "file_tree#entity_manipulation"
 ) {
@@ -24,10 +24,11 @@ class NextFolderProcessor(
         session: Session,
         update: Update
     ): ProcessResult {
-        val folderName = (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity[session.cursor.args["entity"]]?.name ?:
+        val folderName = YandexUtils.getContext(session).elementsMap[session.cursor.args["entity"]]?.name ?:
             return ProcessResult.EMPTY_RESULT
-        (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath = (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath +
-                (if ((session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath.endsWith("/")) {
+        YandexUtils.getContext(session).context["currentPath"] =
+            YandexUtils.getContext(session).context["currentPath"] as String +
+                (if ((YandexUtils.getContext(session).context["currentPath"] as String).endsWith("/")) {
                     ""
                 } else "/") + "$folderName/"
         return getEntities(session)

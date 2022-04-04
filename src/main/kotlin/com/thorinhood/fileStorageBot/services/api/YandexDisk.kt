@@ -1,7 +1,8 @@
 package com.thorinhood.fileStorageBot.services.api
 
+import com.thorinhood.fileStorageBot.chatBotEngine.pagination.ElementsResponse
 import com.thorinhood.fileStorageBot.configs.YandexDiskConfig
-import com.thorinhood.fileStorageBot.data.EntitiesListResponse
+import com.thorinhood.fileStorageBot.services.api.YandexEntity
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
@@ -12,7 +13,7 @@ import org.springframework.web.client.getForEntity
 class YandexDisk(
     private val restTemplate: RestTemplate,
     private val yandexDiskConfig: YandexDiskConfig
-) : FileStorageService {
+) : FileStorageService<YandexEntity> {
 
     override fun getAuthLink(): String =
         restTemplate.getForEntity<String>(
@@ -27,11 +28,18 @@ class YandexDisk(
         ).body!!.access_token
     }
 
-    override fun getEntities(token: String, path: String, offset: Int, limit: Int): EntitiesListResponse {
-        return restTemplate.getForEntity<EntitiesListResponse>(
+    override fun getEntities(token: String, path: String, offset: Int, limit: Int): ElementsResponse<YandexEntity> {
+        val result = restTemplate.getForEntity<ElementsResponse<Map<String, Any>>>(
             "http://${yandexDiskConfig.host}:${yandexDiskConfig.port}/api/content?" +
                     "path=$path&token=$token&offset=$offset&limit=$limit"
         ).body!!
+        val entities = result.entities.map { value ->
+            val name = value["name"] as String
+            val type = value["type"] as String
+            val href = value["href"] as String?
+            YandexEntity(name, type, href)
+        }
+        return ElementsResponse(entities, result.limit, result.offset, result.total, result.path)
     }
 
     override fun createFolder(token: String, path: String): Boolean {

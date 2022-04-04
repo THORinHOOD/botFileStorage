@@ -2,6 +2,7 @@ package com.thorinhood.fileStorageBot.chatBotEngine.processors
 
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
+import com.thorinhood.fileStorageBot.chatBotEngine.processors.baseProcessors.BaseCancelProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 

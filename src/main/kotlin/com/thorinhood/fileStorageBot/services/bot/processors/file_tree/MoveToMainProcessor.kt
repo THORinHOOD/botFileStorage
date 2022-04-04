@@ -6,8 +6,8 @@ import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
-import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.bot.KeyboardService
+import com.thorinhood.fileStorageBot.services.bot.yandex.YandexUtils
 
 @Processor
 class MoveToMainProcessor(
@@ -21,7 +21,7 @@ class MoveToMainProcessor(
         session: Session,
         update: Update
     ): ProcessResult {
-        (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath = "disk:/"
+        YandexUtils.getContext(session).context["currentPath"] = "disk:/"
         return ProcessResult(
             null,
             Transition("default", "Возвращаемся на главную страницу", keyboardService.getDefaultKeyboard(session))

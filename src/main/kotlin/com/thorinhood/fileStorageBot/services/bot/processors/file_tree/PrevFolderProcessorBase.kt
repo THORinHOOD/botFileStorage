@@ -6,18 +6,17 @@ import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
-import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
-import com.thorinhood.fileStorageBot.services.bot.pagination.StoragePageStrategy
-import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.BaseEntitiesProcessor
+import com.thorinhood.fileStorageBot.services.bot.pagination.yandex.YandexEntityPageStrategy
+import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.YandexBaseEntitiesProcessor
 
 @Processor
-class PrevFolderProcessor(
+class PrevFolderProcessorBase(
     yandexDisk: YandexDisk,
-    storagePageStrategy: StoragePageStrategy
-) : BaseEntitiesProcessor(
+    yandexEntityPageStrategy: YandexEntityPageStrategy
+) : YandexBaseEntitiesProcessor(
     yandexDisk,
-    storagePageStrategy,
+    yandexEntityPageStrategy,
     "prevFolder",
     "file_tree"
 ) {
@@ -26,12 +25,12 @@ class PrevFolderProcessor(
         session: Session,
         update: Update
     ): ProcessResult {
-        val currentPath = (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath
+        val currentPath = getContext(session).context["currentPath"] as String
         if (currentPath == "disk:/") {
             return ProcessResult(listOf(SendMessage(session.chatId, "Вы уже в корневой папке").parseMode(ParseMode.HTML)))
         }
         val s = currentPath.substring(0, currentPath.lastIndexOf("/"))
-        (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath = s.substring(0, s.lastIndexOf("/") + 1)
+        getContext(session).context["currentPath"] = s.substring(0, s.lastIndexOf("/") + 1)
         return getEntities(session)
     }
 

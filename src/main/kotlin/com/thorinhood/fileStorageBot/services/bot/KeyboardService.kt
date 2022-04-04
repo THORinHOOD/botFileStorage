@@ -3,15 +3,15 @@ package com.thorinhood.fileStorageBot.services.bot
 import com.pengrad.telegrambot.model.request.KeyboardButton
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
-import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseCancelProcessor
+import com.thorinhood.fileStorageBot.chatBotEngine.processors.baseProcessors.BaseCancelProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions.StartFileTreeProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions.StartYandexAuthProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.MoveToMainProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.PrevFolderProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.ShowEntitiesProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.PrevFolderProcessorBase
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.ShowBaseEntitiesProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.transitions.StartCreateFolderProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.GetFileProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.NextFolderProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.NextFolderProcessorBase
 import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.delete.CancelDeleteEntityProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.delete.DeleteEntityProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.entity_manipulation.transitions.StartDeleteEntityProcessor
@@ -34,8 +34,8 @@ class KeyboardService {
         ).resizeKeyboard(true)
 
         val FILE_TREE_KEYBOARD: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
-            arrayOf(KeyboardButton(PrevFolderProcessor.LABEL)),
-            arrayOf(KeyboardButton(ShowEntitiesProcessor.LABEL)),
+            arrayOf(KeyboardButton(PrevFolderProcessorBase.LABEL)),
+            arrayOf(KeyboardButton(ShowBaseEntitiesProcessor.LABEL)),
             arrayOf(KeyboardButton(StartCreateFolderProcessor.LABEL)),
             arrayOf(KeyboardButton(MoveToMainProcessor.LABEL))
         )
@@ -48,7 +48,7 @@ class KeyboardService {
             arrayOf(KeyboardButton(BaseCancelProcessor.LABEL))
         )
         val FILE_TREE_FOLDER_MANIPULATION: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
-            arrayOf(KeyboardButton(NextFolderProcessor.LABEL)),
+            arrayOf(KeyboardButton(NextFolderProcessorBase.LABEL)),
             arrayOf(KeyboardButton(StartDeleteEntityProcessor.LABEL)),
             arrayOf(KeyboardButton(BaseCancelProcessor.LABEL))
         )

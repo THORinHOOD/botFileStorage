@@ -5,20 +5,18 @@ import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
-import com.thorinhood.fileStorageBot.data.FileTreeInfo
-import com.thorinhood.fileStorageBot.services.api.FileStorageService
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
-import com.thorinhood.fileStorageBot.services.bot.pagination.StoragePageStrategy
-import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.BaseEntitiesProcessor
+import com.thorinhood.fileStorageBot.services.bot.pagination.yandex.YandexEntityPageStrategy
+import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.YandexBaseEntitiesProcessor
+import com.thorinhood.fileStorageBot.services.bot.yandex.YandexUtils
 
 @Processor
 class DeleteEntityProcessor(
     private val yandexDisk: YandexDisk,
-    fileStorageService: FileStorageService,
-    storagePageStrategy: StoragePageStrategy
-) : BaseEntitiesProcessor(
-    fileStorageService,
-    storagePageStrategy,
+    yandexEntityPageStrategy: YandexEntityPageStrategy
+) : YandexBaseEntitiesProcessor(
+    yandexDisk,
+    yandexEntityPageStrategy,
     "deleteEntity",
     "file_tree#entity_manipulation#delete"
 ) {
@@ -34,9 +32,10 @@ class DeleteEntityProcessor(
                 else -> return ProcessResult.EMPTY_RESULT
             }
         } ?: return ProcessResult.EMPTY_RESULT
-        val entityName = (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity[session.cursor.args["entity"]]?.name ?:
+        val entityName = YandexUtils.getContext(session).elementsMap[session.cursor.args["entity"]]?.name ?:
             return ProcessResult(listOf(SendMessage(session.chatId, "Не удалось удалить")))
-        val result = yandexDisk.deleteEntity(session.args["yandex_token"] as String, (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath + entityName,
+        val result = yandexDisk.deleteEntity(session.args["yandex_token"] as String,
+            YandexUtils.getContext(session).context["currentPath"] as String + entityName,
             !inStash)
         return getEntities(session).merge(
             ProcessResult(listOf(if (result) {

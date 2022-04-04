@@ -1,6 +1,7 @@
-package com.thorinhood.fileStorageBot.chatBotEngine.processors
+package com.thorinhood.fileStorageBot.chatBotEngine.processors.baseProcessors
 
 import com.pengrad.telegrambot.model.Update
+import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
