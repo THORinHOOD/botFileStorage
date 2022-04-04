@@ -7,10 +7,10 @@ import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
-import com.thorinhood.fileStorageBot.services.api.FileStorageService
+import com.thorinhood.fileStorageBot.bot.FileStorageService
 
 abstract class BaseEntitiesProcessor<T : Entity>(
-    private val fileStorageService: FileStorageService<T>,
+    private val fileStorageService: com.thorinhood.fileStorageBot.bot.FileStorageService<T>,
     private val storagePageStrategy: BasePageStrategy<T>,
     private val tokenKey: String,
     name: String,
