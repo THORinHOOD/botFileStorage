@@ -1,4 +1,4 @@
-package com.thorinhood.fileStorageBot.services.bot.processors.auth
+package com.thorinhood.fileStorageBot.services.bot.processors.yandex_auth
 
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.services.api.YandexDisk

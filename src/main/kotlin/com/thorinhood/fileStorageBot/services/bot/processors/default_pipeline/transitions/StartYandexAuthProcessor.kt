@@ -9,7 +9,7 @@ import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
 
 @Processor
-class StartAuthProcessor(
+class StartYandexAuthProcessor(
     private val yandexDisk: YandexDisk
 ) : BaseProcessor(
     "startAuth",

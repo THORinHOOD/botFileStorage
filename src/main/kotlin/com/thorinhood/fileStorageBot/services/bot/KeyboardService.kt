@@ -5,7 +5,7 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseCancelProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions.StartFileTreeProcessor
-import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions.StartAuthProcessor
+import com.thorinhood.fileStorageBot.services.bot.processors.default_pipeline.transitions.StartYandexAuthProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.MoveToMainProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.PrevFolderProcessor
 import com.thorinhood.fileStorageBot.services.bot.processors.file_tree.ShowEntitiesProcessor
@@ -27,7 +27,7 @@ class KeyboardService {
 
     companion object {
         private val UNAUTH_KEYBOARD: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
-            arrayOf(KeyboardButton(StartAuthProcessor.LABEL))
+            arrayOf(KeyboardButton(StartYandexAuthProcessor.LABEL))
         ).resizeKeyboard(true)
         private val DEFAULT_KEYBOARD: ReplyKeyboardMarkup = ReplyKeyboardMarkup(
             arrayOf(KeyboardButton(StartFileTreeProcessor.LABEL))

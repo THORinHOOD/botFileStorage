@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.SessionsService
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 import java.io.PrintWriter
@@ -11,7 +12,8 @@ import java.io.StringWriter
 
 @Service
 class ProcessorsManager(
-    @Processor private val processors: List<BaseProcessor>
+    @Processor private val processors: List<BaseProcessor>,
+    private val sessionsService: SessionsService
 ) : Logging {
 
     fun process(session: Session, update: Update): List<BaseRequest<*, *>> {
@@ -24,7 +26,9 @@ class ProcessorsManager(
             ERROR_MESSAGE(session.chatId)
         } else {
             try {
-                foundProcessors.first().process(session, update)
+                val result = foundProcessors.first().process(session, update)
+                sessionsService.updateSession(session)
+                result
             } catch(e: Exception) {
                 error(e)
                 ERROR_MESSAGE(session.chatId)
