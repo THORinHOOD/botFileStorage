@@ -8,6 +8,7 @@ import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
+import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.bot.KeyboardService
 import org.springframework.stereotype.Service
 
@@ -27,7 +28,15 @@ class InputCodeProcessor(
     ): ProcessResult {
         return ProcessResult(update.message()?.text()?.let { message ->
             val token = yandexDisk.getToken(message)
-            session.token = token
+            session.args["yandex_token"] = token
+            session.args.putIfAbsent(
+                "yandex_file_tree_info", FileTreeInfo(
+                    "disk:/",
+                    mutableMapOf(),
+                    0,
+                    10
+                )
+            )
             listOf(SendMessage(session.chatId, "Полученный токен: $token")
                 .replyMarkup(keyboardService.getDefaultKeyboard(session)))
         } ?: return ProcessResult.EMPTY_RESULT,

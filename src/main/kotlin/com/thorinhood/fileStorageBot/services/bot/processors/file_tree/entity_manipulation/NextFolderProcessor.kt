@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Update
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
+import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
 import com.thorinhood.fileStorageBot.services.bot.pagination.StoragePageStrategy
 import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.BaseEntitiesProcessor
@@ -23,10 +24,10 @@ class NextFolderProcessor(
         session: Session,
         update: Update
     ): ProcessResult {
-        val folderName = session.fileTreeInfo.indexToEntity[session.cursor.args["entity"]]?.name ?:
+        val folderName = (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity[session.cursor.args["entity"]]?.name ?:
             return ProcessResult.EMPTY_RESULT
-        session.fileTreeInfo.currentPath = session.fileTreeInfo.currentPath +
-                (if (session.fileTreeInfo.currentPath.endsWith("/")) {
+        (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath = (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath +
+                (if ((session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath.endsWith("/")) {
                     ""
                 } else "/") + "$folderName/"
         return getEntities(session)

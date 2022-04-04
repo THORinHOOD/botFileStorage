@@ -1,4 +1,4 @@
-package com.thorinhood.fileStorageBot.chatBotEngine.sessions
+package com.thorinhood.fileStorageBot.data
 
 import com.thorinhood.fileStorageBot.data.Entity
 

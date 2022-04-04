@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
+import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
 import com.thorinhood.fileStorageBot.services.bot.pagination.StoragePageStrategy
 import com.thorinhood.fileStorageBot.services.bot.processors.baseProcessors.BaseEntitiesProcessor
@@ -25,12 +26,12 @@ class PrevFolderProcessor(
         session: Session,
         update: Update
     ): ProcessResult {
-        val currentPath = session.fileTreeInfo.currentPath
+        val currentPath = (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath
         if (currentPath == "disk:/") {
             return ProcessResult(listOf(SendMessage(session.chatId, "Вы уже в корневой папке").parseMode(ParseMode.HTML)))
         }
         val s = currentPath.substring(0, currentPath.lastIndexOf("/"))
-        session.fileTreeInfo.currentPath = s.substring(0, s.lastIndexOf("/") + 1)
+        (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath = s.substring(0, s.lastIndexOf("/") + 1)
         return getEntities(session)
     }
 

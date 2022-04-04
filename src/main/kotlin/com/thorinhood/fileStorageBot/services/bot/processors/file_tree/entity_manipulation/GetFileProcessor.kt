@@ -6,6 +6,7 @@ import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
+import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.bot.KeyboardService
 
 @Processor
@@ -18,7 +19,7 @@ class GetFileProcessor : BaseProcessor(
         session: Session,
         update: Update
     ): ProcessResult {
-        val entity = session.fileTreeInfo.indexToEntity[session.cursor.args["entity"]] ?:
+        val entity = (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity[session.cursor.args["entity"]] ?:
             return ProcessResult.EMPTY_RESULT
         return ProcessResult(
             null,

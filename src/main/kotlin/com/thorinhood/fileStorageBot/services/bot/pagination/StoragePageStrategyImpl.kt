@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.model.request.ParseMode
 import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.data.EntitiesListResponse
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
@@ -33,7 +34,9 @@ class StoragePageStrategyImpl(
 
         val pageCallback = PageCallback.fromList(data)
 
-        val response = yandexDisk.getEntities(session.token!!, session.fileTreeInfo.currentPath,
+        val response = yandexDisk.getEntities(
+            session.args["yandex_token"] as String,
+            (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath,
             when (paginationType) {
                 PaginationType.FORWARD -> pageCallback.page + 1
                 PaginationType.BACK -> pageCallback.page - 1
@@ -57,7 +60,7 @@ class StoragePageStrategyImpl(
         }
         val currentPage = response.offset/response.limit + 1
         val paginationInfo = PaginationInfo(currentPage - 1, pagesCount)
-        session.fileTreeInfo.indexToEntity.clear()
+        (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity.clear()
         val result = buildString {
             append(
                 "Объектов в папке [<b>${response.path}</b>] : <b>${response.total}</b>\n" +
@@ -68,7 +71,7 @@ class StoragePageStrategyImpl(
                 append(
                     "${entityDescriptionStrategy.description(realIndex, value)} \n"
                 )
-                session.fileTreeInfo.indexToEntity["/${realIndex}"] = value
+                (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity["/${realIndex}"] = value
             }
         }
         val responses = mutableListOf<BaseRequest<*, *>>()
@@ -88,8 +91,8 @@ class StoragePageStrategyImpl(
                     )
                 )
         )
-        session.fileTreeInfo.offset = response.offset
-        session.fileTreeInfo.limit = response.limit
+        (session.args["yandex_file_tree_info"] as FileTreeInfo).offset = response.offset
+        (session.args["yandex_file_tree_info"] as FileTreeInfo).limit = response.limit
         return responses
     }
 

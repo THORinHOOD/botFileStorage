@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
+import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.api.FileStorageService
 import com.thorinhood.fileStorageBot.services.api.YandexDisk
 import com.thorinhood.fileStorageBot.services.bot.pagination.StoragePageStrategy
@@ -33,9 +34,9 @@ class DeleteEntityProcessor(
                 else -> return ProcessResult.EMPTY_RESULT
             }
         } ?: return ProcessResult.EMPTY_RESULT
-        val entityName = session.fileTreeInfo.indexToEntity[session.cursor.args["entity"]]?.name ?:
+        val entityName = (session.args["yandex_file_tree_info"] as FileTreeInfo).indexToEntity[session.cursor.args["entity"]]?.name ?:
             return ProcessResult(listOf(SendMessage(session.chatId, "Не удалось удалить")))
-        val result = yandexDisk.deleteEntity(session.token!!, session.fileTreeInfo.currentPath + entityName,
+        val result = yandexDisk.deleteEntity(session.args["yandex_token"] as String, (session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath + entityName,
             !inStash)
         return getEntities(session).merge(
             ProcessResult(listOf(if (result) {

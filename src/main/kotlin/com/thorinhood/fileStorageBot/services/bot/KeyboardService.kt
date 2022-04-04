@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service
 class KeyboardService {
 
     fun getDefaultKeyboard(session: Session) : ReplyKeyboardMarkup =
-        session.token?.let { token ->
+        session.args["yandex_token"]?.let { token ->
             DEFAULT_KEYBOARD
         } ?: UNAUTH_KEYBOARD
 

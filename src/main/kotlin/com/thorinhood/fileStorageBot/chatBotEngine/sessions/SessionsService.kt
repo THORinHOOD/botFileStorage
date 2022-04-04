@@ -29,14 +29,8 @@ class SessionsService(
     private fun createDefaultSession(chatId : Long) : Session =
         Session(
             chatId,
-            null,
             Cursor(),
-            FileTreeInfo(
-                "disk:/",
-                mutableMapOf(),
-                0,
-                10
-            )
+            mutableMapOf()
         )
 
 }

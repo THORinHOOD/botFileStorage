@@ -7,6 +7,7 @@ import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
+import com.thorinhood.fileStorageBot.data.FileTreeInfo
 import com.thorinhood.fileStorageBot.services.bot.KeyboardService
 
 @Processor
@@ -21,7 +22,7 @@ class StartCreateFolderProcessor : BaseProcessor(
     ): ProcessResult {
         return ProcessResult(
             listOf(SendMessage(session.chatId, "Напишите имя папки\nПапка будет создана внутри текущей папки " +
-                "[${session.fileTreeInfo.currentPath}]")
+                "[${(session.args["yandex_file_tree_info"] as FileTreeInfo).currentPath}]")
             .replyMarkup(KeyboardService.FILE_TREE_CREATE_FOLDER_KEYBOARD)),
             Transition("file_tree#entity_manipulation#create_folder"))
     }

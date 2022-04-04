@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("sessions")
 class Session(@Id val chatId: Long,
-              var token: String?,
               var cursor: Cursor,
-              val fileTreeInfo: FileTreeInfo
+              val args: MutableMap<String, Any>
 )
