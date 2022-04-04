@@ -3,7 +3,6 @@ package com.thorinhood.fileStorageBot.chatBotEngine.processors
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.SessionsService
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
@@ -16,7 +15,8 @@ class ProcessorsManager(
     private val sessionsService: SessionsService
 ) : Logging {
 
-    fun process(session: Session, update: Update): List<BaseRequest<*, *>> {
+    fun process(update: Update): List<BaseRequest<*, *>> {
+        val session = sessionsService.getSession(update)
         val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toList()
         return if (foundProcessors.size > 1) {
             logger.error("Found more than 1 processor [${session.cursor.procSpace}]")
