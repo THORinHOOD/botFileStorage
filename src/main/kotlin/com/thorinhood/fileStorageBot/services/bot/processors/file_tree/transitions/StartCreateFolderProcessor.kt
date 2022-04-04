@@ -23,7 +23,7 @@ class StartCreateFolderProcessor : BaseProcessor(
             listOf(SendMessage(session.chatId, "Напишите имя папки\nПапка будет создана внутри текущей папки " +
                 "[${session.fileTreeInfo.currentPath}]")
             .replyMarkup(KeyboardService.FILE_TREE_CREATE_FOLDER_KEYBOARD)),
-            Transition("file_tree#create_folder"))
+            Transition("file_tree#entity_manipulation#create_folder"))
     }
 
     override fun isThisProcessorInner(session: Session, update: Update): Boolean =

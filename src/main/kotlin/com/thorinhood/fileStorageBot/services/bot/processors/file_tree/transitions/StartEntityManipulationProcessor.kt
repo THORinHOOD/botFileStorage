@@ -19,13 +19,14 @@ class StartEntityManipulationProcessor : BaseProcessor(
         session: Session,
         update: Update
     ): ProcessResult {
-        val entityName = update.message()?.text()?.substring(1) ?: return ProcessResult.EMPTY_RESULT
+        val entityName = session.fileTreeInfo.indexToEntity[update.message()?.text()]?.name ?: return ProcessResult.EMPTY_RESULT
         val entityType = update.message()?.text()?.let {
             session.fileTreeInfo.indexToEntity[it]?.type
         } ?: return ProcessResult.EMPTY_RESULT
         val arg = mutableMapOf<String, Any>("entity" to (update.message()?.text() ?: return ProcessResult.EMPTY_RESULT),
             "entity_type" to entityType,
-            "entity_name" to entityName)
+            "entity_name" to entityName,
+            "entity_index" to update.message()?.text()!!)
         return ProcessResult(listOf(SendMessage(session.chatId, "Что вы собираетесь делать с ${
             when(entityType) {
                 "file" -> " файлом $entityName"
