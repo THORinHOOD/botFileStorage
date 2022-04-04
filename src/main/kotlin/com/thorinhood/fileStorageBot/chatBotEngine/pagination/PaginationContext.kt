@@ -1,6 +1,6 @@
 package com.thorinhood.fileStorageBot.chatBotEngine.pagination
 
-data class PaginationContext<T : Entity>(
+data class PaginationContext<T>(
     val context: MutableMap<String, Any>,
     var offset: Int = 0,
     var limit: Int = 10,

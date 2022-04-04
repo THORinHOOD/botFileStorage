@@ -1,9 +1,8 @@
 package com.thorinhood.fileStorageBot.bot
 
 import com.thorinhood.fileStorageBot.chatBotEngine.pagination.ElementsResponse
-import com.thorinhood.fileStorageBot.chatBotEngine.pagination.Entity
 
-interface FileStorageService<T : Entity> {
+interface FileStorageService<T> {
     fun getAuthLink() : String
     fun getToken(code: String) : String
     fun getEntities(token: String, path: String, offset: Int, limit: Int) : ElementsResponse<T>

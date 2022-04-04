@@ -1,5 +1,5 @@
 package com.thorinhood.fileStorageBot.chatBotEngine.pagination
 
-interface ElementDescriptionStrategy<T : Entity> {
+interface ElementDescriptionStrategy<T> {
     fun description(index: Int, entity: T) : String
 }

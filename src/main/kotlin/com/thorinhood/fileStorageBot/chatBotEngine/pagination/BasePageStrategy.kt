@@ -11,7 +11,7 @@ import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import java.util.function.Predicate
 import kotlin.math.roundToInt
 
-abstract class BasePageStrategy<T : Entity>(
+abstract class BasePageStrategy<T>(
     private val elementDescriptionStrategy: ElementDescriptionStrategy<T>
 ): PageStrategy<T> {
 
