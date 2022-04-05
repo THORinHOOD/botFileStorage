@@ -8,7 +8,7 @@ import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 abstract class BaseProcessor(
     val name: String,
-    private val procSpace: String = ""
+    val procSpace: String = ""
 ) {
 
     fun process(session: Session, update: Update) : List<BaseRequest<*, *>> {
@@ -33,6 +33,12 @@ abstract class BaseProcessor(
         return isThisProcessorInner(session, update)
     }
 
+    fun keyByIndex(depth: Int) : String {
+        val left = indexOf(procSpace, "#", depth - 1) + 1
+        val right = indexOf(procSpace, "#", depth, procSpace.length)
+        return procSpace.substring(left, right)
+    }
+
     protected fun isNotCancel(update: Update) : Boolean =
         update.message()?.text()?.let { it != BaseCancelProcessor.LABEL } ?: false
 
@@ -41,6 +47,18 @@ abstract class BaseProcessor(
 
     protected fun isUpdateMessageContainsLabel(update: Update, label: String) =
         update.message()?.text()?.contains(label) ?: false
+
+    private fun indexOf(str: String, sub: String, number: Int, default: Int = -1) : Int {
+        if (number < 1) {
+            return default
+        }
+        var from = -1
+        for (i in 1..number) {
+            from = str.indexOf(sub, from + 1)
+            if (from == -1) return str.length
+        }
+        return from
+    }
 
     protected abstract fun processInner(session: Session, update: Update) : ProcessResult
     protected abstract fun isThisProcessorInner(session: Session, update: Update) : Boolean

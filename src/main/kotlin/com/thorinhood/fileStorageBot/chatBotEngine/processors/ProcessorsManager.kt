@@ -11,12 +11,19 @@ import java.io.StringWriter
 
 @Service
 class ProcessorsManager(
-    @Processor private val processors: List<BaseProcessor>,
+    @Processor processors: List<BaseProcessor>,
     private val sessionsService: SessionsService
 ) : Logging {
 
+    private val tree: Tree
+
+    init {
+        tree = Tree.createTree(processors)
+    }
+
     fun process(update: Update): List<BaseRequest<*, *>> {
         val session = sessionsService.getSession(update)
+        val processors = tree.getProcessorsByProcSpace(session.cursor.procSpace)
         val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toList()
         return if (foundProcessors.size > 1) {
             logger.error("Found more than 1 processor [${session.cursor.procSpace}]")
