@@ -32,6 +32,7 @@ class NextFolderProcessorBase(
                 ""
             } else "/") + "$folderName/"
         )
+        YandexUtils.getContext(session).offset = 0
         return getEntities(session)
     }
 

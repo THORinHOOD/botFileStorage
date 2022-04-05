@@ -33,6 +33,7 @@ class PrevFolderProcessorBase(
         }
         val s = currentPath.substring(0, currentPath.lastIndexOf("/"))
         YandexUtils.setCurrentPath(session, s.substring(0, s.lastIndexOf("/") + 1))
+        YandexUtils.getContext(session).offset = 0
         return getEntities(session)
     }
 

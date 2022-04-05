@@ -15,15 +15,26 @@ class ProcessorsManager(
     private val sessionsService: SessionsService
 ) : Logging {
 
-    private val tree: Tree
+    private val spaces: MutableMap<String, MutableList<BaseProcessor>> = mutableMapOf()
 
     init {
-        tree = Tree.createTree(processors)
+        processors.forEach { processor ->
+            spaces.getOrPut(processor.procSpace) { mutableListOf() }
+                .add(processor)
+        }
     }
 
     fun process(update: Update): List<BaseRequest<*, *>> {
         val session = sessionsService.getSession(update)
-        val processors = tree.getProcessorsByProcSpace(session.cursor.procSpace)
+        val processors = mutableListOf<BaseProcessor>()
+        if (!spaces.containsKey(session.cursor.procSpace)) {
+            logger.error("Can't find proc space ${session.cursor.procSpace}")
+            return ERROR_MESSAGE(session.chatId)
+        }
+        if (spaces.containsKey("")) {
+            processors.addAll(spaces[""]!!)
+        }
+        processors.addAll(spaces[session.cursor.procSpace]!!)
         val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toList()
         return if (foundProcessors.size > 1) {
             logger.error("Found more than 1 processor [${session.cursor.procSpace}]")
