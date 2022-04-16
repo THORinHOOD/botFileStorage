@@ -1,7 +1,7 @@
 package com.thorinhood.fileStorageBot.chatBotEngine.sessions.mongo
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.context.annotation.Profile
 import org.springframework.data.mongodb.repository.MongoRepository
 
-@ConditionalOnBean(MongoDbConfig::class)
+@Profile("mongo")
 interface MongoSessionRepository : MongoRepository<MongoSession<Long>, Long>

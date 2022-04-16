@@ -8,12 +8,11 @@ import com.thorinhood.fileStorageBot.chatBotEngine.sessions.SessionsService
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.mongo.MongoDbConfig
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
+@Profile("memory")
 @Service
-@ConditionalOnMissingBean(
-    value = [MongoDbConfig::class]
-)
 class MemorySessionsService : SessionsService, Logging {
 
     private val allSessions: MutableMap<Long, MemorySession<Long>> = mutableMapOf()
