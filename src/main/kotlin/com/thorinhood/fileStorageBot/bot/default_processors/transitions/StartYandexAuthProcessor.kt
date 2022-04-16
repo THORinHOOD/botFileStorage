@@ -1,6 +1,5 @@
 package com.thorinhood.fileStorageBot.bot.default_processors.transitions
 
-
 import com.pengrad.telegrambot.model.Update
 import com.thorinhood.fileStorageBot.bot.ProcSpaces
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.api.YandexDisk
