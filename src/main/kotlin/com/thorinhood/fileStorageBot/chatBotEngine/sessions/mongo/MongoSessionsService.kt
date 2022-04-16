@@ -5,7 +5,11 @@ import com.pengrad.telegrambot.model.Update
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Cursor
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.SessionsService
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Service
 
+@Profile("mongo")
+@Service
 class MongoSessionsService(
     private val mongoSessionRepository: MongoSessionRepository
 ) : SessionsService {

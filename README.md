@@ -22,3 +22,11 @@ docker-compose up
 docker exec -it mongo-container bash
 
 mongo -u root_user -p password
+
+### Sessions storages 
+
+available two ways: mongo and in memory
+
+spring.profiles.active=mongo (in this case you need to define propeties for mongo db connection)
+\
+spring.profiles.active=memory
