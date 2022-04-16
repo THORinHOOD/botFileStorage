@@ -3,7 +3,7 @@ package com.thorinhood.fileStorageBot.bot.yandex_disk.utils.baseProcessors
 import com.thorinhood.fileStorageBot.chatBotEngine.pagination.PaginationContext
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.baseProcessors.BaseEntitiesProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.bot.KeyboardService
 import com.thorinhood.fileStorageBot.bot.ProcSpaces
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexConst
@@ -11,6 +11,7 @@ import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexEntity
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexUtils
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.api.YandexDisk
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.pagination.YandexEntityPageStrategy
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 abstract class YandexBaseEntitiesProcessor(
     yandexDisk: YandexDisk,
@@ -25,7 +26,7 @@ abstract class YandexBaseEntitiesProcessor(
     procSpace
 ) {
 
-    override fun getContext(session: Session): PaginationContext<YandexEntity> =
+    override fun getContext(session: Session<Long>): PaginationContext<YandexEntity> =
         YandexUtils.getContext(session)
 
     override fun buildTransition(

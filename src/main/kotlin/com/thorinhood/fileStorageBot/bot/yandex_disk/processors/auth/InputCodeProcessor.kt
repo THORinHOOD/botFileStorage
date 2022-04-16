@@ -1,6 +1,5 @@
 package com.thorinhood.fileStorageBot.bot.yandex_disk.processors.auth
 
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.chatBotEngine.pagination.PaginationContext
@@ -13,6 +12,7 @@ import com.thorinhood.fileStorageBot.bot.ProcSpaces
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexConst
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexEntity
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.api.YandexDisk
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import org.springframework.stereotype.Service
 
 @Service
@@ -26,7 +26,7 @@ class InputCodeProcessor(
 ) {
 
     override fun processInner(
-        session: Session,
+        session: Session<Long>,
         update: Update
     ): ProcessResult {
         return ProcessResult(update.message()?.text()?.let { message ->
@@ -37,13 +37,13 @@ class InputCodeProcessor(
                     mutableMapOf("currentPath" to "disk:/")
                 )
             )
-            listOf(SendMessage(session.chatId, "Полученный токен: $token")
+            listOf(SendMessage(session.sessionId, "Полученный токен: $token")
                 .replyMarkup(keyboardService.getDefaultKeyboard(session)))
         } ?: return ProcessResult.EMPTY_RESULT,
         Transition(ProcSpaces.DEFAULT))
     }
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isNotCancel(update)
 
 }

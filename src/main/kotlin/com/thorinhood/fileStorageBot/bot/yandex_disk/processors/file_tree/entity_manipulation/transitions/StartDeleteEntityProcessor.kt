@@ -2,13 +2,14 @@ package com.thorinhood.fileStorageBot.bot.yandex_disk.processors.file_tree.entit
 
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
 import com.thorinhood.fileStorageBot.bot.KeyboardService
 import com.thorinhood.fileStorageBot.bot.ProcSpaces
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 @Processor
 class StartDeleteEntityProcessor : BaseProcessor(
@@ -17,15 +18,15 @@ class StartDeleteEntityProcessor : BaseProcessor(
 ) {
 
     override fun processInner(
-        session: Session,
+        session: Session<Long>,
         update: Update
     ): ProcessResult = ProcessResult(
-        listOf(SendMessage(session.chatId, "Удалить перманентно или переместить в корзину?")
+        listOf(SendMessage(session.sessionId, "Удалить перманентно или переместить в корзину?")
             .replyMarkup(KeyboardService.FILE_TREE_DELETE_CHOICE)),
         Transition(ProcSpaces.YANDEX_FILE_TREE_ENTITY_MANIPULATION_DELETE)
     )
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

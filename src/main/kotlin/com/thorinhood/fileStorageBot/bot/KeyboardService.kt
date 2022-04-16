@@ -14,14 +14,15 @@ import com.thorinhood.fileStorageBot.bot.yandex_disk.processors.file_tree.entity
 import com.thorinhood.fileStorageBot.bot.yandex_disk.processors.file_tree.entity_manipulation.transitions.StartDeleteEntityProcessor
 import com.thorinhood.fileStorageBot.bot.yandex_disk.processors.file_tree.transitions.StartCreateFolderProcessor
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexConst
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.baseProcessors.BaseCancelProcessor
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import org.springframework.stereotype.Service
 
 @Service
 class KeyboardService {
 
-    fun getDefaultKeyboard(session: Session) : ReplyKeyboardMarkup =
+    fun getDefaultKeyboard(session: Session<Long>) : ReplyKeyboardMarkup =
         session.args[YandexConst.TOKEN]?.let { DEFAULT_KEYBOARD } ?: UNAUTH_KEYBOARD
 
     companion object {

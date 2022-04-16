@@ -8,10 +8,11 @@ import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexUtils
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.api.YandexDisk
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.baseProcessors.YandexBaseEntitiesProcessor
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.pagination.YandexEntityPageStrategy
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 @Processor
 class CreateFolderProcessor(
@@ -25,13 +26,13 @@ class CreateFolderProcessor(
 ) {
 
     override fun processInner(
-        session: Session,
+        session: Session<Long>,
         update: Update
     ): ProcessResult =
         getEntities(session).merge(ProcessResult(update.message()?.text()?.let { folderName ->
             val folderPath = "${YandexUtils.getCurrentPath(session)}$folderName/"
             val created = yandexDisk.createFolder(session.args[YandexConst.TOKEN] as String, folderPath)
-            listOf(SendMessage(session.chatId, if (created) {
+            listOf(SendMessage(session.sessionId, if (created) {
                 "Создана папка [$folderPath]"
             } else {
                 "Не удалось создать папку [$folderName]"
@@ -39,7 +40,7 @@ class CreateFolderProcessor(
         } ?: listOf(),
         Transition(ProcSpaces.YANDEX_FILE_TREE)))
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isNotCancel(update)
 
 }

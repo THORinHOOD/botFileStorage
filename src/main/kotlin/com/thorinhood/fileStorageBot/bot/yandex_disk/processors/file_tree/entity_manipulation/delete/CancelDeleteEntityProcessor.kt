@@ -6,9 +6,10 @@ import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.bot.KeyboardService
 import com.thorinhood.fileStorageBot.bot.ProcSpaces
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 @Processor
 class CancelDeleteEntityProcessor : BaseProcessor(
@@ -16,10 +17,10 @@ class CancelDeleteEntityProcessor : BaseProcessor(
   ProcSpaces.YANDEX_FILE_TREE_ENTITY_MANIPULATION_DELETE
 ) {
 
-    override fun processInner(session: Session, update: Update): ProcessResult {
+    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
         return ProcessResult(listOf(
-            SendMessage(session.chatId, "Окей, не будем этого делать"),
-            SendMessage(session.chatId, "Что вы собираетесь делать с ${
+            SendMessage(session.sessionId, "Окей, не будем этого делать"),
+            SendMessage(session.sessionId, "Что вы собираетесь делать с ${
                 when(session.cursor.args["entityType"]) {
                     "file" -> " файлом ${session.cursor.args["entityName"]}"
                     "dir" -> " папкой ${session.cursor.args["entityName"]}"
@@ -35,7 +36,7 @@ class CancelDeleteEntityProcessor : BaseProcessor(
             Transition(ProcSpaces.YANDEX_FILE_TREE_ENTITY_MANIPULATION))
     }
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

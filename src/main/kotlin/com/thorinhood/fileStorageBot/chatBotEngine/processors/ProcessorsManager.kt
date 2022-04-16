@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.SessionsService
 import org.apache.logging.log4j.kotlin.Logging
+import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Service
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -12,12 +13,16 @@ import java.io.StringWriter
 @Service
 class ProcessorsManager(
     @Processor processors: List<BaseProcessor>,
-    private val sessionsService: SessionsService
+    private val sessionsService: SessionsService,
+    private val appContext: ApplicationContext
 ) : Logging {
 
     private val spaces: MutableMap<String, MutableList<BaseProcessor>> = mutableMapOf()
 
     init {
+//        appContext.beanDefinitionNames.toList().stream().map { it.toLowerCase() }.filter { it.contains("mon") }.forEach {
+//            println(it)
+//        }
         processors.forEach { processor ->
             spaces.getOrPut(processor.procSpace) { mutableListOf() }
                 .add(processor)
@@ -29,7 +34,7 @@ class ProcessorsManager(
         val processors = mutableListOf<BaseProcessor>()
         if (!spaces.containsKey(session.cursor.procSpace)) {
             logger.error("Can't find proc space ${session.cursor.procSpace}")
-            return ERROR_MESSAGE(session.chatId)
+            return ERROR_MESSAGE(session.sessionId)
         }
         if (spaces.containsKey("")) {
             processors.addAll(spaces[""]!!)
@@ -38,10 +43,10 @@ class ProcessorsManager(
         val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toList()
         return if (foundProcessors.size > 1) {
             logger.error("Found more than 1 processor [${session.cursor.procSpace}]")
-            ERROR_MESSAGE(session.chatId)
+            ERROR_MESSAGE(session.sessionId)
         } else if (foundProcessors.isEmpty()) {
             logger.error("Not found any processors [${session.cursor.procSpace}]")
-            ERROR_MESSAGE(session.chatId)
+            ERROR_MESSAGE(session.sessionId)
         } else {
             try {
                 val result = foundProcessors.first().process(session, update)
@@ -49,7 +54,7 @@ class ProcessorsManager(
                 result
             } catch(e: Exception) {
                 error(e)
-                ERROR_MESSAGE(session.chatId)
+                ERROR_MESSAGE(session.sessionId)
             }
         }
     }

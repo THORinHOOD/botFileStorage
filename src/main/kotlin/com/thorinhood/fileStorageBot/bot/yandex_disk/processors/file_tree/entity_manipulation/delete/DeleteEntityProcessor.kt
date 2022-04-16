@@ -8,9 +8,10 @@ import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexUtils
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.api.YandexDisk
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.baseProcessors.YandexBaseEntitiesProcessor
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.pagination.YandexEntityPageStrategy
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 @Processor
 class DeleteEntityProcessor(
@@ -24,7 +25,7 @@ class DeleteEntityProcessor(
 ) {
 
     override fun processInner(
-        session: Session,
+        session: Session<Long>,
         update: Update
     ): ProcessResult {
         val inStash = update.message()?.text()?.let { text ->
@@ -35,25 +36,25 @@ class DeleteEntityProcessor(
             }
         } ?: return ProcessResult.EMPTY_RESULT
         val entityName = YandexUtils.getContext(session).elementsMap[session.cursor.args["entity"]]?.name ?:
-            return ProcessResult(listOf(SendMessage(session.chatId, "Не удалось удалить")))
+            return ProcessResult(listOf(SendMessage(session.sessionId, "Не удалось удалить")))
         val result = yandexDisk.deleteEntity(session.args[YandexConst.TOKEN] as String,
             YandexUtils.getCurrentPath(session) + entityName,
             !inStash)
         return getEntities(session).merge(
             ProcessResult(listOf(if (result) {
-                 SendMessage(session.chatId, "[$entityName] ${
+                 SendMessage(session.sessionId, "[$entityName] ${
                      if (inStash) {
                          "Перемещено в корзину"
                      } else {
                          "Удалено перманентно"
                      }}")
              } else {
-                 SendMessage(session.chatId, "Не удалось удалить $entityName")
+                 SendMessage(session.sessionId, "Не удалось удалить $entityName")
              }))
         )
     }
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, PERMANENTLY) ||
         isUpdateMessageEqualsLabel(update, IN_STASH)
 

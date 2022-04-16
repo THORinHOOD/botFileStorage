@@ -9,8 +9,9 @@ import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.api.YandexDisk
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.baseProcessors.YandexBaseEntitiesProcessor
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.pagination.YandexEntityPageStrategy
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 @Processor
 class PrevFolderProcessorBase(
@@ -24,12 +25,12 @@ class PrevFolderProcessorBase(
 ) {
 
     override fun processInner(
-        session: Session,
+        session: Session<Long>,
         update: Update
     ): ProcessResult {
         val currentPath = YandexUtils.getCurrentPath(session)
         if (currentPath == "disk:/") {
-            return ProcessResult(listOf(SendMessage(session.chatId, "Вы уже в корневой папке").parseMode(ParseMode.HTML)))
+            return ProcessResult(listOf(SendMessage(session.sessionId, "Вы уже в корневой папке").parseMode(ParseMode.HTML)))
         }
         val s = currentPath.substring(0, currentPath.lastIndexOf("/"))
         YandexUtils.setCurrentPath(session, s.substring(0, s.lastIndexOf("/") + 1))
@@ -37,7 +38,7 @@ class PrevFolderProcessorBase(
         return getEntities(session)
     }
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

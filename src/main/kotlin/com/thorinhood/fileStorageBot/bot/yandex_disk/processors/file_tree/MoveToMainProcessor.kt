@@ -4,11 +4,12 @@ import com.pengrad.telegrambot.model.Update
 import com.thorinhood.fileStorageBot.bot.KeyboardService
 import com.thorinhood.fileStorageBot.bot.ProcSpaces
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexUtils
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 @Processor
 class MoveToMainProcessor(
@@ -19,7 +20,7 @@ class MoveToMainProcessor(
 ) {
 
     override fun processInner(
-        session: Session,
+        session: Session<Long>,
         update: Update
     ): ProcessResult {
         YandexUtils.setCurrentPath(session, "disk:/")
@@ -29,7 +30,7 @@ class MoveToMainProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isUpdateMessageContainsLabel(update, LABEL)
 
     companion object {

@@ -13,13 +13,13 @@ abstract class BaseCancelProcessor(
 ) : BaseProcessor(name, procSpace) {
 
     override fun processInner(
-        session: Session,
+        session: Session<Long>,
         update: Update
     ): ProcessResult {
         return ProcessResult(null, transition, null)
     }
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

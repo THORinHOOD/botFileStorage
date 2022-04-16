@@ -12,9 +12,10 @@ version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
+	jcenter()
 	mavenCentral()
 	maven {
-		url = uri("https://raw.github.com/THORinHOOD/benchLib/mvn-repo/")
+		url = uri("https://plugins-gradle.org/m2/")
 	}
 }
 
@@ -32,7 +33,7 @@ dependencies {
 	implementation("com.github.pengrad:java-telegram-bot-api:5.2.0")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("software.amazon.awssdk:s3:2.16.33")
+//	implementation("software.amazon.awssdk:s3:2.16.33")
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

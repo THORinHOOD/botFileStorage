@@ -1,36 +1,17 @@
 package com.thorinhood.fileStorageBot.chatBotEngine.sessions
 
 import com.pengrad.telegrambot.model.Update
-import com.thorinhood.fileStorageBot.chatBotEngine.repositories.SessionRepository
-import org.springframework.stereotype.Service
 
-@Service
-class SessionsService(
-    private val sessionRepository: SessionRepository
-) {
+interface SessionsService {
 
-    fun getSession(update: Update) : Session {
-        val chatId = extractChatId(update)
-        return sessionRepository.findById(chatId).orElseGet {
-            sessionRepository.save(createDefaultSession(chatId))
-        }
-    }
+    fun getSession(update: Update) : Session<Long>
 
-    fun updateSession(session: Session) {
-        sessionRepository.save(session)
-    }
+    fun updateSession(session: Session<Long>)
 
-    private fun extractChatId(update: Update) : Long =
+    fun extractSessionId(update: Update) : Long =
         update.message()?.chat()?.id() ?:
         update.callbackQuery()?.message()?.chat()?.id() ?:
         update.editedMessage()?.chat()?.id() ?:
         throw IllegalArgumentException("Can't find chat id in update")
-
-    private fun createDefaultSession(chatId : Long) : Session =
-        Session(
-            chatId,
-            Cursor(),
-            mutableMapOf()
-        )
 
 }

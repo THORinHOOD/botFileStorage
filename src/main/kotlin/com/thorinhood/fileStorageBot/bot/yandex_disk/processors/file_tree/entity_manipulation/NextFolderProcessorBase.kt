@@ -7,8 +7,9 @@ import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.api.YandexDisk
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.baseProcessors.YandexBaseEntitiesProcessor
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.pagination.YandexEntityPageStrategy
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 @Processor
 class NextFolderProcessorBase(
@@ -22,7 +23,7 @@ class NextFolderProcessorBase(
 ) {
 
     override fun processInner(
-        session: Session,
+        session: Session<Long>,
         update: Update
     ): ProcessResult {
         val folderName = YandexUtils.getContext(session).elementsMap[session.cursor.args["entity"]]?.name ?:
@@ -36,7 +37,7 @@ class NextFolderProcessorBase(
         return getEntities(session)
     }
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

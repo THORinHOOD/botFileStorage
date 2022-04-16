@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.baseProcessors.BaseCancelProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
+
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 abstract class BaseProcessor(
@@ -11,12 +12,12 @@ abstract class BaseProcessor(
     val procSpace: String = ""
 ) {
 
-    fun process(session: Session, update: Update) : List<BaseRequest<*, *>> {
+    fun process(session: Session<Long>, update: Update) : List<BaseRequest<*, *>> {
         val result = processInner(session, update)
         val messages = result.messages?.toMutableList() ?: mutableListOf()
         if (result.transition != null) {
             session.cursor.procSpace = result.transition.procSpace
-            result.transition.makeMessage(session.chatId)?.let {
+            result.transition.makeMessage(session.sessionId)?.let {
                 messages.add(0, it)
             }
             if (result.args != null) {
@@ -26,7 +27,7 @@ abstract class BaseProcessor(
         return messages
     }
 
-    fun isThisProcessor(session: Session, update: Update) : Boolean {
+    fun isThisProcessor(session: Session<Long>, update: Update) : Boolean {
         if (session.cursor.procSpace != procSpace && procSpace != "") {
             return false
         }
@@ -60,7 +61,7 @@ abstract class BaseProcessor(
         return from
     }
 
-    protected abstract fun processInner(session: Session, update: Update) : ProcessResult
-    protected abstract fun isThisProcessorInner(session: Session, update: Update) : Boolean
+    protected abstract fun processInner(session: Session<Long>, update: Update) : ProcessResult
+    protected abstract fun isThisProcessorInner(session: Session<Long>, update: Update) : Boolean
 
 }

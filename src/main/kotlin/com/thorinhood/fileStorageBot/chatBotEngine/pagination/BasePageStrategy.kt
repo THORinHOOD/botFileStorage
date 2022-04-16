@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import java.util.function.Predicate
 import kotlin.math.roundToInt
 
@@ -17,7 +18,7 @@ abstract class BasePageStrategy<T>(
 
     override fun paginate(
         callbackQuery: CallbackQuery,
-        session: Session,
+        session: Session<Long>,
         paginationType: PaginationType
     ): List<BaseRequest<*, *>> {
         val data = callbackQuery.data().split("_")
@@ -34,7 +35,7 @@ abstract class BasePageStrategy<T>(
 
     override fun buildPage(
         response: ElementsResponse<T>,
-        session: Session,
+        session: Session<Long>,
         callbackId: String?
     ): List<BaseRequest<*, *>> {
         var pagesCount = (response.total.toDouble()/response.limit).roundToInt()
@@ -66,7 +67,7 @@ abstract class BasePageStrategy<T>(
         val pageCallback = PageCallback(currentPage - 1, response.limit)
 
         responses.add(
-            SendMessage(session.chatId, result)
+            SendMessage(session.sessionId, result)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(
                     InlineKeyboardMarkup(
@@ -80,8 +81,8 @@ abstract class BasePageStrategy<T>(
         return responses
     }
 
-    protected abstract fun paginationContextExtract(session: Session) : PaginationContext<T>
-    protected abstract fun getElements(session: Session, pageCallback: PageCallback, paginationType: PaginationType) : ElementsResponse<T>
+    protected abstract fun paginationContextExtract(session: Session<Long>) : PaginationContext<T>
+    protected abstract fun getElements(session: Session<Long>, pageCallback: PageCallback, paginationType: PaginationType) : ElementsResponse<T>
 
     private fun forwardButton(paginationInfo: PaginationInfo, pageCallback: PageCallback): InlineKeyboardButton =
         InlineKeyboardButton("Дальше")

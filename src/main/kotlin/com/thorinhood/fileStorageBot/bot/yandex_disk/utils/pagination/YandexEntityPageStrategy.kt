@@ -3,9 +3,10 @@ package com.thorinhood.fileStorageBot.bot.yandex_disk.utils.pagination
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexConst
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexEntity
 import com.thorinhood.fileStorageBot.chatBotEngine.pagination.*
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexUtils
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.api.YandexDisk
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 import org.springframework.stereotype.Service
 
 @Service
@@ -14,10 +15,10 @@ class YandexEntityPageStrategy(
     private val yandexDisk: YandexDisk
 ) : BasePageStrategy<YandexEntity>(yandexEntityDescriptionStrategy) {
 
-    override fun paginationContextExtract(session: Session): PaginationContext<YandexEntity> =
+    override fun paginationContextExtract(session: Session<Long>): PaginationContext<YandexEntity> =
         YandexUtils.getContext(session)
 
-    override fun getElements(session: Session, pageCallback: PageCallback,
+    override fun getElements(session: Session<Long>, pageCallback: PageCallback,
                              paginationType: PaginationType): ElementsResponse<YandexEntity> =
         yandexDisk.getEntities(
             session.args[YandexConst.TOKEN] as String,

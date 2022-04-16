@@ -4,9 +4,10 @@ import com.thorinhood.fileStorageBot.bot.FileStorageService
 import com.thorinhood.fileStorageBot.chatBotEngine.pagination.BasePageStrategy
 import com.thorinhood.fileStorageBot.chatBotEngine.pagination.PaginationContext
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 abstract class BaseEntitiesProcessor<T>(
     private val fileStorageService: FileStorageService<T>,
@@ -19,7 +20,7 @@ abstract class BaseEntitiesProcessor<T>(
     procSpace
 ) {
 
-    protected fun getEntities(session: Session) : ProcessResult {
+    protected fun getEntities(session: Session<Long>) : ProcessResult {
         val paginationContext = getContext(session)
         val currentPath = paginationContext.context["currentPath"] as String
         val response = fileStorageService.getEntities(
@@ -36,6 +37,6 @@ abstract class BaseEntitiesProcessor<T>(
             buildTransition(response.entities.isEmpty(), currentPath))
     }
 
-    abstract fun getContext(session: Session) : PaginationContext<T>
+    abstract fun getContext(session: Session<Long>) : PaginationContext<T>
     protected abstract fun buildTransition(hasEntities: Boolean, extraArg: String) : Transition
 }

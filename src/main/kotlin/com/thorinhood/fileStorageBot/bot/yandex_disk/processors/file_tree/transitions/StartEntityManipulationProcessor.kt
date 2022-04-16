@@ -2,7 +2,7 @@ package com.thorinhood.fileStorageBot.bot.yandex_disk.processors.file_tree.trans
 
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
+
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.BaseProcessor
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.ProcessResult
 import com.thorinhood.fileStorageBot.chatBotEngine.processors.Processor
@@ -10,6 +10,7 @@ import com.thorinhood.fileStorageBot.chatBotEngine.processors.data.Transition
 import com.thorinhood.fileStorageBot.bot.KeyboardService
 import com.thorinhood.fileStorageBot.bot.ProcSpaces
 import com.thorinhood.fileStorageBot.bot.yandex_disk.utils.YandexUtils
+import com.thorinhood.fileStorageBot.chatBotEngine.sessions.Session
 
 @Processor
 class StartEntityManipulationProcessor : BaseProcessor(
@@ -18,7 +19,7 @@ class StartEntityManipulationProcessor : BaseProcessor(
 ) {
 
     override fun processInner(
-        session: Session,
+        session: Session<Long>,
         update: Update
     ): ProcessResult {
         val entityName = YandexUtils.getContext(session).elementsMap[update.message()?.text()]?.name
@@ -30,7 +31,7 @@ class StartEntityManipulationProcessor : BaseProcessor(
             "entity_type" to entityType,
             "entity_name" to entityName,
             "entity_index" to update.message()?.text()!!)
-        return ProcessResult(listOf(SendMessage(session.chatId, "Что вы собираетесь делать с ${
+        return ProcessResult(listOf(SendMessage(session.sessionId, "Что вы собираетесь делать с ${
             when(entityType) {
                 "file" -> " файлом $entityName"
                 "dir" -> " папкой $entityName"
@@ -46,10 +47,10 @@ class StartEntityManipulationProcessor : BaseProcessor(
         Transition(ProcSpaces.YANDEX_FILE_TREE_ENTITY_MANIPULATION), arg)
     }
 
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         isEntity(session, update, setOf("file", "dir"))
 
-    private fun isEntity(session: Session, update: Update, types: Set<String>) : Boolean =
+    private fun isEntity(session: Session<Long>, update: Update, types: Set<String>) : Boolean =
         update.message()?.text()?.let { text ->
             text.startsWith("/") && YandexUtils.getContext(session).elementsMap.contains(text) &&
                     types.contains(YandexUtils.getContext(session).elementsMap[text]?.type)
