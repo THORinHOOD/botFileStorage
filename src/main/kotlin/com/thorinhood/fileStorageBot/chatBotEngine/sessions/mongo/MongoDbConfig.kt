@@ -1,12 +1,12 @@
 package com.thorinhood.fileStorageBot.chatBotEngine.sessions.mongo
 
+import com.thorinhood.fileStorageBot.chatBotEngine.Utils
+import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Conditional
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
 @Configuration
@@ -19,7 +19,11 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 )
 @EnableMongoRepositories
 @Import(value = [MongoAutoConfiguration::class])
-class MongoDbConfig {
+class MongoDbConfig : Logging {
+
+    init {
+        Utils.initLog(logger, "mongo")
+    }
 
     @Bean
     fun sessionsService(mongoSessionRepository: MongoSessionRepository)

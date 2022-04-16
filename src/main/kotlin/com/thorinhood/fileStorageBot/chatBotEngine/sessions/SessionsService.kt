@@ -1,6 +1,7 @@
 package com.thorinhood.fileStorageBot.chatBotEngine.sessions
 
 import com.pengrad.telegrambot.model.Update
+import org.apache.logging.log4j.kotlin.KotlinLogger
 
 interface SessionsService {
 
