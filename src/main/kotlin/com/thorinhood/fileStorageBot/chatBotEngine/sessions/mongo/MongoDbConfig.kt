@@ -2,6 +2,7 @@ package com.thorinhood.fileStorageBot.chatBotEngine.sessions.mongo
 
 import com.thorinhood.fileStorageBot.chatBotEngine.Utils
 import org.apache.logging.log4j.kotlin.Logging
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -11,7 +12,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Profile("mongo")
 @Configuration
 @EnableMongoRepositories
-@Import(value = [MongoAutoConfiguration::class])
 class MongoDbConfig : Logging {
 
     init {
@@ -19,3 +19,8 @@ class MongoDbConfig : Logging {
     }
 
 }
+
+@Profile("!mongo")
+@Configuration
+@EnableAutoConfiguration(exclude = [MongoAutoConfiguration::class])
+class NotMongoDbConfig
