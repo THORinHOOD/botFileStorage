@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 class MongoDbConfig : Logging {
 
     init {
-        com.thorinhood.botFarm.engine.Utils.initLog(logger, "mongo")
+        Utils.initLog(logger, "mongo")
     }
 
 }

@@ -12,12 +12,12 @@ import java.io.StringWriter
 
 @Service
 class ProcessorsManager(
-    @com.thorinhood.botFarm.engine.processors.Processor processors: List<com.thorinhood.botFarm.engine.processors.BaseProcessor>,
+    @Processor processors: List<BaseProcessor>,
     private val sessionsService: SessionsService,
     private val appContext: ApplicationContext
 ) : Logging {
 
-    private val spaces: MutableMap<String, MutableList<com.thorinhood.botFarm.engine.processors.BaseProcessor>> = mutableMapOf()
+    private val spaces: MutableMap<String, MutableList<BaseProcessor>> = mutableMapOf()
 
     init {
 //        appContext.beanDefinitionNames.toList().stream().map { it.toLowerCase() }.filter { it.contains("mon") }.forEach {
@@ -31,7 +31,7 @@ class ProcessorsManager(
 
     fun process(update: Update): List<BaseRequest<*, *>> {
         val session = sessionsService.getSession(update)
-        val processors = mutableListOf<com.thorinhood.botFarm.engine.processors.BaseProcessor>()
+        val processors = mutableListOf<BaseProcessor>()
         if (!spaces.containsKey(session.cursor.procSpace)) {
             logger.error("Can't find proc space ${session.cursor.procSpace}")
             return com.thorinhood.botFarm.engine.processors.ProcessorsManager.Companion.ERROR_MESSAGE(session.sessionId)
@@ -43,10 +43,10 @@ class ProcessorsManager(
         val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toList()
         return if (foundProcessors.size > 1) {
             logger.error("Found more than 1 processor [${session.cursor.procSpace}]")
-            com.thorinhood.botFarm.engine.processors.ProcessorsManager.Companion.ERROR_MESSAGE(session.sessionId)
+            ERROR_MESSAGE(session.sessionId)
         } else if (foundProcessors.isEmpty()) {
             logger.error("Not found any processors [${session.cursor.procSpace}]")
-            com.thorinhood.botFarm.engine.processors.ProcessorsManager.Companion.ERROR_MESSAGE(session.sessionId)
+            ERROR_MESSAGE(session.sessionId)
         } else {
             try {
                 val result = foundProcessors.first().process(session, update)
@@ -54,7 +54,7 @@ class ProcessorsManager(
                 result
             } catch(e: Exception) {
                 error(e)
-                com.thorinhood.botFarm.engine.processors.ProcessorsManager.Companion.ERROR_MESSAGE(session.sessionId)
+                ERROR_MESSAGE(session.sessionId)
             }
         }
     }

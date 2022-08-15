@@ -13,20 +13,20 @@ import java.util.function.Predicate
 import kotlin.math.roundToInt
 
 abstract class BasePageStrategy<T>(
-    private val elementDescriptionStrategy: com.thorinhood.botFarm.engine.pagination.ElementDescriptionStrategy<T>
-): com.thorinhood.botFarm.engine.pagination.PageStrategy<T> {
+    private val elementDescriptionStrategy: ElementDescriptionStrategy<T>
+): PageStrategy<T> {
 
     override fun paginate(
         callbackQuery: CallbackQuery,
         session: Session<Long>,
-        paginationType: com.thorinhood.botFarm.engine.pagination.PaginationType
+        paginationType: PaginationType
     ): List<BaseRequest<*, *>> {
         val data = callbackQuery.data().split("_")
         if (data[1] == "stop") {
             return listOf(AnswerCallbackQuery(callbackQuery.id()))
         }
         val response = getElements(session,
-            com.thorinhood.botFarm.engine.pagination.PageCallback.Companion.fromList(data), paginationType)
+            PageCallback.fromList(data), paginationType)
         return if (response.entities.isEmpty()) {
             listOf(AnswerCallbackQuery(callbackQuery.id()))
         } else {
@@ -35,7 +35,7 @@ abstract class BasePageStrategy<T>(
     }
 
     override fun buildPage(
-        response: com.thorinhood.botFarm.engine.pagination.ElementsResponse<T>,
+        response: ElementsResponse<T>,
         session: Session<Long>,
         callbackId: String?
     ): List<BaseRequest<*, *>> {
@@ -45,7 +45,7 @@ abstract class BasePageStrategy<T>(
         }
         val currentPage = response.offset/response.limit + 1
         val paginationInfo =
-            com.thorinhood.botFarm.engine.pagination.BasePageStrategy.PaginationInfo(currentPage - 1, pagesCount)
+            PaginationInfo(currentPage - 1, pagesCount)
         val paginationContext = paginationContextExtract(session)
         paginationContext.elementsMap.clear()
         val result = buildString {
@@ -66,7 +66,7 @@ abstract class BasePageStrategy<T>(
             responses.add(AnswerCallbackQuery(it))
         }
 
-        val pageCallback = com.thorinhood.botFarm.engine.pagination.PageCallback(currentPage - 1, response.limit)
+        val pageCallback = PageCallback(currentPage - 1, response.limit)
 
         responses.add(
             SendMessage(session.sessionId, result)
@@ -83,10 +83,10 @@ abstract class BasePageStrategy<T>(
         return responses
     }
 
-    protected abstract fun paginationContextExtract(session: Session<Long>) : com.thorinhood.botFarm.engine.pagination.PaginationContext<T>
-    protected abstract fun getElements(session: Session<Long>, pageCallback: com.thorinhood.botFarm.engine.pagination.PageCallback, paginationType: com.thorinhood.botFarm.engine.pagination.PaginationType) : com.thorinhood.botFarm.engine.pagination.ElementsResponse<T>
+    protected abstract fun paginationContextExtract(session: Session<Long>) : PaginationContext<T>
+    protected abstract fun getElements(session: Session<Long>, pageCallback: PageCallback, paginationType: PaginationType) : ElementsResponse<T>
 
-    private fun forwardButton(paginationInfo: com.thorinhood.botFarm.engine.pagination.BasePageStrategy.PaginationInfo, pageCallback: com.thorinhood.botFarm.engine.pagination.PageCallback): InlineKeyboardButton =
+    private fun forwardButton(paginationInfo: PaginationInfo, pageCallback: PageCallback): InlineKeyboardButton =
         InlineKeyboardButton("Дальше")
             .callbackData(
                 buttonInfo("forward", pageCallback, paginationInfo) {
@@ -94,7 +94,7 @@ abstract class BasePageStrategy<T>(
                 }
             )
 
-    private fun backButton(paginationInfo: com.thorinhood.botFarm.engine.pagination.BasePageStrategy.PaginationInfo, pageCallback: com.thorinhood.botFarm.engine.pagination.PageCallback): InlineKeyboardButton =
+    private fun backButton(paginationInfo: PaginationInfo, pageCallback: PageCallback): InlineKeyboardButton =
         InlineKeyboardButton("Назад")
             .callbackData(
                 buttonInfo("back", pageCallback, paginationInfo) {
@@ -104,9 +104,9 @@ abstract class BasePageStrategy<T>(
 
     private fun buttonInfo(
         name: String,
-        pageCallback: com.thorinhood.botFarm.engine.pagination.PageCallback,
-        paginationInfo: com.thorinhood.botFarm.engine.pagination.BasePageStrategy.PaginationInfo,
-        isStop: Predicate<com.thorinhood.botFarm.engine.pagination.BasePageStrategy.PaginationInfo>
+        pageCallback: PageCallback,
+        paginationInfo: PaginationInfo,
+        isStop: Predicate<PaginationInfo>
     ): String =
         name + "_" + if (isStop.test(paginationInfo)) {
             "stop"

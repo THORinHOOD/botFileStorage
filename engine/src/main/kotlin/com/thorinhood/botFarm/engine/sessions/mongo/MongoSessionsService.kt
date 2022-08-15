@@ -11,16 +11,16 @@ import org.springframework.stereotype.Service
 @Profile("mongo")
 @Service
 class MongoSessionsService(
-    private val mongoSessionRepository: com.thorinhood.botFarm.engine.sessions.mongo.MongoSessionRepository
+    private val mongoSessionRepository: MongoSessionRepository
 ) : SessionsService {
 
     override fun getSession(update: Update) : Session<Long> {
         val chatId = extractSessionId(update)
         return mongoSessionRepository.findById(chatId).orElseGet {
             mongoSessionRepository.save(
-                com.thorinhood.botFarm.engine.sessions.mongo.MongoSession(
+                MongoSession(
                     chatId,
-                    com.thorinhood.botFarm.engine.sessions.Cursor(),
+                    Cursor(),
                     mutableMapOf()
                 )
             )
@@ -28,7 +28,7 @@ class MongoSessionsService(
     }
 
     override fun updateSession(session: Session<Long>) {
-        if (session is com.thorinhood.botFarm.engine.sessions.mongo.MongoSession<Long>) {
+        if (session is MongoSession<Long>) {
             mongoSessionRepository.save(session)
         } else {
             throw IllegalArgumentException("You work with mongo, but session isn't MongoSession type")

@@ -4,15 +4,15 @@ import com.pengrad.telegrambot.request.BaseRequest
 
 class ProcessResult(
     val messages: List<BaseRequest<*, *>>?,
-    val transition: com.thorinhood.botFarm.engine.processors.data.Transition? = null,
+    val transition: Transition? = null,
     val args: MutableMap<String, Any>? = null
 ) {
 
-    fun merge(processResult: com.thorinhood.botFarm.engine.processors.data.ProcessResult) : com.thorinhood.botFarm.engine.processors.data.ProcessResult {
+    fun merge(processResult: ProcessResult) : ProcessResult {
         val messages = processResult.messages?.toMutableList()
         messages?.addAll(this.messages ?: listOf())
         args?.putAll(processResult.args ?: mapOf())
-        return com.thorinhood.botFarm.engine.processors.data.ProcessResult(
+        return ProcessResult(
             messages,
             transition,
             args
@@ -20,6 +20,6 @@ class ProcessResult(
     }
 
     companion object {
-        val EMPTY_RESULT = com.thorinhood.botFarm.engine.processors.data.ProcessResult(listOf())
+        val EMPTY_RESULT = ProcessResult(listOf())
     }
 }

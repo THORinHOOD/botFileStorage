@@ -13,25 +13,25 @@ import org.springframework.stereotype.Service
 @Service
 class MemorySessionsService : SessionsService, Logging {
 
-    private val allSessions: MutableMap<Long, com.thorinhood.botFarm.engine.sessions.memory.MemorySession<Long>> = mutableMapOf()
+    private val allSessions: MutableMap<Long, MemorySession<Long>> = mutableMapOf()
 
     init {
-        com.thorinhood.botFarm.engine.Utils.initLog(logger, "memory")
+        Utils.initLog(logger, "memory")
     }
 
     override fun getSession(update: Update): Session<Long> {
         val chatId = extractSessionId(update)
         return allSessions.computeIfAbsent(chatId) {
-            com.thorinhood.botFarm.engine.sessions.memory.MemorySession(
+            MemorySession(
                 chatId,
-                com.thorinhood.botFarm.engine.sessions.Cursor(),
+                Cursor(),
                 mutableMapOf()
             )
         }
     }
 
     override fun updateSession(session: Session<Long>) {
-        if (session is com.thorinhood.botFarm.engine.sessions.memory.MemorySession<Long>) {
+        if (session is MemorySession<Long>) {
             allSessions[session.sessionId] = session
         } else {
             throw IllegalArgumentException("You use in memory storage but session is not MemorySession")

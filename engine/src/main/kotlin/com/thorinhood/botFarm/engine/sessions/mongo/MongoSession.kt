@@ -8,5 +8,5 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document("sessions")
 class MongoSession<ID>(
     @Id override val sessionId: ID,
-    override var cursor: com.thorinhood.botFarm.engine.sessions.Cursor,
+    override var cursor: Cursor,
     override val args: MutableMap<String, Any>) : Session<ID>

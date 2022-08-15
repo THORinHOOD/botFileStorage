@@ -9,8 +9,8 @@ data class PageCallback(
     }
 
     companion object {
-        fun fromList(data: List<String>): com.thorinhood.botFarm.engine.pagination.PageCallback =
-            com.thorinhood.botFarm.engine.pagination.PageCallback(
+        fun fromList(data: List<String>): PageCallback =
+            PageCallback(
                 data[1].toInt(),
                 data[2].toInt()
             )

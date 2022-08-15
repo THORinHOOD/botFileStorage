@@ -4,9 +4,9 @@ import com.pengrad.telegrambot.model.Update
 
 interface SessionsService {
 
-    fun getSession(update: Update) : com.thorinhood.botFarm.engine.sessions.Session<Long>
+    fun getSession(update: Update) : Session<Long>
 
-    fun updateSession(session: com.thorinhood.botFarm.engine.sessions.Session<Long>)
+    fun updateSession(session: Session<Long>)
 
     fun extractSessionId(update: Update) : Long =
         update.message()?.chat()?.id() ?:

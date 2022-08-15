@@ -1,4 +1,4 @@
-package com.thorinhood.botFarm.engine.configs
+package com.thorinhood.botFarm.configs
 
 import com.pengrad.telegrambot.TelegramBot
 import org.springframework.beans.factory.annotation.Value
