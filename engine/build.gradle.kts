@@ -24,19 +24,20 @@ configurations.all {
 }
 
 dependencies {
-    //	implementation("com.db:benchLib:0.0.36")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("com.lmax:disruptor:3.4.2")
     implementation("org.apache.logging.log4j:log4j-api-kotlin:1.0.0")
-    implementation("org.springframework.boot:spring-boot-starter-log4j2")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("com.github.pengrad:java-telegram-bot-api:5.2.0")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-//	implementation("software.amazon.awssdk:s3:2.16.33")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    implementation("org.springframework.boot:spring-boot-starter-log4j2")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

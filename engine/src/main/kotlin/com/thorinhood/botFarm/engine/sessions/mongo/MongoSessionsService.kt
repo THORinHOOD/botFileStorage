@@ -1,6 +1,7 @@
 package com.thorinhood.botFarm.engine.sessions.mongo
 
 import com.pengrad.telegrambot.model.Update
+import com.thorinhood.botFarm.configs.MainConfig
 
 import com.thorinhood.botFarm.engine.sessions.Cursor
 import com.thorinhood.botFarm.engine.sessions.Session
@@ -8,10 +9,9 @@ import com.thorinhood.botFarm.engine.sessions.SessionsService
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
-@Profile("mongo")
-@Service
 class MongoSessionsService(
-    private val mongoSessionRepository: MongoSessionRepository
+    private val mongoSessionRepository: MongoSessionRepository,
+    private val cursorProcSpaceInit: String
 ) : SessionsService {
 
     override fun getSession(update: Update) : Session<Long> {
@@ -20,7 +20,7 @@ class MongoSessionsService(
             mongoSessionRepository.save(
                 MongoSession(
                     chatId,
-                    Cursor(),
+                    Cursor(cursorProcSpaceInit),
                     mutableMapOf()
                 )
             )

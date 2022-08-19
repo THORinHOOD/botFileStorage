@@ -34,13 +34,13 @@ class ProcessorsManager(
         val processors = mutableListOf<BaseProcessor>()
         if (!spaces.containsKey(session.cursor.procSpace)) {
             logger.error("Can't find proc space ${session.cursor.procSpace}")
-            return com.thorinhood.botFarm.engine.processors.ProcessorsManager.Companion.ERROR_MESSAGE(session.sessionId)
+            return ERROR_MESSAGE(session.sessionId)
         }
         if (spaces.containsKey("")) {
             processors.addAll(spaces[""]!!)
         }
         processors.addAll(spaces[session.cursor.procSpace]!!)
-        val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toList()
+        val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toSet()
         return if (foundProcessors.size > 1) {
             logger.error("Found more than 1 processor [${session.cursor.procSpace}]")
             ERROR_MESSAGE(session.sessionId)

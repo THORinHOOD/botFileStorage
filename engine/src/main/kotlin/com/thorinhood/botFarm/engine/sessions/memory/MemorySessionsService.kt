@@ -1,6 +1,7 @@
 package com.thorinhood.botFarm.engine.sessions.memory
 
 import com.pengrad.telegrambot.model.Update
+import com.thorinhood.botFarm.configs.MainConfig
 import com.thorinhood.botFarm.engine.Utils
 import com.thorinhood.botFarm.engine.sessions.Cursor
 import com.thorinhood.botFarm.engine.sessions.Session
@@ -9,9 +10,9 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
-@Profile("memory")
-@Service
-class MemorySessionsService : SessionsService, Logging {
+class MemorySessionsService(
+    private val cursorProcSpaceInit: String
+) : SessionsService, Logging {
 
     private val allSessions: MutableMap<Long, MemorySession<Long>> = mutableMapOf()
 
@@ -24,7 +25,7 @@ class MemorySessionsService : SessionsService, Logging {
         return allSessions.computeIfAbsent(chatId) {
             MemorySession(
                 chatId,
-                Cursor(),
+                Cursor(cursorProcSpaceInit),
                 mutableMapOf()
             )
         }
