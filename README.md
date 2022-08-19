@@ -30,3 +30,7 @@ available two ways: mongo and in memory
 spring.profiles.active=mongo (in this case you need to define propeties for mongo db connection)
 \
 spring.profiles.active=memory
+
+### Engine properties
+
+engine.cursor.procSpace.init=<text> - initial procSpace for new cursor (new user)
