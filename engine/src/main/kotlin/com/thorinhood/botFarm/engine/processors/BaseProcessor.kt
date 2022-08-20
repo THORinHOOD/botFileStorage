@@ -16,6 +16,9 @@ abstract class BaseProcessor(
         val result = processInner(session, update)
         val messages = result.messages?.toMutableList() ?: mutableListOf()
         if (result.transition != null) {
+            result.transition.preTransitionAction?.let {
+                it(session)
+            }
             session.cursor.procSpace = result.transition.procSpace
             result.transition.makeMessage(session.sessionId)?.let {
                 messages.add(0, it)

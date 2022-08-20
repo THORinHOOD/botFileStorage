@@ -38,4 +38,7 @@ class MemorySessionsService(
             throw IllegalArgumentException("You use in memory storage but session is not MemorySession")
         }
     }
+
+    override fun getAllSessions(): List<Session<Long>> = allSessions.values.toList()
+
 }

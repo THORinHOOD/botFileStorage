@@ -14,4 +14,5 @@ interface SessionsService {
         update.editedMessage()?.chat()?.id() ?:
         throw IllegalArgumentException("Can't find chat id in update")
 
+    fun getAllSessions() : List<Session<Long>>
 }

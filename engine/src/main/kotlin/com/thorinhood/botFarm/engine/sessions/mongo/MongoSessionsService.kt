@@ -35,4 +35,6 @@ class MongoSessionsService(
         }
     }
 
+    override fun getAllSessions(): List<Session<Long>> = mongoSessionRepository.findAll()
+
 }
