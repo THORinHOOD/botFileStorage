@@ -5,6 +5,8 @@ build/
 !**/src/test/**/build/
 /src/main/resources/application.properties
 /trainingBot/src/main/resources/application.properties
+/fileStorageBot/src/main/resources/application.properties
+/testBot/src/main/resources/application.properties
 /engine/src/main/resources/*.properties
 /logs/*
 ### STS ###
