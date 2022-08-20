@@ -4,6 +4,8 @@ import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.botFarm.engine.ChatBot
 import com.thorinhood.botFarm.engine.sessions.SessionsService
 import com.thorinhood.botFarm.trainingBot.domain.TimerConfig
+import com.thorinhood.botFarm.trainingBot.statics.ArgKey
+import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
@@ -17,15 +19,15 @@ class TaskGiverService(
     @Scheduled(fixedRate = 1000 * 60)
     fun sendTask() {
         sessionsService.getAllSessions().forEach { session ->
-            if (session.args.containsKey("timer_config") &&
-                session.cursor.procSpace == "default") {
-                val timer = session.args["timer_config"] as TimerConfig
+            if (session.args.containsKey(ArgKey.TIMER_CONFIG) &&
+                session.cursor.procSpace == ProcSpace.DEFAULT) {
+                val timer = session.args[ArgKey.TIMER_CONFIG] as TimerConfig
                 timer.counter += 1
                 if (timer.counter == timer.interval) {
                     timer.counter = 0
-                    if (session.cursor.procSpace == "default") {
-                        session.cursor.procSpace = "lesson"
-                        session.args["lesson_tasks_remain"] = (session.args["timer_config"] as TimerConfig).size - 1
+                    if (session.cursor.procSpace == ProcSpace.DEFAULT) {
+                        session.cursor.procSpace = ProcSpace.LESSON
+                        session.args[ArgKey.LESSON_TASKS_REMAIN] = (session.args[ArgKey.TIMER_CONFIG] as TimerConfig).size - 1
                         chatBot.sendMessages(listOf(
                             SendMessage(
                                 session.sessionId,

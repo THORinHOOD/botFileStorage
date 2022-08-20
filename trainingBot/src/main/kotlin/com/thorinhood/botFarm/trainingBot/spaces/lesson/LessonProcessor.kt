@@ -7,20 +7,22 @@ import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.processors.data.Transition
 import com.thorinhood.botFarm.engine.sessions.Session
-import com.thorinhood.botFarm.trainingBot.KeyboardMarkups
+import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.services.TaskService
+import com.thorinhood.botFarm.trainingBot.statics.ArgKey
+import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
 @Processor
 class LessonProcessor(
     private val taskService: TaskService
 ) : BaseProcessor(
-    "lesson", "lesson"
+    "lesson", ProcSpace.LESSON
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
         val answers = session.cursor.args["answers"] as List<*>
         if (answers.contains(update.message()?.text()?.lowercase())) {
-            session.args["lesson_tasks_remain"] = (session.args["lesson_tasks_remain"] as Int) - 1
-            if (session.args["lesson_tasks_remain"] as Int >= 0) {
+            session.args[ArgKey.LESSON_TASKS_REMAIN] = (session.args[ArgKey.LESSON_TASKS_REMAIN] as Int) - 1
+            if (session.args[ArgKey.LESSON_TASKS_REMAIN] as Int >= 0) {
                 taskService.buildMessageWithTask(session)
                 return ProcessResult(
                     listOf(
@@ -33,7 +35,7 @@ class LessonProcessor(
                 session.cursor.args.remove("answers")
                 return ProcessResult(
                     null, Transition(
-                        "default", "Правильно!\n" + "Ты молодец!\n" + "До следующего задания!",
+                        ProcSpace.DEFAULT, "Правильно!\n" + "Ты молодец!\n" + "До следующего задания!",
                         KeyboardMarkups.DEFAULT_KEYBOARD
                     )
                 )

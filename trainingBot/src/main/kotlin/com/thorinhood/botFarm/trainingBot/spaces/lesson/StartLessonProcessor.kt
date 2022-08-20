@@ -10,20 +10,22 @@ import com.thorinhood.botFarm.engine.processors.data.Transition
 import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.trainingBot.domain.TimerConfig
 import com.thorinhood.botFarm.trainingBot.services.TaskService
+import com.thorinhood.botFarm.trainingBot.statics.ArgKey
+import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
 @Processor
 class StartLessonProcessor(
     private val taskService: TaskService
 ) : BaseProcessor(
     "start_lesson",
-    "default"
+    ProcSpace.DEFAULT
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
-        session.args["lesson_tasks_remain"] = (session.args["timer_config"] as TimerConfig).size - 1
+        session.args[ArgKey.LESSON_TASKS_REMAIN] = (session.args[ArgKey.TIMER_CONFIG] as TimerConfig).size - 1
         return ProcessResult(
             listOf(taskService.buildMessageWithTask(session)),
             Transition(
-                "lesson",
+                ProcSpace.LESSON,
                 "Okaaaaay, let's go!",
                 ReplyKeyboardMarkup(
                     arrayOf(KeyboardButton("Отмена"))

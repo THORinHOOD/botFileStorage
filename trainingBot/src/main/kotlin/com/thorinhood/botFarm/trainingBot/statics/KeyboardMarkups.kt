@@ -1,4 +1,4 @@
-package com.thorinhood.botFarm.trainingBot
+package com.thorinhood.botFarm.trainingBot.statics
 
 import com.pengrad.telegrambot.model.request.KeyboardButton
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
