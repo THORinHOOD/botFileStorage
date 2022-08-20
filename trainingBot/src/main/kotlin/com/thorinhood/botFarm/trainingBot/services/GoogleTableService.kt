@@ -2,40 +2,51 @@ package com.thorinhood.botFarm.trainingBot.services
 
 import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.trainingBot.domain.GoogleSheet
-import com.thorinhood.botFarm.trainingBot.domain.Question
+import com.thorinhood.botFarm.trainingBot.domain.Lesson
+import com.thorinhood.botFarm.trainingBot.domain.LessonConfig
+import com.thorinhood.botFarm.trainingBot.domain.Task
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
-import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import java.util.*
 
-@Service
 class GoogleTableService(
-    private val restTemplate: RestTemplate
+    private val restTemplate: RestTemplate,
+    private val googleTableApiKey: String
 ) {
 
-    fun <ID> getTask(session: Session<ID>) : Optional<Question> {
-        val googleSheet = restTemplate.getForEntity(
-            "https://sheets.googleapis.com/v4/spreadsheets/${session.args[ArgKey.GOOGLE_TABLE_ID]}/" +
-                    "values/${session.args[ArgKey.GOOGLE_TABLE_SHEET]}?alt=json" +
-                    "&key=AIzaSyDTxrXX0DKqtDTqIKGjd-KRzWtm_l58AmE",
-            GoogleSheet::class.java
-        )
-        return googleSheet.body?.let { sheet ->
-            val rows = sheet.values
-            val taskIndex = (1 until rows.size).random()
-            val questionIndex = (0 until rows[taskIndex].size).random()
-            return Optional.of(
-                Question(
-                    rows[taskIndex][questionIndex],
-                    rows[taskIndex].filterIndexed { i, _ ->
-                        (i != questionIndex) &&
-                        (rows[0][questionIndex] != rows[0][i])
-                    }.map {
-                        it.lowercase()
-                    }
-                )
+    fun <ID> uploadLessonToSession(session: Session<ID>) =
+        getGoogleSheet(session)?.let { sheet ->
+            val size = (session.args[ArgKey.LESSON_CONFIG] as LessonConfig).size
+            session.args[ArgKey.LESSON_CURRENT] = Lesson(
+                (0 until size)
+                    .map { makeTask(sheet) }
+                    .toCollection(LinkedList())
             )
-        } ?: return Optional.empty()
+        }
+
+    private fun makeTask(googleSheet: GoogleSheet): Task {
+        val rows = googleSheet.values
+        val taskIndex = (1 until rows.size).random()
+        val questionIndex = (0 until rows[taskIndex].size).random()
+        return Task(
+            rows[taskIndex][questionIndex],
+            rows[taskIndex].filterIndexed { i, _ ->
+                (i != questionIndex) &&
+                (rows[0][questionIndex] != rows[0][i]) &&
+                rows[taskIndex][i].isNotEmpty() &&
+                rows[taskIndex][i].isNotBlank()
+            }.map {
+                it.lowercase()
+            }
+        )
     }
 
+    private fun <ID> getGoogleSheet(session: Session<ID>): GoogleSheet? {
+        return restTemplate.getForEntity(
+            "https://sheets.googleapis.com/v4/spreadsheets/${session.args[ArgKey.GOOGLE_TABLE_ID]}/" +
+                    "values/${session.args[ArgKey.GOOGLE_TABLE_SHEET]}?alt=json" +
+                    "&key=${googleTableApiKey}",
+            GoogleSheet::class.java
+        ).body
+    }
 }

@@ -1,6 +1,6 @@
 package com.thorinhood.botFarm.trainingBot.domain
 
-data class Question(
+data class Task(
     val question: String,
     val answers: List<String>
 )

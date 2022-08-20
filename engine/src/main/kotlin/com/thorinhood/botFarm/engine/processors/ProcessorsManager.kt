@@ -33,7 +33,7 @@ class ProcessorsManager(
         val session = sessionsService.getSession(update)
         val processors = mutableListOf<BaseProcessor>()
         if (!spaces.containsKey(session.cursor.procSpace)) {
-            logger.error("Can't find proc space ${session.cursor.procSpace}")
+            logger.error("Can't find procSpace = ${session.cursor.procSpace}")
             return ERROR_MESSAGE(session.sessionId)
         }
         if (spaces.containsKey("")) {
@@ -42,10 +42,11 @@ class ProcessorsManager(
         processors.addAll(spaces[session.cursor.procSpace]!!)
         val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toSet()
         return if (foundProcessors.size > 1) {
-            logger.error("Found more than 1 processor [${session.cursor.procSpace}]")
+            logger.error("Found more than 1 processor \nprocSpace = ${session.cursor.procSpace}" +
+                    "\nprocessors = ${foundProcessors.map { it.name }}")
             ERROR_MESSAGE(session.sessionId)
         } else if (foundProcessors.isEmpty()) {
-            logger.error("Not found any processors [${session.cursor.procSpace}]")
+            logger.error("Not found any processors \nprocSpace = ${session.cursor.procSpace}")
             ERROR_MESSAGE(session.sessionId)
         } else {
             try {

@@ -25,7 +25,7 @@ class ChangeIntervalProcessor : BaseProcessor(
             null,
             Transition(
                 ProcSpace.DEFAULT,
-                "Поменял интервал на каждые ${newInterval} минут",
+                "Поменял интервал на каждые $newInterval минут",
                 KeyboardMarkups.DEFAULT_KEYBOARD
             )
         )

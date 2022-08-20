@@ -21,9 +21,6 @@ repositories {
 
 dependencies {
     implementation(project(":engine", "default"))
-    implementation("com.google.api-client:google-api-client:1.33.0")
-    implementation("com.google.oauth-client:google-oauth-client-jetty:1.32.1")
-    implementation("com.google.apis:google-api-services-sheets:v4-rev20210629-1.32.1")
 }
 
 tasks.withType<KotlinCompile> {

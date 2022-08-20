@@ -6,9 +6,9 @@ import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.processors.data.Transition
 import com.thorinhood.botFarm.engine.sessions.Session
-import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
-import com.thorinhood.botFarm.trainingBot.domain.TimerConfig
+import com.thorinhood.botFarm.trainingBot.domain.LessonConfig
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
+import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
 @Processor
@@ -20,10 +20,10 @@ class StartChangeSizeProcessor : BaseProcessor(
         ProcessResult(
             null,
             Transition(
-                "change_size",
+                ProcSpace.CHANGE_SIZE,
                 "Напиши, сколько вопросов должно быть в одном задании.\n" +
                         "На данный момент я прихожу к тебе с " +
-                        "${(session.args[ArgKey.TIMER_CONFIG] as TimerConfig).size} вопросами",
+                        "${(session.args[ArgKey.LESSON_CONFIG] as LessonConfig).size} вопросами",
                 KeyboardMarkups.CANCEL_KEYBOARD
             )
         )

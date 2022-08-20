@@ -8,5 +8,6 @@ class ProcSpace {
         const val INPUT_GOOGLE_TABLE_SHEET = "input_google_table_sheet"
         const val LESSON = "lesson"
         const val CHANGE_INTERVAL = "change_interval"
+        const val CHANGE_SIZE = "change_size"
     }
 }

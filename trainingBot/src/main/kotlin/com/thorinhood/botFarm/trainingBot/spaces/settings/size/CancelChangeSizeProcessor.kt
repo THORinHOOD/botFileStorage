@@ -9,7 +9,7 @@ import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 @Processor
 class CancelChangeSizeProcessor : BaseCancelProcessor(
     "cancel_change_size",
-    "change_size",
+    ProcSpace.CHANGE_SIZE,
     Transition(
         ProcSpace.DEFAULT,
        "Окей, не будем",

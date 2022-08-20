@@ -23,7 +23,7 @@ class StartChangeIntervalProcessor : BaseProcessor(
                 ProcSpace.CHANGE_INTERVAL,
                 "Напиши, как часто надо приходить к тебе с заданиями (каждые N-минут).\n" +
                         "На данный момент я прихожу к тебе " +
-                        "каждые ${(session.args[ArgKey.TIMER_CONFIG] as TimerConfig).interval}",
+                        "каждые ${(session.args[ArgKey.TIMER_CONFIG] as TimerConfig).interval} минут",
                 KeyboardMarkups.CANCEL_KEYBOARD
             )
         )

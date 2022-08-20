@@ -26,6 +26,6 @@ class WelcomeProcessor : BaseProcessor(
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {
-        private val LABEL = "/start"
+        private const val LABEL = "/start"
     }
 }
