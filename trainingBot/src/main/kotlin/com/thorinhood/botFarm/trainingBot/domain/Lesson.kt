@@ -5,7 +5,5 @@ data class Lesson(
 ) {
     fun hasTask(): Boolean = tasks.isNotEmpty()
     fun getCurrentTask() : Task = tasks.first()
-    fun removeCurrentTask() {
-        tasks.removeAt(0)
-    }
+    fun removeCurrentTask() = tasks.removeAt(0)
 }

@@ -24,11 +24,11 @@ class MemorySessionsService(
     }
 
     override fun updateSession(session: Session<Long>) {
-        if (session is MemorySession<Long>) {
-            allSessions[session.sessionId] = session
-        } else {
-            throw IllegalArgumentException("You use in memory storage but session is not MemorySession")
-        }
+//        if (session is MemorySession<Long>) {
+//            allSessions[session.sessionId] = session
+//        } else {
+//            throw IllegalArgumentException("You use in memory storage but session is not MemorySession")
+//        }
     }
 
     override fun getAllSessions(): List<Session<Long>> = allSessions.values.toList()

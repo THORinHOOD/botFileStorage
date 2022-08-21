@@ -29,7 +29,10 @@ class GoogleTableService(
     private fun makeTask(googleSheet: GoogleSheet): Task {
         val rows = googleSheet.values
         val taskIndex = (1 until rows.size).random()
-        val questionIndex = (0 until rows[taskIndex].size).random()
+        val questionIndex = rows[taskIndex].indices.filter { i ->
+            rows[taskIndex][i].isNotEmpty() &&
+            rows[taskIndex][i].isNotBlank()
+        }.random()
         return Task(
             rows[taskIndex][questionIndex],
             rows[taskIndex].filterIndexed { i, _ ->

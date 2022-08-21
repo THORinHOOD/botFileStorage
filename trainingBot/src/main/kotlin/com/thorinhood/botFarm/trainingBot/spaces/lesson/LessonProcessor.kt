@@ -10,6 +10,7 @@ import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.trainingBot.domain.Lesson
 import com.thorinhood.botFarm.trainingBot.services.LessonService
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
+import com.thorinhood.botFarm.trainingBot.statics.Emojis
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
@@ -22,12 +23,15 @@ class LessonProcessor(
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
         val lesson = session.args[ArgKey.LESSON_CURRENT] as Lesson
         if (lesson.getCurrentTask().answers.contains(update.message()?.text()?.lowercase())) {
-            lesson.removeCurrentTask()
+            val previousTask = lesson.removeCurrentTask()
             if (lesson.hasTask()) {
                 val nextTaskMessage = lessonService.makeCurrentTaskMessage(session.sessionId, lesson)
                 return ProcessResult(
                     listOf(
-                        SendMessage(session.sessionId, "Правильно!"),
+                        SendMessage(
+                            session.sessionId, "Правильно! ${Emojis.SUNGLASSES}" +
+                                    "\n${previousTask.question} - ${previousTask.answers.joinToString("; ")}"
+                        ),
                         nextTaskMessage
                     )
                 )
@@ -37,17 +41,25 @@ class LessonProcessor(
                     null,
                     Transition(
                         ProcSpace.DEFAULT,
-                        "Правильно!\n" + "Ты молодец!\n" + "До следующего задания!",
+                        "Правильно! ${Emojis.SUNGLASSES}" +
+                                "\n${previousTask.question} - ${previousTask.answers.joinToString("; ")}" +
+                                "\nТы молодец! ${Emojis.CLAP}" +
+                                "\nДо следующего задания!",
                         KeyboardMarkups.DEFAULT_KEYBOARD
                     )
                 )
             }
         } else {
-            return ProcessResult(listOf(SendMessage(session.sessionId, "Неправильно, попробуй снова")))
+            return ProcessResult(listOf(
+                SendMessage(
+                    session.sessionId,
+                    "${Emojis.HMM}\nХмм, неправильно, попробуй снова"
+                )
+            ))
         }
     }
 
     override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
         !isUpdateMessageEqualsLabel(update, "Закончить занятие") &&
-        !isUpdateMessageEqualsLabel(update, "Не знаю")
+                !isUpdateMessageEqualsLabel(update, "Не знаю")
 }
