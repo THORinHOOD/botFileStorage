@@ -1,19 +1,20 @@
 ## First look
 
-|                                                                    ***Roughly what it looks like***                                                                     |
-|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|                                                                 ![](documentation/pictures/botFarm.png)                                                                 |
-|                                                                            ***Processors***                                                                             |
-|                                                               ![](documentation/pictures/processors.png)                                                                |
-|                                         They are given a message, the current <br/>session and they do ~~useless~~ useful work.                                         |
-|                                                                         ***Processors Spaces***                                                                         |
-|                                                               ![](documentation/pictures/procSpaces.png)                                                                |
-| They are places where processors live. <br/> When engine decides which processor to take <br/> it will search processors from the proc space <br/> where the cursor is. |
-|                                                                            ***Transition***                                                                             |
-|                                                               ![](documentation/pictures/transition.png)                                                                |
-|                                              Processor after its work can say, in which proc space session cursor will be.                                              |
-
-
+|                                                                   ***Roughly what it looks like***                                                                    |
+|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|                                                                ![](documentation/pictures/botFarm.png)                                                                |
+|                                                                            ***Processor***                                                                            |
+|                                                              ![](documentation/pictures/processors.png)                                                               |
+|                                       It is given a message, the current <br/>user session and it does ~~useless~~ useful work.                                       |
+|                                                                         ***Processor Space***                                                                         |
+|                                                              ![](documentation/pictures/procSpaces.png)                                                               |
+| This is place where processors live. <br/> When engine decides which processor to take <br/> it will search processors from the proc space <br/> where the cursor is. |
+|                                                                           ***Transition***                                                                            |
+|                                                              ![](documentation/pictures/transition.png)                                                               |
+|                                             Processor after its work can say, in which proc space session cursor will be.                                             |
+|                                                                             ***Cursor***                                                                              |
+|                                                                ![](documentation/pictures/cursor.png)                                                                 |
+|        This is the part of user session.<br/>It contains the information about where the user is right now,<br/>which processors should process next message.         |
 ### Build docker image
 
 docker build --build-arg JAR_FILE=build/libs/fileBot-0.0.1.jar -t thorinhood/fileBot .
