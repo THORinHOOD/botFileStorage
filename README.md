@@ -2,7 +2,7 @@
 
 |                                                                   ***Roughly what it looks like***                                                                    |
 |:---------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|                                                                ![](documentation/pictures/botFarm.png)                                                                |
+|                                                                ![](documentation/pictures/botFarmFirstLook.png)                                                                |
 |                                                                            ***Processor***                                                                            |
 |                                                              ![](documentation/pictures/processors.png)                                                               |
 |                                       It is given a message, the current <br/>user session and it does ~~useless~~ useful work.                                       |
