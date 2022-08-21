@@ -15,34 +15,24 @@ class LessonService(
 ) {
 
     fun stopLesson(session: Session<Long>) {
-        session.args.remove(ArgKey.TASK_CURRENT)
         session.args.remove(ArgKey.LESSON_CURRENT)
     }
 
     fun startLesson(session: Session<Long>) : List<BaseRequest<*, *>> {
         session.cursor.procSpace = ProcSpace.LESSON
-        googleTableService.uploadLessonToSession(session)
+        val lesson = googleTableService.uploadLessonToSession(session)
+            ?: throw Exception("Не получилось собрать задание")
         return listOf(
             SendMessage(
                 session.sessionId,
                 "Пора начинать занятие!"
             ).replyMarkup(KeyboardMarkups.LESSON_KEYBOARD),
-            takeNextTask(session)
+            makeCurrentTaskMessage(session.sessionId, lesson)
         )
     }
 
-    fun takeNextTask(session: Session<Long>) : BaseRequest<*, *> {
-        val task = (session.args[ArgKey.LESSON_CURRENT] as Lesson).tasks.poll()
-        session.args[ArgKey.TASK_CURRENT] = task
-        return SendMessage(
-            session.sessionId,
-            "Переведи:\n${task.question}"
-        )
-    }
-
-    fun hasNextTask(session: Session<Long>) : Boolean {
-        val lesson = session.args[ArgKey.LESSON_CURRENT] as Lesson
-        return lesson.tasks.isNotEmpty()
+    fun makeCurrentTaskMessage(sessionId: Long, lesson: Lesson) : BaseRequest<*, *> {
+        return SendMessage(sessionId, "Переведи:\n${lesson.getCurrentTask().question}")
     }
 
 }

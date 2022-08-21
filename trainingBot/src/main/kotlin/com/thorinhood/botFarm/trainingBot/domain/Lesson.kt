@@ -1,7 +1,11 @@
 package com.thorinhood.botFarm.trainingBot.domain
 
-import java.util.Queue
-
 data class Lesson(
-    val tasks: Queue<Task>
-)
+    var tasks: MutableList<Task>
+) {
+    fun hasTask(): Boolean = tasks.isNotEmpty()
+    fun getCurrentTask() : Task = tasks.first()
+    fun removeCurrentTask() {
+        tasks.removeAt(0)
+    }
+}

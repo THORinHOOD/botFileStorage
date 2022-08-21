@@ -14,14 +14,16 @@ class GoogleTableService(
     private val googleTableApiKey: String
 ) {
 
-    fun <ID> uploadLessonToSession(session: Session<ID>) =
+    fun uploadLessonToSession(session: Session<Long>) : Lesson? =
         getGoogleSheet(session)?.let { sheet ->
             val size = (session.args[ArgKey.LESSON_CONFIG] as LessonConfig).size
-            session.args[ArgKey.LESSON_CURRENT] = Lesson(
+            val lesson = Lesson(
                 (0 until size)
                     .map { makeTask(sheet) }
                     .toCollection(LinkedList())
             )
+            session.args[ArgKey.LESSON_CURRENT] = lesson
+            return lesson
         }
 
     private fun makeTask(googleSheet: GoogleSheet): Task {

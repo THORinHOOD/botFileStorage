@@ -6,7 +6,7 @@ import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.sessions.Session
-import com.thorinhood.botFarm.trainingBot.domain.Task
+import com.thorinhood.botFarm.trainingBot.domain.Lesson
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
@@ -16,8 +16,8 @@ class IDKProcessor : BaseProcessor(
     ProcSpace.LESSON
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
-        val task = session.args[ArgKey.TASK_CURRENT] as Task
-        val answer = task.answers[0]
+        val lesson = session.args[ArgKey.LESSON_CURRENT] as Lesson
+        val answer = (lesson.getCurrentTask().answers).first()
         val blank = answer.indices.random()
         val hint = answer.mapIndexed { i, symbol -> if (i == blank) "_" else symbol }.joinToString()
         return ProcessResult(

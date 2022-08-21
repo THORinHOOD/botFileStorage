@@ -7,7 +7,7 @@ import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.processors.data.Transition
 import com.thorinhood.botFarm.engine.sessions.Session
-import com.thorinhood.botFarm.trainingBot.domain.Task
+import com.thorinhood.botFarm.trainingBot.domain.Lesson
 import com.thorinhood.botFarm.trainingBot.services.LessonService
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
@@ -20,10 +20,11 @@ class LessonProcessor(
     "lesson", ProcSpace.LESSON
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
-        val task = session.args[ArgKey.TASK_CURRENT] as Task
-        if (task.answers.contains(update.message()?.text()?.lowercase())) {
-            if (lessonService.hasNextTask(session)) {
-                val nextTaskMessage = lessonService.takeNextTask(session)
+        val lesson = session.args[ArgKey.LESSON_CURRENT] as Lesson
+        if (lesson.getCurrentTask().answers.contains(update.message()?.text()?.lowercase())) {
+            lesson.removeCurrentTask()
+            if (lesson.hasTask()) {
+                val nextTaskMessage = lessonService.makeCurrentTaskMessage(session.sessionId, lesson)
                 return ProcessResult(
                     listOf(
                         SendMessage(session.sessionId, "Правильно!"),

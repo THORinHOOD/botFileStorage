@@ -23,6 +23,12 @@ docker exec -it mongo-container bash
 
 mongo -u root_user -p password
 
+show dbs
+
+use ...
+
+show collections
+
 ### Sessions storages 
 
 available two ways: mongo and in memory
