@@ -1,3 +1,19 @@
+## First look
+
+|                                                                    ***Roughly what it looks like***                                                                     |
+|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|                                                                 ![](documentation/pictures/botFarm.png)                                                                 |
+|                                                                            ***Processors***                                                                             |
+|                                                               ![](documentation/pictures/processors.png)                                                                |
+|                                         They are given a message, the current <br/>session and they do ~~useless~~ useful work.                                         |
+|                                                                         ***Processors Spaces***                                                                         |
+|                                                               ![](documentation/pictures/procSpaces.png)                                                                |
+| They are places where processors live. <br/> When engine decides which processor to take <br/> it will search processors from the proc space <br/> where the cursor is. |
+|                                                                            ***Transition***                                                                             |
+|                                                               ![](documentation/pictures/transition.png)                                                                |
+|                                              Processor after its work can say, in which proc space session cursor will be.                                              |
+
+
 ### Build docker image
 
 docker build --build-arg JAR_FILE=build/libs/fileBot-0.0.1.jar -t thorinhood/fileBot .
