@@ -11,6 +11,7 @@ import com.thorinhood.botFarm.trainingBot.domain.TimerConfig
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
+import java.sql.Timestamp
 
 @Processor
 class InputGoogleTableSheetProcessor : BaseProcessor(
@@ -19,7 +20,7 @@ class InputGoogleTableSheetProcessor : BaseProcessor(
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
         session.args[ArgKey.GOOGLE_TABLE_SHEET] = update.message()?.text() ?: throw Exception("Попробуй ещё раз")
-        session.args[ArgKey.TIMER_CONFIG] = TimerConfig(60, 0)
+        session.args[ArgKey.TIMER_CONFIG] = TimerConfig.makeNew(60)
         session.args[ArgKey.LESSON_CONFIG] = LessonConfig(10)
         return ProcessResult(
             null,

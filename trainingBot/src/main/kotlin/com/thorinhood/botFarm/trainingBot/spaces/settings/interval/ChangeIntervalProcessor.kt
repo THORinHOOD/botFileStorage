@@ -18,9 +18,9 @@ class ChangeIntervalProcessor : BaseProcessor(
 ) {
 
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
-        val newInterval = update.message()?.text()?.toInt() ?: throw Exception("Попробуй ещё раз")
+        val newInterval = update.message()?.text()?.toLong() ?: throw Exception("Попробуй ещё раз")
         val timerConfig = session.args[ArgKey.TIMER_CONFIG] as TimerConfig
-        timerConfig.interval = newInterval
+        timerConfig.changeInterval(newInterval)
         return ProcessResult(
             null,
             Transition(
