@@ -1,11 +1,11 @@
 package com.thorinhood.botFarm.trainingBot.domain
 
-import java.sql.Timestamp
+import java.util.Date
 
 data class TimerConfig(
     var interval: Long,
-    var from: Timestamp,
-    var to: Timestamp
+    var from: Date,
+    var to: Date
 ) {
 
     fun changeInterval(interval: Long) {
@@ -15,8 +15,8 @@ data class TimerConfig(
         to.time = currentMillis + interval * 60 * 1000
     }
 
-    fun checkAndUpdate(currentTimestamp: Timestamp) : Boolean {
-        return if (currentTimestamp.after(to) || currentTimestamp.equals(to)) {
+    fun checkAndUpdate(currentTimestamp: Date) : Boolean {
+        return if (currentTimestamp.after(to) || currentTimestamp == to) {
             from.time = to.time
             to.time = from.time + interval * 60 * 1000
             true
@@ -30,8 +30,8 @@ data class TimerConfig(
             val currentMillis = System.currentTimeMillis()
             return TimerConfig(
                 interval,
-                Timestamp(currentMillis),
-                Timestamp(currentMillis + interval * 60 * 1000)
+                Date(currentMillis),
+                Date(currentMillis + interval * 60 * 1000)
             )
         }
     }

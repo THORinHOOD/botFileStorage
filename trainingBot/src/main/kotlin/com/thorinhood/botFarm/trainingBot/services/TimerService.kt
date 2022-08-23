@@ -7,7 +7,7 @@ import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import java.sql.Timestamp
+import java.util.Date
 
 @Service
 class TimerService(
@@ -17,7 +17,7 @@ class TimerService(
 ) {
     @Scheduled(fixedRate = 1000 * 60)
     fun tick() {
-        val currentTimestamp = Timestamp(System.currentTimeMillis())
+        val currentTimestamp = Date(System.currentTimeMillis())
         sessionsService.getAllSessions().forEach { session ->
             if (session.hasArg(ArgKey.TIMER_CONFIG) &&
                 session.cursor.procSpace == ProcSpace.DEFAULT) {
