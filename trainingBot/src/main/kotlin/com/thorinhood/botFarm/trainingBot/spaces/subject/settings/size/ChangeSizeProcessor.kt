@@ -1,4 +1,4 @@
-package com.thorinhood.botFarm.trainingBot.spaces.settings.interval
+package com.thorinhood.botFarm.trainingBot.spaces.subject.settings.size
 
 import com.pengrad.telegrambot.model.Update
 import com.thorinhood.botFarm.engine.processors.BaseProcessor
@@ -6,27 +6,28 @@ import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.processors.data.Transition
 import com.thorinhood.botFarm.engine.sessions.Session
-import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
-import com.thorinhood.botFarm.trainingBot.domain.TimerConfig
+import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
+import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
 @Processor
-class ChangeIntervalProcessor : BaseProcessor(
-    "change_interval",
-    ProcSpace.CHANGE_INTERVAL
+class ChangeSizeProcessor : BaseProcessor(
+    "change_size",
+    ProcSpace.CHANGE_SIZE
 ) {
 
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
-        val newInterval = update.message()?.text()?.toLong() ?: throw Exception("Попробуй ещё раз")
-        val timerConfig = session.args[ArgKey.TIMER_CONFIG] as TimerConfig
-        timerConfig.changeInterval(newInterval)
+        val newSize = update.message()?.text()?.toInt() ?: throw Exception("Попробуй ещё раз")
+        @Suppress("UNCHECKED_CAST")
+        val subjects = session.args[ArgKey.SUBJECTS] as AllSubjects
+        subjects[session.args[ArgKey.SELECTED_SUBJECT]]!!.lessonSize = newSize
         return ProcessResult(
             null,
             Transition(
-                ProcSpace.DEFAULT,
-                "Поменял интервал на каждые $newInterval минут",
-                KeyboardMarkups.DEFAULT_KEYBOARD
+                ProcSpace.IN_SUBJECT,
+                "Теперь в каждом занятии будет $newSize вопросов",
+                KeyboardMarkups.SUBJECT_KEYBOARD
             )
         )
     }

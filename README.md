@@ -61,4 +61,4 @@ spring.profiles.active=memory
 
 ### Engine properties
 
-engine.cursor.procSpace.init=<text> - initial procSpace for new cursor (new user)
+engine.procSpace.init=<text> - initial procSpace for new cursor (new user)

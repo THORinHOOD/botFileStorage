@@ -7,6 +7,7 @@ data class TimerConfig(
     var from: Date,
     var to: Date
 ) {
+    constructor(now: Date) : this(interval = 60, from = now, to = Date(now.time + 60))
 
     fun changeInterval(interval: Long) {
         this.interval = interval

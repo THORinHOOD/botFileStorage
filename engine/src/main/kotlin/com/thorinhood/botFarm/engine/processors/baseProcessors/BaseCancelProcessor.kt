@@ -16,7 +16,7 @@ abstract class BaseCancelProcessor(
         session: Session<Long>,
         update: Update
     ): ProcessResult {
-        return ProcessResult(null, transition, null)
+        return ProcessResult(null, transition)
     }
 
     override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =

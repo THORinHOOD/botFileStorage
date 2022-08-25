@@ -1,8 +1,6 @@
-package com.thorinhood.botFarm.trainingBot.spaces.lesson
+package com.thorinhood.botFarm.trainingBot.spaces.subject.lesson
 
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.model.request.KeyboardButton
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
@@ -17,7 +15,7 @@ class StartLessonProcessor(
     private val lessonService: LessonService
 ) : BaseProcessor(
     "start_lesson",
-    ProcSpace.DEFAULT
+    ProcSpace.IN_SUBJECT
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult =
         ProcessResult(

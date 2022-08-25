@@ -1,4 +1,4 @@
-package com.thorinhood.botFarm.trainingBot.spaces.lesson
+package com.thorinhood.botFarm.trainingBot.spaces.subject.lesson
 
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SendMessage
@@ -21,7 +21,7 @@ class LessonProcessor(
     "lesson", ProcSpace.LESSON
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
-        val lesson = session.args[ArgKey.LESSON_CURRENT] as Lesson
+        val lesson = session.args[ArgKey.LESSON] as Lesson
         if (lesson.getCurrentTask().answers.contains(update.message()?.text()?.lowercase())) {
             val previousTask = lesson.removeCurrentTask()
             if (lesson.hasTask()) {
@@ -36,7 +36,7 @@ class LessonProcessor(
                     )
                 )
             } else {
-                lessonService.stopLesson(session)
+                session.args.remove(ArgKey.LESSON)
                 return ProcessResult(
                     null,
                     Transition(
@@ -46,7 +46,7 @@ class LessonProcessor(
                                 "\nТы молодец! ${Emojis.CLAP}" +
                                 "\nДо следующего задания!",
                         KeyboardMarkups.DEFAULT_KEYBOARD
-                    )
+                    ) { innerSession -> innerSession.args.remove(ArgKey.SELECTED_SUBJECT) }
                 )
             }
         } else {

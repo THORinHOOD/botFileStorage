@@ -1,4 +1,4 @@
-package com.thorinhood.botFarm.trainingBot.spaces.settings.interval
+package com.thorinhood.botFarm.trainingBot.spaces.subject.settings.size
 
 import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.baseProcessors.BaseCancelProcessor
@@ -7,12 +7,12 @@ import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
 @Processor
-class CancelChangeIntervalProcessor : BaseCancelProcessor(
-    "cancel_change_interval",
-    ProcSpace.CHANGE_INTERVAL,
+class CancelChangeSizeProcessor : BaseCancelProcessor(
+    "cancel_change_size",
+    ProcSpace.CHANGE_SIZE,
     Transition(
-        ProcSpace.DEFAULT,
+        ProcSpace.IN_SUBJECT,
        "Окей, не будем",
-       KeyboardMarkups.DEFAULT_KEYBOARD
+       KeyboardMarkups.SUBJECT_KEYBOARD
     )
 )

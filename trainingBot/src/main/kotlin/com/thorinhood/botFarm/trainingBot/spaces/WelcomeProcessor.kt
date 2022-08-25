@@ -7,6 +7,7 @@ import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.processors.data.Transition
 import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.trainingBot.statics.Emojis
+import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
 @Processor
@@ -18,8 +19,9 @@ class WelcomeProcessor : BaseProcessor(
         ProcessResult(
             null,
             Transition(
-                ProcSpace.INPUT_GOOGLE_TABLE_ID,
-                "Привет! ${Emojis.HAND_WAVE}\nПришли пожалуйста id google таблицы"
+                ProcSpace.DEFAULT,
+                "Привет! ${Emojis.HAND_WAVE}",
+                KeyboardMarkups.DEFAULT_KEYBOARD
             )
         )
 

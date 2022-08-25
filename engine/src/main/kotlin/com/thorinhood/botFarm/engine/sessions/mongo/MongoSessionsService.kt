@@ -1,13 +1,9 @@
 package com.thorinhood.botFarm.engine.sessions.mongo
 
 import com.pengrad.telegrambot.model.Update
-import com.thorinhood.botFarm.configs.MainConfig
 
-import com.thorinhood.botFarm.engine.sessions.Cursor
 import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.engine.sessions.SessionsService
-import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Service
 
 class MongoSessionsService(
     private val mongoSessionRepository: MongoSessionRepository,
@@ -20,7 +16,7 @@ class MongoSessionsService(
             mongoSessionRepository.save(
                 MongoSession(
                     chatId,
-                    Cursor(cursorProcSpaceInit),
+                    cursorProcSpaceInit,
                     mutableMapOf()
                 )
             )

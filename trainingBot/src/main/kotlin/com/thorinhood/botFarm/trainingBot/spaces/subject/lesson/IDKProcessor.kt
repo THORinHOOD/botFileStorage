@@ -1,4 +1,4 @@
-package com.thorinhood.botFarm.trainingBot.spaces.lesson
+package com.thorinhood.botFarm.trainingBot.spaces.subject.lesson
 
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SendMessage
@@ -16,7 +16,7 @@ class IDKProcessor : BaseProcessor(
     ProcSpace.LESSON
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
-        val lesson = session.args[ArgKey.LESSON_CURRENT] as Lesson
+        val lesson = session.args[ArgKey.LESSON] as Lesson
         val answer = (lesson.getCurrentTask().answers).first()
         val blank = answer.indices.random()
         val hint = answer.mapIndexed { i, symbol -> if (i == blank) "_" else symbol }.joinToString()

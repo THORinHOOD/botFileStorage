@@ -32,21 +32,21 @@ class ProcessorsManager(
     fun process(update: Update): List<BaseRequest<*, *>> {
         val session = sessionsService.getSession(update)
         val processors = mutableListOf<BaseProcessor>()
-        if (!spaces.containsKey(session.cursor.procSpace)) {
-            logger.error("Can't find procSpace = ${session.cursor.procSpace}")
+        if (!spaces.containsKey(session.procSpace)) {
+            logger.error("Can't find procSpace = ${session.procSpace}")
             return ERROR_MESSAGE(session.sessionId)
         }
         if (spaces.containsKey("")) {
             processors.addAll(spaces[""]!!)
         }
-        processors.addAll(spaces[session.cursor.procSpace]!!)
+        processors.addAll(spaces[session.procSpace]!!)
         val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toSet()
         return if (foundProcessors.size > 1) {
-            logger.error("Found more than 1 processor \nprocSpace = ${session.cursor.procSpace}" +
+            logger.error("Found more than 1 processor \nprocSpace = ${session.procSpace}" +
                     "\nprocessors = ${foundProcessors.map { it.name }}")
             ERROR_MESSAGE(session.sessionId)
         } else if (foundProcessors.isEmpty()) {
-            logger.error("Not found any processors \nprocSpace = ${session.cursor.procSpace}")
+            logger.error("Not found any processors \nprocSpace = ${session.procSpace}")
             ERROR_MESSAGE(session.sessionId)
         } else {
             try {

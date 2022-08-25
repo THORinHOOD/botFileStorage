@@ -8,13 +8,12 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import java.time.Duration
 
 @Configuration
 class MainConfig(
-    @Value("\${engine.cursor.procSpace.init}") val cursorProcSpaceInit: String
+    @Value("\${engine.procSpace.init}") val procSpaceInit: String
 ) {
 
     @Profile("mongo")
@@ -22,13 +21,13 @@ class MainConfig(
     fun mongoSessionsService(mongoSessionRepository: MongoSessionRepository) : MongoSessionsService =
         MongoSessionsService(
             mongoSessionRepository,
-            cursorProcSpaceInit
+            procSpaceInit
         )
 
     @Profile("memory")
     @Bean
     fun memorySessionsService() : MemorySessionsService =
-        MemorySessionsService(cursorProcSpaceInit)
+        MemorySessionsService(procSpaceInit)
 
     @Bean
     fun restTemplate() : RestTemplate = RestTemplateBuilder()

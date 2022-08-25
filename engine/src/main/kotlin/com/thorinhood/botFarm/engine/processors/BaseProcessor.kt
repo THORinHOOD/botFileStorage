@@ -19,19 +19,16 @@ abstract class BaseProcessor(
             result.transition.preTransitionAction?.let {
                 it(session)
             }
-            session.cursor.procSpace = result.transition.procSpace
+            session.procSpace = result.transition.procSpace
             result.transition.makeMessage(session.sessionId)?.let {
                 messages.add(0, it)
-            }
-            if (result.args != null) {
-                session.cursor.args.putAll(result.args)
             }
         }
         return messages
     }
 
     fun isThisProcessor(session: Session<Long>, update: Update) : Boolean {
-        if (session.cursor.procSpace != procSpace && procSpace != "") {
+        if (session.procSpace != procSpace && procSpace != "") {
             return false
         }
         return isThisProcessorInner(session, update)
