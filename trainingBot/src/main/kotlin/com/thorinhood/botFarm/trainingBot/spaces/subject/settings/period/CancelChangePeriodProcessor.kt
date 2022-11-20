@@ -1,4 +1,4 @@
-package com.thorinhood.botFarm.trainingBot.spaces.subject.settings.interval
+package com.thorinhood.botFarm.trainingBot.spaces.subject.settings.period
 
 import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.baseProcessors.BaseCancelProcessor
