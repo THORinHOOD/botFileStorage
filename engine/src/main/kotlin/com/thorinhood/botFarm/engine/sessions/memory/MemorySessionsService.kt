@@ -12,23 +12,21 @@ class MemorySessionsService(
     private val allSessions: MutableMap<Long, MemorySession<Long>> = mutableMapOf()
 
     override fun getSession(update: Update): Session<Long> {
-        val chatId = extractSessionId(update)
-        return allSessions.computeIfAbsent(chatId) {
+        val sessionId = extractSessionId(update)
+        return getSession(sessionId)
+    }
+
+    override fun getSession(sessionId: Long): Session<Long> {
+        return allSessions.computeIfAbsent(sessionId) {
             MemorySession(
-                chatId,
+                sessionId,
                 procSpaceInit,
                 mutableMapOf()
             )
         }
     }
 
-    override fun updateSession(session: Session<Long>) {
-//        if (session is MemorySession<Long>) {
-//            allSessions[session.sessionId] = session
-//        } else {
-//            throw IllegalArgumentException("You use in memory storage but session is not MemorySession")
-//        }
-    }
+    override fun updateSession(session: Session<Long>) { }
 
     override fun getAllSessions(): List<Session<Long>> = allSessions.values.toList()
 

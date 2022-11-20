@@ -21,7 +21,7 @@ class LessonProcessor(
     "lesson", ProcSpace.LESSON
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
-        val lesson = session.args[ArgKey.LESSON] as Lesson
+        val lesson : Lesson = session[ArgKey.LESSON]
         if (lesson.getCurrentTask().answers.contains(update.message()?.text()?.lowercase())) {
             val previousTask = lesson.removeCurrentTask()
             if (lesson.hasTask()) {
@@ -36,7 +36,7 @@ class LessonProcessor(
                     )
                 )
             } else {
-                session.args.remove(ArgKey.LESSON)
+                session.remove(ArgKey.LESSON)
                 return ProcessResult(
                     null,
                     Transition(
@@ -44,9 +44,9 @@ class LessonProcessor(
                         "Правильно! ${Emojis.SUNGLASSES}" +
                                 "\n${previousTask.question} - ${previousTask.answers.joinToString("; ")}" +
                                 "\nТы молодец! ${Emojis.CLAP}" +
-                                "\nДо следующего задания!",
+                                "\nДо следующего занятия!",
                         KeyboardMarkups.DEFAULT_KEYBOARD
-                    ) { innerSession -> innerSession.args.remove(ArgKey.SELECTED_SUBJECT) }
+                    ) { innerSession -> innerSession.remove(ArgKey.SELECTED_SUBJECT) }
                 )
             }
         } else {

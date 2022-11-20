@@ -17,7 +17,7 @@ class InputSubjectGoogleTableIdProcessor : BaseProcessor(
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
         val googleTableId = update.message()?.text() ?: throw Exception("Попробуй ещё раз")
-        (session.args[ArgKey.SUBJECT_BUILDER] as Subject.Builder).googleTableId(googleTableId)
+        (session.get<Subject.Builder>(ArgKey.SUBJECT_BUILDER)).googleTableId(googleTableId)
         return ProcessResult(
             null,
             Transition(

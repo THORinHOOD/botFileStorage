@@ -11,11 +11,15 @@ class MongoSessionsService(
 ) : SessionsService {
 
     override fun getSession(update: Update) : Session<Long> {
-        val chatId = extractSessionId(update)
-        return mongoSessionRepository.findById(chatId).orElseGet {
+        val sessionId = extractSessionId(update)
+        return getSession(sessionId)
+    }
+
+    override fun getSession(sessionId: Long): Session<Long> {
+        return mongoSessionRepository.findById(sessionId).orElseGet {
             mongoSessionRepository.save(
                 MongoSession(
-                    chatId,
+                    sessionId,
                     cursorProcSpaceInit,
                     mutableMapOf()
                 )

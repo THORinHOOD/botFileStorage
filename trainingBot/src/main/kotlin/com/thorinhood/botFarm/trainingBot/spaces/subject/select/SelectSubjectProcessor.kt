@@ -29,8 +29,7 @@ class SelectSubjectProcessor : BaseProcessor(
                 )
             )
         }
-        @Suppress("UNCHECKED_CAST")
-        val subjects = session.args[ArgKey.SUBJECTS] as AllSubjects
+        val subjects = session.get<AllSubjects>(ArgKey.SUBJECTS)
         if (!subjects.containsKey(subjectName)) {
             return ProcessResult(
                 null,

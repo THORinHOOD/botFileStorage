@@ -6,6 +6,8 @@ interface SessionsService {
 
     fun getSession(update: Update) : Session<Long>
 
+    fun getSession(sessionId: Long) : Session<Long>
+
     fun updateSession(session: Session<Long>)
 
     fun extractSessionId(update: Update) : Long =

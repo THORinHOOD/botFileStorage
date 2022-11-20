@@ -6,15 +6,9 @@ class Subject(
     var name: String,
     var googleTableId: String,
     var googleTableSheet: String,
-    var timerConfig: TimerConfig,
+    var scheduleConfig: ScheduleConfig,
     var lessonSize: Int = 10
 ) {
-    constructor(builder: Builder, interval: Long) : this(
-        builder.name,
-        builder.googleTableId,
-        builder.googleTableSheet,
-        TimerConfig.makeNew(interval)
-    )
 
     class Builder {
         var name: String = ""
@@ -23,8 +17,16 @@ class Subject(
             private set
         var googleTableSheet: String = ""
             private set
+
+        var scheduleConfig: ScheduleConfig = ScheduleConfig("", -1)
+            private set
+
         fun name(name: String) = apply { this.name = name }
         fun googleTableId(googleTableId: String) = apply { this.googleTableId = googleTableId }
         fun googleTableSheet(googleTableSheet: String) = apply { this.googleTableSheet = googleTableSheet }
+
+        fun scheduleConfig(scheduleConfig: ScheduleConfig) = apply { this.scheduleConfig = scheduleConfig }
+
+        fun build() = Subject(name, googleTableId, googleTableSheet, scheduleConfig)
     }
 }

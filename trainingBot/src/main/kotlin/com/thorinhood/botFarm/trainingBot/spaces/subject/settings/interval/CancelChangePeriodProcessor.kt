@@ -7,9 +7,9 @@ import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
 @Processor
-class CancelChangeIntervalProcessor : BaseCancelProcessor(
-    "cancel_change_interval",
-    ProcSpace.CHANGE_INTERVAL,
+class CancelChangePeriodProcessor : BaseCancelProcessor(
+    "cancel_change_period",
+    ProcSpace.CHANGE_PERIOD,
     Transition(
         ProcSpace.IN_SUBJECT,
        "Окей, не будем",

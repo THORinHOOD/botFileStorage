@@ -19,16 +19,15 @@ class LessonService(
 ) {
 
     fun startLesson(session: Session<Long>) : List<BaseRequest<*, *>> {
-        @Suppress("UNCHECKED_CAST")
-        val subjects = session.args[ArgKey.SUBJECTS] as AllSubjects
-        val subject = subjects[session.args[ArgKey.SELECTED_SUBJECT]]!!
+        val subjects = session.get<AllSubjects>(ArgKey.SUBJECTS)
+        val subject = subjects[session[ArgKey.SELECTED_SUBJECT]]!!
         return startLesson(session, subject)
     }
 
     fun startLesson(session: Session<Long>, subject: Subject) : List<BaseRequest<*, *>> {
         session.procSpace = ProcSpace.LESSON
         val lesson = makeLesson(subject) ?: throw Exception("Не получилось собрать задание")
-        session.args[ArgKey.LESSON] = lesson
+        session[ArgKey.LESSON] = lesson
         return listOf(
             SendMessage(
                 session.sessionId,

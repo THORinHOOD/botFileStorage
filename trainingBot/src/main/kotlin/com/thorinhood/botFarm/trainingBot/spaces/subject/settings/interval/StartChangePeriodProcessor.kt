@@ -12,26 +12,25 @@ import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 
 @Processor
-class ChangeIntervalProcessor : BaseProcessor(
-    "change_interval",
-    ProcSpace.CHANGE_INTERVAL
+class StartChangePeriodProcessor : BaseProcessor(
+    "start_change_period",
+    ProcSpace.IN_SUBJECT
 ) {
-
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
-        val newInterval = update.message()?.text()?.toLong() ?: throw Exception("Попробуй ещё раз")
-        @Suppress("UNCHECKED_CAST")
-        val subjects = session.args[ArgKey.SUBJECTS] as AllSubjects
-        subjects[session.args[ArgKey.SELECTED_SUBJECT]]!!.timerConfig.changeInterval(newInterval)
+        val subjects = session.get<AllSubjects>(ArgKey.SUBJECTS)
+        val milliseconds = subjects[session[ArgKey.SELECTED_SUBJECT]]!!.scheduleConfig.period
         return ProcessResult(
             null,
             Transition(
-                ProcSpace.IN_SUBJECT,
-                "Поменял интервал на каждые $newInterval минут",
-                KeyboardMarkups.SUBJECT_KEYBOARD
+                ProcSpace.CHANGE_PERIOD,
+                "Напиши, как часто надо приходить к тебе с заданиями (каждые N-минут).\n" +
+                        "На данный момент я прихожу к тебе " +
+                        "каждые ${milliseconds/1000/60} минут",
+                KeyboardMarkups.CANCEL_KEYBOARD
             )
         )
     }
 
     override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
-        isNotCancel(update)
+        isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Изменить интервал выдачи заданий")
 }

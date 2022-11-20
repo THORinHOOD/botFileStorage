@@ -10,7 +10,7 @@ class ProcSpace {
         const val SELECT_SUBJECT = "select_subject"
         const val IN_SUBJECT = "in_subject"
         const val LESSON = "lesson"
-        const val CHANGE_INTERVAL = "change_interval"
+        const val CHANGE_PERIOD = "change_period"
         const val CHANGE_SIZE = "change_size"
     }
 }

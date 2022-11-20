@@ -8,6 +8,4 @@ import org.springframework.data.mongodb.core.mapping.Document
 class MongoSession<ID>(
     @Id override val sessionId: ID,
     override var procSpace: String,
-    override val args: MutableMap<String, Any>) : Session<ID> {
-    override fun hasArg(argKey: String): Boolean = args.containsKey(argKey)
-}
+    override val args: MutableMap<String, Any>) : Session<ID>

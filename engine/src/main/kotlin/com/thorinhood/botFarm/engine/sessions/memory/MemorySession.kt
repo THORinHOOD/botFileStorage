@@ -6,6 +6,4 @@ class MemorySession<ID>(
     override val sessionId: ID,
     override var procSpace: String,
     override val args: MutableMap<String, Any>
-) : Session<ID> {
-    override fun hasArg(argKey: String): Boolean = args.containsKey(argKey)
-}
+) : Session<ID>
