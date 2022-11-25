@@ -47,11 +47,12 @@ class ProcessorsManager(
             ERROR_MESSAGE(session.sessionId)
         } else if (foundProcessors.isEmpty()) {
             logger.error("Not found any processors \nprocSpace = ${session.procSpace}")
-            ERROR_MESSAGE(session.sessionId)
+            listOf(SendMessage(session.sessionId, "Что-то я тебя не понимаю"))
         } else {
             try {
-                val result = foundProcessors.first().process(session, update)
-                sessionsService.updateSession(session)
+                val result = foundProcessors.first().process(session, update) {
+                    sessionsService.updateSession(it)
+                }
                 result
             } catch(e: Exception) {
                 error(e)
@@ -66,6 +67,6 @@ class ProcessorsManager(
     }
 
     companion object {
-        private fun ERROR_MESSAGE(chatId: Long) = listOf(SendMessage(chatId, "Что-то пошло не так"))
+        private fun ERROR_MESSAGE(sessionId: Long) = listOf(SendMessage(sessionId, "Что-то пошло не так"))
     }
 }

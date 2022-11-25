@@ -18,7 +18,8 @@ class StartChangePeriodProcessor : BaseProcessor(
 ) {
     override fun processInner(session: Session<Long>, update: Update): ProcessResult {
         val subjects = session.get<AllSubjects>(ArgKey.SUBJECTS)
-        val milliseconds = subjects[session[ArgKey.SELECTED_SUBJECT]]!!.scheduleConfig.period
+        val subject = subjects[session[ArgKey.SELECTED_SUBJECT]]!!
+        val milliseconds = subject.scheduleConfig.period
         return ProcessResult(
             null,
             Transition(

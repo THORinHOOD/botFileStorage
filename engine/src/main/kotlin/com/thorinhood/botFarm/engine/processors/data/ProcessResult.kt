@@ -1,10 +1,12 @@
 package com.thorinhood.botFarm.engine.processors.data
 
-import com.pengrad.telegrambot.request.BaseRequest
+import com.thorinhood.botFarm.configs.TelegramMessage
+import com.thorinhood.botFarm.engine.sessions.Session
 
 class ProcessResult(
-    val messages: List<BaseRequest<*, *>>?,
+    val messages: List<TelegramMessage>?,
     val transition: Transition? = null,
+    val postProcessAction: ((Session<Long>) -> Unit)? = null
 ) {
 
     fun merge(processResult: ProcessResult) : ProcessResult {

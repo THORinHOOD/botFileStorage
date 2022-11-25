@@ -1,4 +1,4 @@
-package com.thorinhood.botFarm.trainingBot.domain
+package com.thorinhood.botFarm.engine.scheduling
 
 data class ScheduleConfig(
     var taskId: String,

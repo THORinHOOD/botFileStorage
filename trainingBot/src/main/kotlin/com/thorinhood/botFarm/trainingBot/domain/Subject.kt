@@ -1,8 +1,10 @@
 package com.thorinhood.botFarm.trainingBot.domain
 
+import com.thorinhood.botFarm.engine.scheduling.ScheduleConfig
+
 typealias AllSubjects = MutableMap<String, Subject>
 
-class Subject(
+data class Subject(
     var name: String,
     var googleTableId: String,
     var googleTableSheet: String,

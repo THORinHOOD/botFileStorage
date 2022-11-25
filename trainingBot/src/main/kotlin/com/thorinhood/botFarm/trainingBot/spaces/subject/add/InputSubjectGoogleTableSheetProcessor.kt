@@ -6,7 +6,7 @@ import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.processors.data.Transition
 import com.thorinhood.botFarm.engine.sessions.Session
-import com.thorinhood.botFarm.trainingBot.domain.ScheduleConfig
+import com.thorinhood.botFarm.engine.scheduling.ScheduleConfig
 import com.thorinhood.botFarm.trainingBot.domain.Subject
 import com.thorinhood.botFarm.trainingBot.services.SubjectService
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
@@ -32,7 +32,6 @@ class InputSubjectGoogleTableSheetProcessor(
         ).build()
         allSubjects[subject.name] = subject
         session.remove(ArgKey.SUBJECT_BUILDER)
-        subjectService.scheduleSubject(session, subject)
         return ProcessResult(
             null,
             Transition(
@@ -41,7 +40,7 @@ class InputSubjectGoogleTableSheetProcessor(
                         "Добавлен новый предмет!",
                 KeyboardMarkups.DEFAULT_KEYBOARD
             )
-        )
+        ) { subjectService.scheduleSubject(it, subject) }
     }
 
     override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =

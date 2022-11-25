@@ -24,6 +24,7 @@ docker push thorinhood/fileBot
 ### Run docker container
 
 docker run -d -p 8080:8080 -p 8090:8090 -v "path to logs in machine":/logs thorinhood/fileBot
+
 docker run -d -p 8080:8080 -p 8090:8090 -v ~/logs:/logs thorinhood/trainingbot
 
 (from container to container add: --network="host")
