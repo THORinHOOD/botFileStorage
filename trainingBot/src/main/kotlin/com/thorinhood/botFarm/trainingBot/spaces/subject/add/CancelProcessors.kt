@@ -16,3 +16,25 @@ class CancelInputSubjectNameProcessor : BaseCancelProcessor(
         KeyboardMarkups.SUBJECT_KEYBOARD
     )
 )
+
+@Processor
+class CancelInputSubjectGoogleTableIdProcessor: BaseCancelProcessor(
+    "cancel_input_google_table_id",
+    ProcSpace.INPUT_SUBJECT_GOOGLE_TABLE_ID,
+    Transition(
+        ProcSpace.DEFAULT,
+        "Окей, не будем",
+        KeyboardMarkups.SUBJECT_KEYBOARD
+    )
+)
+
+@Processor
+class CancelInputSubjectGoogleTableSheetProcessor: BaseCancelProcessor(
+    "cancel_input_google_table_sheet",
+    ProcSpace.INPUT_SUBJECT_GOOGLE_TABLE_SHEET,
+    Transition(
+        ProcSpace.DEFAULT,
+        "Окей, не будем",
+        KeyboardMarkups.SUBJECT_KEYBOARD
+    )
+)
