@@ -3,6 +3,7 @@ package com.thorinhood.botFarm.engine
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.UpdatesListener
 import com.pengrad.telegrambot.model.Update
+import com.pengrad.telegrambot.request.GetUpdates
 import com.thorinhood.botFarm.configs.TelegramMessage
 import com.thorinhood.botFarm.engine.messages.MsgSender
 import com.thorinhood.botFarm.engine.processors.ProcessorsManager
@@ -16,7 +17,7 @@ class ChatBot(private val msgSender: MsgSender<TelegramMessage>,
 ) : UpdatesListener, Logging {
 
     init {
-        telegramBot.setUpdatesListener(this)
+        telegramBot.setUpdatesListener(this, GetUpdates().limit(3))
     }
 
     override fun process(updates: MutableList<Update>?): Int {
