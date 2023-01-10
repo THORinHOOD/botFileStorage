@@ -9,6 +9,7 @@ import com.thorinhood.botFarm.engine.sessions.Session
 abstract class BaseTransition(
     private val message: String? = null,
     private val keyboard: Keyboard? = null,
+    val postTransitionAction: ((Session<Long>) -> Unit)? = null
 ) {
     fun makeMessage(chatId: Long) : SendMessage? =
         message?.let {
@@ -21,10 +22,12 @@ abstract class BaseTransition(
 class Transition(
     val procSpace: String,
     message: String? = null,
-    keyboard: Keyboard? = null
-) : BaseTransition(message, keyboard)
+    keyboard: Keyboard? = null,
+    postTransitionAction: ((Session<Long>) -> Unit)? = null
+) : BaseTransition(message, keyboard, postTransitionAction)
 
 class BackTransition(
     message: String? = null,
-    keyboard: Keyboard? = null
-) : BaseTransition(message, keyboard)
+    keyboard: Keyboard? = null,
+    postTransitionAction: ((Session<Long>) -> Unit)? = null
+) : BaseTransition(message, keyboard, postTransitionAction)

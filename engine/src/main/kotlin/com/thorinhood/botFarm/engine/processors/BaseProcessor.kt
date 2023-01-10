@@ -22,6 +22,7 @@ abstract class BaseProcessor(
         session.transitionsHistory.makeTransition(session.sessionId, result.transition)?.let {
             messages.add(0, it)
         }
+        result.transition?.postTransitionAction?.invoke(session)
         updateSession(session)
         result.postProcessAction?.let {
             it(session)
