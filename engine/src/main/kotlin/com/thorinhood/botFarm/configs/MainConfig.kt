@@ -13,7 +13,8 @@ import java.time.Duration
 
 @Configuration
 class MainConfig(
-    @Value("\${engine.procSpace.init}") val procSpaceInit: String
+    @Value("\${engine.procSpace.init}") val procSpaceInit: String,
+    @Value("\${engine.procSpace.history.capacity}") val historyCapacity: Int
 ) {
 
     @Profile("mongo")
@@ -21,13 +22,14 @@ class MainConfig(
     fun mongoSessionsService(mongoSessionRepository: MongoSessionRepository) : MongoSessionsService =
         MongoSessionsService(
             mongoSessionRepository,
-            procSpaceInit
+            procSpaceInit,
+            historyCapacity
         )
 
     @Profile("memory")
     @Bean
     fun memorySessionsService() : MemorySessionsService =
-        MemorySessionsService(procSpaceInit)
+        MemorySessionsService(procSpaceInit, historyCapacity)
 
     @Bean
     fun restTemplate() : RestTemplate = RestTemplateBuilder()

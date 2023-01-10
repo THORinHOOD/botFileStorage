@@ -2,14 +2,14 @@ package com.thorinhood.botFarm.engine.processors.baseProcessors
 
 import com.pengrad.telegrambot.model.Update
 import com.thorinhood.botFarm.engine.processors.BaseProcessor
+import com.thorinhood.botFarm.engine.processors.data.BaseTransition
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
-import com.thorinhood.botFarm.engine.processors.data.Transition
 import com.thorinhood.botFarm.engine.sessions.Session
 
 abstract class BaseCancelProcessor(
     name: String,
     procSpace: String = "",
-    private val transition: Transition
+    private val transition: BaseTransition
 ) : BaseProcessor(name, procSpace) {
 
     override fun processInner(

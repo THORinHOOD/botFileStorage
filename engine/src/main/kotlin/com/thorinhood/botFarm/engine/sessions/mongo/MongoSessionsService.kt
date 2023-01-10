@@ -4,10 +4,12 @@ import com.pengrad.telegrambot.model.Update
 
 import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.engine.sessions.SessionsService
+import com.thorinhood.botFarm.engine.sessions.TransitionsHistory
 
 class MongoSessionsService(
     private val mongoSessionRepository: MongoSessionRepository,
-    private val cursorProcSpaceInit: String
+    private val cursorProcSpaceInit: String,
+    private val historyCapacity: Int
 ) : SessionsService {
 
     override fun getSession(update: Update) : Session<Long> {
@@ -20,7 +22,7 @@ class MongoSessionsService(
             mongoSessionRepository.save(
                 MongoSession(
                     sessionId,
-                    cursorProcSpaceInit,
+                    TransitionsHistory(cursorProcSpaceInit),
                     mutableMapOf()
                 )
             )

@@ -19,14 +19,8 @@ abstract class BaseProcessor(
     ): List<BaseRequest<*, *>> {
         val result = processInner(session, update)
         val messages = result.messages?.toMutableList() ?: mutableListOf()
-        result.transition?.let { transition ->
-            transition.preTransitionAction?.let {
-                it(session)
-            }
-            session.procSpace = result.transition.procSpace
-            transition.makeMessage(session.sessionId)?.let {
-                messages.add(0, it)
-            }
+        session.transitionsHistory.makeTransition(session.sessionId, result.transition)?.let {
+            messages.add(0, it)
         }
         updateSession(session)
         result.postProcessAction?.let {
@@ -36,16 +30,10 @@ abstract class BaseProcessor(
     }
 
     fun isThisProcessor(session: Session<Long>, update: Update): Boolean {
-        if (session.procSpace != procSpace && procSpace != "") {
+        if (session.transitionsHistory.currentProcSpace() != procSpace && procSpace != "") {
             return false
         }
         return isThisProcessorInner(session, update)
-    }
-
-    fun keyByIndex(depth: Int): String {
-        val left = indexOf(procSpace, "#", depth - 1) + 1
-        val right = indexOf(procSpace, "#", depth, procSpace.length)
-        return procSpace.substring(left, right)
     }
 
     protected fun isNotCancel(update: Update): Boolean =
@@ -56,18 +44,6 @@ abstract class BaseProcessor(
 
     protected fun isUpdateMessageContainsLabel(update: Update, label: String) =
         update.message()?.text()?.contains(label) ?: false
-
-    private fun indexOf(str: String, sub: String, number: Int, default: Int = -1): Int {
-        if (number < 1) {
-            return default
-        }
-        var from = -1
-        for (i in 1..number) {
-            from = str.indexOf(sub, from + 1)
-            if (from == -1) return str.length
-        }
-        return from
-    }
 
     protected abstract fun processInner(session: Session<Long>, update: Update): ProcessResult
     protected abstract fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean

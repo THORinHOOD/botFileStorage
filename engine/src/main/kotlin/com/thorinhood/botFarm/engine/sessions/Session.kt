@@ -4,8 +4,11 @@ package com.thorinhood.botFarm.engine.sessions
 
 interface Session<ID> {
     val sessionId: ID
-    var procSpace: String
+    val transitionsHistory: TransitionsHistory
     val args: MutableMap<String, Any>
+    val procSpace: String
+        get() = transitionsHistory.currentProcSpace()
+
 
     fun containsKey(key: String) : Boolean = args.containsKey(key)
 

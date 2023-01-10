@@ -25,7 +25,7 @@ class LessonService(
     }
 
     fun startLesson(session: Session<Long>, subject: Subject) : List<BaseRequest<*, *>> {
-        session.procSpace = ProcSpace.LESSON
+        session.transitionsHistory.processTransition(ProcSpace.LESSON)
         val lesson = makeLesson(subject) ?: throw Exception("Не получилось собрать задание")
         session[ArgKey.LESSON] = lesson
         return listOf(

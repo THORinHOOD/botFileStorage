@@ -5,18 +5,26 @@ import com.pengrad.telegrambot.model.request.ParseMode
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.botFarm.engine.sessions.Session
 
-class Transition(
-    val procSpace: String,
+
+abstract class BaseTransition(
     private val message: String? = null,
     private val keyboard: Keyboard? = null,
-    val preTransitionAction: ((Session<Long>) -> Unit)? = null,
 ) {
     fun makeMessage(chatId: Long) : SendMessage? =
-        if (message == null) {
-            null
-        } else {
-            val message = SendMessage(chatId, message).parseMode(ParseMode.HTML)
+        message?.let {
+            val message = SendMessage(chatId, it).parseMode(ParseMode.HTML)
             keyboard?.let { message.replyMarkup(it) }
             message
         }
 }
+
+class Transition(
+    val procSpace: String,
+    message: String? = null,
+    keyboard: Keyboard? = null
+) : BaseTransition(message, keyboard)
+
+class BackTransition(
+    message: String? = null,
+    keyboard: Keyboard? = null
+) : BaseTransition(message, keyboard)
