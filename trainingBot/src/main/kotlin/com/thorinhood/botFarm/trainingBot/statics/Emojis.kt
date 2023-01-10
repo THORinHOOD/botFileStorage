@@ -6,5 +6,6 @@ class Emojis {
         const val SUNGLASSES = "😎"
         const val CLAP = "\uD83D\uDC4F"
         const val HMM = "\uD83E\uDD14"
+        const val SAD = "\uD83D\uDE14"
     }
 }

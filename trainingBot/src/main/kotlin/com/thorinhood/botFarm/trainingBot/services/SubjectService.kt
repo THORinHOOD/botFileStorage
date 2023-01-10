@@ -1,10 +1,13 @@
 package com.thorinhood.botFarm.trainingBot.services
 
+import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.botFarm.configs.TelegramMessage
 import com.thorinhood.botFarm.engine.scheduling.SchedulingManager
 import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
 import com.thorinhood.botFarm.trainingBot.domain.Subject
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
+import com.thorinhood.botFarm.trainingBot.statics.Emojis
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.scheduling.annotation.Async
@@ -29,13 +32,18 @@ class SubjectService(
             session.sessionId,
             mapOf("subject_name" to subject.name),
             { innerSession, arguments ->
-                if (innerSession.procSpace == ProcSpace.DEFAULT) {
-                    val allSubjects = innerSession.get<AllSubjects>(ArgKey.SUBJECTS)
+                val allSubjects = innerSession.get<AllSubjects>(ArgKey.SUBJECTS)
+                if (innerSession.transitionsHistory.currentProcSpace() == ProcSpace.LESSON) {
+                    listOf(
+                        SendMessage(
+                            innerSession.sessionId,
+                        "${Emojis.HAND_WAVE}\nКажется ты пропустил занятие!"
+                        )
+                    )
+                } else {
                     allSubjects[arguments["subject_name"]]?.let { innerSubject ->
                         lessonService.startLesson(innerSession, innerSubject)
-                    } ?: listOf() // TODO what if nothing to send
-                } else {
-                    listOf()
+                    } ?: listOf() // TODO scheduled subject that doesn't exist anymore
                 }
             },
             { innerSession ->
