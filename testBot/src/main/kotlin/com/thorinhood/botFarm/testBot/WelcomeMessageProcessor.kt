@@ -5,7 +5,6 @@ import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.processors.data.Transition
-import com.thorinhood.botFarm.engine.sessions.Session
 
 @Processor
 class WelcomeMessageProcessor : BaseProcessor(

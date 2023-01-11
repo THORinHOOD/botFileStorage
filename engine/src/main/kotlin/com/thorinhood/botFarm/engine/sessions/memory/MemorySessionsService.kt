@@ -11,7 +11,7 @@ class MemorySessionsService(
     private val historyCapacity: Int
 ) : SessionsService, Logging {
 
-    private val allSessions: MutableMap<Long, MemorySession> = mutableMapOf()
+    private val allSessions: MutableMap<Long, Session> = mutableMapOf()
 
     override fun getSession(update: Update): Session {
         val sessionId = extractSessionId(update)
@@ -20,7 +20,7 @@ class MemorySessionsService(
 
     override fun getSession(sessionId: Long): Session {
         return allSessions.computeIfAbsent(sessionId) {
-            MemorySession(
+            Session(
                 sessionId,
                 TransitionsHistory(procSpaceInit, historyCapacity),
                 mutableMapOf()

@@ -2,13 +2,17 @@
 
 package com.thorinhood.botFarm.engine.sessions
 
-interface Session {
-    val sessionId: Long
-    val transitionsHistory: TransitionsHistory
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
+
+@Document("sessions")
+class Session(
+    @Id val sessionId: Long,
+    val transitionsHistory: TransitionsHistory,
     val args: MutableMap<String, Any>
+) {
     val procSpace: String
         get() = transitionsHistory.currentProcSpace()
-
 
     fun containsKey(key: String) : Boolean = args.containsKey(key)
 

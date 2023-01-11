@@ -16,7 +16,6 @@ import com.thorinhood.botFarm.fileStorageBot.yandex_disk.processors.file_tree.tr
 import com.thorinhood.botFarm.fileStorageBot.yandex_disk.utils.YandexConst
 
 import com.thorinhood.botFarm.engine.processors.baseProcessors.BaseCancelProcessor
-import com.thorinhood.botFarm.engine.sessions.Session
 import org.springframework.stereotype.Service
 
 @Service

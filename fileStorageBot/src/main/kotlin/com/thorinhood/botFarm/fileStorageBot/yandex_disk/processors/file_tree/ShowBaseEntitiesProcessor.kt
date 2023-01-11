@@ -8,7 +8,6 @@ import com.thorinhood.botFarm.fileStorageBot.yandex_disk.utils.pagination.Yandex
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 
 import com.thorinhood.botFarm.engine.processors.Processor
-import com.thorinhood.botFarm.engine.sessions.Session
 
 @Processor
 class ShowBaseEntitiesProcessor(

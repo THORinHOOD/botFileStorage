@@ -1,8 +1,8 @@
 package com.thorinhood.botFarm.engine.sessions.mongo
 
 import com.pengrad.telegrambot.model.Update
-
 import com.thorinhood.botFarm.engine.sessions.Session
+
 import com.thorinhood.botFarm.engine.sessions.SessionsService
 import com.thorinhood.botFarm.engine.sessions.TransitionsHistory
 
@@ -20,7 +20,7 @@ class MongoSessionsService(
     override fun getSession(sessionId: Long): Session {
         return mongoSessionRepository.findById(sessionId).orElseGet {
             mongoSessionRepository.save(
-                MongoSession(
+                Session(
                     sessionId,
                     TransitionsHistory(cursorProcSpaceInit, historyCapacity),
                     mutableMapOf()
@@ -30,11 +30,7 @@ class MongoSessionsService(
     }
 
     override fun updateSession(session: Session) {
-        if (session is MongoSession) {
-            mongoSessionRepository.save(session)
-        } else {
-            throw IllegalArgumentException("You work with mongo, but session isn't MongoSession type")
-        }
+        mongoSessionRepository.save(session)
     }
 
     override fun getAllSessions(): List<Session> = mongoSessionRepository.findAll()

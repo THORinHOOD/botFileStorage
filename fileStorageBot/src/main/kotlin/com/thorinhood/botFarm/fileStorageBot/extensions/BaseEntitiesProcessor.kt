@@ -6,7 +6,6 @@ import com.thorinhood.botFarm.engine.processors.BaseProcessor
 
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.processors.data.Transition
-import com.thorinhood.botFarm.engine.sessions.Session
 
 abstract class BaseEntitiesProcessor<T>(
     private val fileStorageService: FileStorageService<T>,

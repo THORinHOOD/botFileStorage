@@ -9,7 +9,6 @@ import com.thorinhood.botFarm.engine.processors.Processor
 
 import com.thorinhood.botFarm.fileStorageBot.KeyboardService
 import com.thorinhood.botFarm.fileStorageBot.ProcSpaces
-import com.thorinhood.botFarm.engine.sessions.Session
 
 @Processor
 class CancelDeleteEntityProcessor : BaseProcessor(

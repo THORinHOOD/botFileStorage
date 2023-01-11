@@ -9,7 +9,6 @@ import com.thorinhood.botFarm.engine.processors.data.Transition
 import com.thorinhood.botFarm.fileStorageBot.KeyboardService
 import com.thorinhood.botFarm.fileStorageBot.ProcSpaces
 import com.thorinhood.botFarm.fileStorageBot.yandex_disk.utils.YandexUtils
-import com.thorinhood.botFarm.engine.sessions.Session
 
 @Processor
 class GetFileProcessor : BaseProcessor(

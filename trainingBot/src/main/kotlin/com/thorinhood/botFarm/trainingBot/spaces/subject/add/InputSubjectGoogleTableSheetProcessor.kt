@@ -5,8 +5,8 @@ import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
 import com.thorinhood.botFarm.engine.processors.data.Transition
-import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.engine.scheduling.ScheduleConfig
+import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.trainingBot.domain.Subject
 import com.thorinhood.botFarm.trainingBot.services.SubjectService
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
