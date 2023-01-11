@@ -20,7 +20,7 @@ class InputSubjectGoogleTableSheetProcessor(
     "input_google_table_sheet",
     ProcSpace.INPUT_SUBJECT_GOOGLE_TABLE_SHEET
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         val googleTableSheet = update.message()?.text() ?: throw Exception("Попробуй ещё раз")
         val builder = session.get<Subject.Builder>(ArgKey.SUBJECT_BUILDER).googleTableSheet(googleTableSheet)
         val allSubjects = session.getOrPut(ArgKey.SUBJECTS) { mutableMapOf<String, Subject>() }
@@ -43,6 +43,6 @@ class InputSubjectGoogleTableSheetProcessor(
         ) { subjectService.scheduleSubject(it, subject) }
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update)
 }

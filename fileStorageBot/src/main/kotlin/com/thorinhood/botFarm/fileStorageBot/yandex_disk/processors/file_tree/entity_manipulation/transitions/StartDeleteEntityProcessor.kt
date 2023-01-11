@@ -18,7 +18,7 @@ class StartDeleteEntityProcessor : BaseProcessor(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult = ProcessResult(
         listOf(SendMessage(session.sessionId, "Удалить перманентно или переместить в корзину?")
@@ -26,7 +26,7 @@ class StartDeleteEntityProcessor : BaseProcessor(
         Transition(ProcSpaces.YANDEX_FILE_TREE_ENTITY_MANIPULATION_DELETE)
     )
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

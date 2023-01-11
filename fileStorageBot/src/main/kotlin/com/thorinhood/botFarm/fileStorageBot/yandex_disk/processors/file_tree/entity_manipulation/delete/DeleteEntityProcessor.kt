@@ -25,7 +25,7 @@ class DeleteEntityProcessor(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult {
         val inStash = update.message()?.text()?.let { text ->
@@ -35,7 +35,7 @@ class DeleteEntityProcessor(
                 else -> return ProcessResult.EMPTY_RESULT
             }
         } ?: return ProcessResult.EMPTY_RESULT
-        val entityName = YandexUtils.getContext(session).elementsMap[session.cursor.args["entity"]]?.name ?:
+        val entityName = YandexUtils.getContext(session).elementsMap[session.args["entity"]]?.name ?:
             return ProcessResult(listOf(SendMessage(session.sessionId, "Не удалось удалить")))
         val result = yandexDisk.deleteEntity(session.args[YandexConst.TOKEN] as String,
             YandexUtils.getCurrentPath(session) + entityName,
@@ -54,7 +54,7 @@ class DeleteEntityProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, PERMANENTLY) ||
         isUpdateMessageEqualsLabel(update, IN_STASH)
 

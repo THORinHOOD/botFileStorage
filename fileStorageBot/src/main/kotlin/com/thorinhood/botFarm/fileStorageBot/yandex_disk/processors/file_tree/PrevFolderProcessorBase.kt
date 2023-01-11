@@ -25,7 +25,7 @@ class PrevFolderProcessorBase(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult {
         val currentPath = YandexUtils.getCurrentPath(session)
@@ -38,7 +38,7 @@ class PrevFolderProcessorBase(
         return getEntities(session)
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

@@ -19,7 +19,7 @@ class StartEntityManipulationProcessor : BaseProcessor(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult {
         val entityName = YandexUtils.getContext(session).elementsMap[update.message()?.text()]?.name
@@ -44,13 +44,13 @@ class StartEntityManipulationProcessor : BaseProcessor(
                 else -> null
             }
         )),
-        Transition(ProcSpaces.YANDEX_FILE_TREE_ENTITY_MANIPULATION), arg)
+        Transition(ProcSpaces.YANDEX_FILE_TREE_ENTITY_MANIPULATION))
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isEntity(session, update, setOf("file", "dir"))
 
-    private fun isEntity(session: Session<Long>, update: Update, types: Set<String>) : Boolean =
+    private fun isEntity(session: Session, update: Update, types: Set<String>) : Boolean =
         update.message()?.text()?.let { text ->
             text.startsWith("/") && YandexUtils.getContext(session).elementsMap.contains(text) &&
                     types.contains(YandexUtils.getContext(session).elementsMap[text]?.type)

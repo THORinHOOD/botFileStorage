@@ -15,7 +15,7 @@ class IDKProcessor : BaseProcessor(
     "lesson_idk",
     ProcSpace.LESSON
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         val lesson = session.args[ArgKey.LESSON] as Lesson
         val answer = (lesson.getCurrentTask().answers).first()
         val blank = answer.indices.random()
@@ -28,6 +28,6 @@ class IDKProcessor : BaseProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Не знаю")
 }

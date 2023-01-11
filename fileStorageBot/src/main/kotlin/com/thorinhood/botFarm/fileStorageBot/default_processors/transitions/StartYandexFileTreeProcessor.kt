@@ -20,9 +20,9 @@ class StartYandexFileTreeProcessor(
     ProcSpaces.DEFAULT
 ) {
 
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult = getEntities(session)
+    override fun processInner(session: Session, update: Update): ProcessResult = getEntities(session)
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

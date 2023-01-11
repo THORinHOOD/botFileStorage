@@ -19,6 +19,6 @@ class BackSubjectSelectProcessor : BaseCancelProcessor(
         KeyboardMarkups.DEFAULT_KEYBOARD
     ) { session -> session.args.remove(ArgKey.SELECTED_SUBJECT) }
 ) {
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, "Назад")
 }

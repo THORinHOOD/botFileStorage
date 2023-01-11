@@ -18,10 +18,10 @@ class GetFileProcessor : BaseProcessor(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult {
-        val entity = YandexUtils.getContext(session).elementsMap[session.cursor.args["entity"]] ?:
+        val entity = YandexUtils.getContext(session).elementsMap[session.args["entity"]] ?:
             return ProcessResult.EMPTY_RESULT
         return ProcessResult(
             null,
@@ -30,7 +30,7 @@ class GetFileProcessor : BaseProcessor(
                 KeyboardService.FILE_TREE_KEYBOARD))
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

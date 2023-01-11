@@ -17,7 +17,7 @@ class StartLessonProcessor(
     "start_lesson",
     ProcSpace.IN_SUBJECT
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult =
+    override fun processInner(session: Session, update: Update): ProcessResult =
         ProcessResult(
             lessonService.startLesson(session),
             Transition(
@@ -27,6 +27,6 @@ class StartLessonProcessor(
             )
         )
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Начать занятие")
 }

@@ -17,17 +17,17 @@ class CancelDeleteEntityProcessor : BaseProcessor(
   ProcSpaces.YANDEX_FILE_TREE_ENTITY_MANIPULATION_DELETE
 ) {
 
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         return ProcessResult(listOf(
             SendMessage(session.sessionId, "Окей, не будем этого делать"),
             SendMessage(session.sessionId, "Что вы собираетесь делать с ${
-                when(session.cursor.args["entityType"]) {
-                    "file" -> " файлом ${session.cursor.args["entityName"]}"
-                    "dir" -> " папкой ${session.cursor.args["entityName"]}"
+                when(session.args["entityType"]) {
+                    "file" -> " файлом ${session.args["entityName"]}"
+                    "dir" -> " папкой ${session.args["entityName"]}"
                     else -> return ProcessResult.EMPTY_RESULT
                 }
             } ?").replyMarkup(
-                when(session.cursor.args["entityType"]) {
+                when(session.args["entityType"]) {
                     "file" -> KeyboardService.FILE_TREE_FILE_MANIPULATION
                     "dir" -> KeyboardService.FILE_TREE_FOLDER_MANIPULATION
                     else -> null
@@ -36,7 +36,7 @@ class CancelDeleteEntityProcessor : BaseProcessor(
             Transition(ProcSpaces.YANDEX_FILE_TREE_ENTITY_MANIPULATION))
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

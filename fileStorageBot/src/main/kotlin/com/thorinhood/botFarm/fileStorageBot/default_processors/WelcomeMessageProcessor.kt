@@ -18,7 +18,7 @@ class WelcomeMessageProcessor(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult {
         return ProcessResult(null,
@@ -26,7 +26,7 @@ class WelcomeMessageProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

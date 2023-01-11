@@ -2,8 +2,8 @@
 
 package com.thorinhood.botFarm.engine.sessions
 
-interface Session<ID> {
-    val sessionId: ID
+interface Session {
+    val sessionId: Long
     val transitionsHistory: TransitionsHistory
     val args: MutableMap<String, Any>
     val procSpace: String

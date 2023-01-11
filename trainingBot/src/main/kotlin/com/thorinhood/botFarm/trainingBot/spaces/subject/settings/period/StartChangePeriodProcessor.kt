@@ -16,7 +16,7 @@ class StartChangePeriodProcessor : BaseProcessor(
     "start_change_period",
     ProcSpace.IN_SUBJECT
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         val subjects = session.get<AllSubjects>(ArgKey.SUBJECTS)
         val subject = subjects[session[ArgKey.SELECTED_SUBJECT]]!!
         val milliseconds = subject.scheduleConfig.period
@@ -32,6 +32,6 @@ class StartChangePeriodProcessor : BaseProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Изменить интервал выдачи заданий")
 }

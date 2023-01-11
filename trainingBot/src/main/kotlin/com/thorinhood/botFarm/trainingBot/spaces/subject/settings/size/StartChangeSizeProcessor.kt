@@ -16,7 +16,7 @@ class StartChangeSizeProcessor : BaseProcessor(
     "start_change_size",
     ProcSpace.IN_SUBJECT
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         @Suppress("UNCHECKED_CAST")
         val subjects = session.args[ArgKey.SUBJECTS] as AllSubjects
         return ProcessResult(
@@ -31,6 +31,6 @@ class StartChangeSizeProcessor : BaseProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Изменить кол-во заданий в выдаче")
 }

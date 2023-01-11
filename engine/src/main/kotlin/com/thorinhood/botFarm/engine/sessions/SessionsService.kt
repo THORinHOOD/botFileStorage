@@ -4,11 +4,11 @@ import com.pengrad.telegrambot.model.Update
 
 interface SessionsService {
 
-    fun getSession(update: Update) : Session<Long>
+    fun getSession(update: Update) : Session
 
-    fun getSession(sessionId: Long) : Session<Long>
+    fun getSession(sessionId: Long) : Session
 
-    fun updateSession(session: Session<Long>)
+    fun updateSession(session: Session)
 
     fun extractSessionId(update: Update) : Long =
         update.message()?.chat()?.id() ?:
@@ -16,5 +16,5 @@ interface SessionsService {
         update.editedMessage()?.chat()?.id() ?:
         throw IllegalArgumentException("Can't find chat id in update")
 
-    fun getAllSessions() : List<Session<Long>>
+    fun getAllSessions() : List<Session>
 }

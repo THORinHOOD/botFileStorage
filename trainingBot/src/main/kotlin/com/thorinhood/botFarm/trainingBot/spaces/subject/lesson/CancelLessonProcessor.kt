@@ -22,6 +22,6 @@ class CancelLessonProcessor: BaseCancelProcessor(
         session.args.remove(ArgKey.SELECTED_SUBJECT)
     }
 ) {
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, "Закончить занятие")
 }

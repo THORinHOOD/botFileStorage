@@ -18,7 +18,7 @@ class StartYandexAuthProcessor(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult {
         val link = yandexDisk.getAuthLink()
@@ -27,7 +27,7 @@ class StartYandexAuthProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageContainsLabel(update, LABEL)
 
     companion object {

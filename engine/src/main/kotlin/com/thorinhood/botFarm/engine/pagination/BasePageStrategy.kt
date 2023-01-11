@@ -18,7 +18,7 @@ abstract class BasePageStrategy<T>(
 
     override fun paginate(
         callbackQuery: CallbackQuery,
-        session: Session<Long>,
+        session: Session,
         paginationType: PaginationType
     ): List<BaseRequest<*, *>> {
         val data = callbackQuery.data().split("_")
@@ -36,7 +36,7 @@ abstract class BasePageStrategy<T>(
 
     override fun buildPage(
         response: ElementsResponse<T>,
-        session: Session<Long>,
+        session: Session,
         callbackId: String?
     ): List<BaseRequest<*, *>> {
         var pagesCount = (response.total.toDouble()/response.limit).roundToInt()
@@ -83,8 +83,8 @@ abstract class BasePageStrategy<T>(
         return responses
     }
 
-    protected abstract fun paginationContextExtract(session: Session<Long>) : PaginationContext<T>
-    protected abstract fun getElements(session: Session<Long>, pageCallback: PageCallback, paginationType: PaginationType) : ElementsResponse<T>
+    protected abstract fun paginationContextExtract(session: Session) : PaginationContext<T>
+    protected abstract fun getElements(session: Session, pageCallback: PageCallback, paginationType: PaginationType) : ElementsResponse<T>
 
     private fun forwardButton(paginationInfo: PaginationInfo, pageCallback: PageCallback): InlineKeyboardButton =
         InlineKeyboardButton("Дальше")

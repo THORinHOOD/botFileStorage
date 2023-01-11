@@ -24,8 +24,8 @@ class SchedulingManager(
         scheduleConfig: ScheduleConfig,
         sessionId: Long,
         arguments: Map<String, Any>,
-        task: (Session<Long>, Map<String, Any>) -> List<TelegramMessage>,
-        getPeriod: (Session<Long>) -> Long
+        task: (Session, Map<String, Any>) -> List<TelegramMessage>,
+        getPeriod: (Session) -> Long
     ) {
         if (scheduledTasks.containsKey(scheduleConfig.taskId)) {
             throw IllegalArgumentException("Task is already scheduled!!! ${scheduleConfig.taskId}")

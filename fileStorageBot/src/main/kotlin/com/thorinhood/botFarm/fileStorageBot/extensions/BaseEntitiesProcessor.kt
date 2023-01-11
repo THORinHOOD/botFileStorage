@@ -19,7 +19,7 @@ abstract class BaseEntitiesProcessor<T>(
     procSpace
 ) {
 
-    protected fun getEntities(session: Session<Long>) : ProcessResult {
+    protected fun getEntities(session: Session) : ProcessResult {
         val paginationContext = getContext(session)
         val currentPath = paginationContext.context["currentPath"] as String
         val response = fileStorageService.getEntities(
@@ -36,6 +36,6 @@ abstract class BaseEntitiesProcessor<T>(
             buildTransition(response.entities.isEmpty(), currentPath))
     }
 
-    abstract fun getContext(session: Session<Long>) : PaginationContext<T>
+    abstract fun getContext(session: Session) : PaginationContext<T>
     protected abstract fun buildTransition(hasEntities: Boolean, extraArg: String) : Transition
 }

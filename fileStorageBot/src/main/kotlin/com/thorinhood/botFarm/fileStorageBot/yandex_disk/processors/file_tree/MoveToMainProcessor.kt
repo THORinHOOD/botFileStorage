@@ -20,7 +20,7 @@ class MoveToMainProcessor(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult {
         YandexUtils.setCurrentPath(session, "disk:/")
@@ -30,7 +30,7 @@ class MoveToMainProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageContainsLabel(update, LABEL)
 
     companion object {

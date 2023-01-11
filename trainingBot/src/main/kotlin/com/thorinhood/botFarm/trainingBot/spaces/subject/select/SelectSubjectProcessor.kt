@@ -17,7 +17,7 @@ class SelectSubjectProcessor : BaseProcessor(
     "select_subject",
     ProcSpace.SELECT_SUBJECT
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         val subjectName = update.message()?.text() ?: throw Exception("Попробуй ещё раз")
         if (!session.args.containsKey(ArgKey.SUBJECTS)) {
             return ProcessResult(
@@ -50,6 +50,6 @@ class SelectSubjectProcessor : BaseProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update)
 }

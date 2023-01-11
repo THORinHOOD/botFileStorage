@@ -18,13 +18,13 @@ class LessonService(
     @Value("\${google.table.api.key}") private val googleTableApiKey: String
 ) {
 
-    fun startLesson(session: Session<Long>) : List<BaseRequest<*, *>> {
+    fun startLesson(session: Session) : List<BaseRequest<*, *>> {
         val subjects = session.get<AllSubjects>(ArgKey.SUBJECTS)
         val subject = subjects[session[ArgKey.SELECTED_SUBJECT]]!!
         return startLesson(session, subject)
     }
 
-    fun startLesson(session: Session<Long>, subject: Subject) : List<BaseRequest<*, *>> {
+    fun startLesson(session: Session, subject: Subject) : List<BaseRequest<*, *>> {
         session.transitionsHistory.processTransition(ProcSpace.LESSON)
         val lesson = makeLesson(subject) ?: throw Exception("Не получилось собрать задание")
         session[ArgKey.LESSON] = lesson

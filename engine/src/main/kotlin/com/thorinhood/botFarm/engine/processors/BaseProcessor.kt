@@ -13,9 +13,9 @@ abstract class BaseProcessor(
 ) {
 
     fun process(
-        session: Session<Long>,
+        session: Session,
         update: Update,
-        updateSession: (Session<Long>) -> Unit
+        updateSession: (Session) -> Unit
     ): List<BaseRequest<*, *>> {
         val result = processInner(session, update)
         val messages = result.messages?.toMutableList() ?: mutableListOf()
@@ -30,7 +30,7 @@ abstract class BaseProcessor(
         return messages
     }
 
-    fun isThisProcessor(session: Session<Long>, update: Update): Boolean {
+    fun isThisProcessor(session: Session, update: Update): Boolean {
         if (session.transitionsHistory.currentProcSpace() != procSpace && procSpace != "") {
             return false
         }
@@ -46,7 +46,7 @@ abstract class BaseProcessor(
     protected fun isUpdateMessageContainsLabel(update: Update, label: String) =
         update.message()?.text()?.contains(label) ?: false
 
-    protected abstract fun processInner(session: Session<Long>, update: Update): ProcessResult
-    protected abstract fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean
+    protected abstract fun processInner(session: Session, update: Update): ProcessResult
+    protected abstract fun isThisProcessorInner(session: Session, update: Update): Boolean
 
 }

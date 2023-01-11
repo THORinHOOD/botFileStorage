@@ -23,10 +23,10 @@ class NextFolderProcessorBase(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult {
-        val folderName = YandexUtils.getContext(session).elementsMap[session.cursor.args["entity"]]?.name ?:
+        val folderName = YandexUtils.getContext(session).elementsMap[session.args["entity"]]?.name ?:
             return ProcessResult.EMPTY_RESULT
         YandexUtils.setCurrentPath(session, YandexUtils.getCurrentPath(session) +
             (if (YandexUtils.getCurrentPath(session).endsWith("/")) {
@@ -37,7 +37,7 @@ class NextFolderProcessorBase(
         return getEntities(session)
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isUpdateMessageEqualsLabel(update, LABEL)
 
     companion object {

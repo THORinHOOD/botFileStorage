@@ -26,7 +26,7 @@ abstract class YandexBaseEntitiesProcessor(
     procSpace
 ) {
 
-    override fun getContext(session: Session<Long>): PaginationContext<YandexEntity> =
+    override fun getContext(session: Session): PaginationContext<YandexEntity> =
         YandexUtils.getContext(session)
 
     override fun buildTransition(

@@ -17,7 +17,7 @@ abstract class BaseForwardPageProcessor<T>(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult = ProcessResult(
         update.callbackQuery()?.let { callbackQuery ->
@@ -25,7 +25,7 @@ abstract class BaseForwardPageProcessor<T>(
         } ?: listOf()
     )
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         update.callbackQuery()?.let { callbackQuery ->
             callbackQuery.data()
                 .split("_")[0] == LABEL

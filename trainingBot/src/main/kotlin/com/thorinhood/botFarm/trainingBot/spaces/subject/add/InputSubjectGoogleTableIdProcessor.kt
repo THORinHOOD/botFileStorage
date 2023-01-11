@@ -15,7 +15,7 @@ class InputSubjectGoogleTableIdProcessor : BaseProcessor(
     "input_google_table_id",
     ProcSpace.INPUT_SUBJECT_GOOGLE_TABLE_ID
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         val googleTableId = update.message()?.text() ?: throw Exception("Попробуй ещё раз")
         (session.get<Subject.Builder>(ArgKey.SUBJECT_BUILDER)).googleTableId(googleTableId)
         return ProcessResult(
@@ -27,6 +27,6 @@ class InputSubjectGoogleTableIdProcessor : BaseProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update)
 }

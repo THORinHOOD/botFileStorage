@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service
 @Service
 class KeyboardService {
 
-    fun getDefaultKeyboard(session: Session<Long>) : ReplyKeyboardMarkup =
+    fun getDefaultKeyboard(session: Session) : ReplyKeyboardMarkup =
         session.args[YandexConst.TOKEN]?.let { DEFAULT_KEYBOARD } ?: UNAUTH_KEYBOARD
 
     companion object {

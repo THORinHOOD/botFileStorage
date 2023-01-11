@@ -11,14 +11,14 @@ class MemorySessionsService(
     private val historyCapacity: Int
 ) : SessionsService, Logging {
 
-    private val allSessions: MutableMap<Long, MemorySession<Long>> = mutableMapOf()
+    private val allSessions: MutableMap<Long, MemorySession> = mutableMapOf()
 
-    override fun getSession(update: Update): Session<Long> {
+    override fun getSession(update: Update): Session {
         val sessionId = extractSessionId(update)
         return getSession(sessionId)
     }
 
-    override fun getSession(sessionId: Long): Session<Long> {
+    override fun getSession(sessionId: Long): Session {
         return allSessions.computeIfAbsent(sessionId) {
             MemorySession(
                 sessionId,
@@ -28,8 +28,8 @@ class MemorySessionsService(
         }
     }
 
-    override fun updateSession(session: Session<Long>) { }
+    override fun updateSession(session: Session) { }
 
-    override fun getAllSessions(): List<Session<Long>> = allSessions.values.toList()
+    override fun getAllSessions(): List<Session> = allSessions.values.toList()
 
 }

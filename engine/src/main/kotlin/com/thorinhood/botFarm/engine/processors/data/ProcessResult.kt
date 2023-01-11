@@ -6,7 +6,7 @@ import com.thorinhood.botFarm.engine.sessions.Session
 class ProcessResult(
     val messages: List<TelegramMessage>?,
     val transition: BaseTransition? = null,
-    val postProcessAction: ((Session<Long>) -> Unit)? = null
+    val postProcessAction: ((Session) -> Unit)? = null
 ) {
 
     fun merge(processResult: ProcessResult) : ProcessResult {

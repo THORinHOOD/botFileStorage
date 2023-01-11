@@ -1,7 +1,6 @@
 package com.thorinhood.botFarm.trainingBot.services
 
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.botFarm.configs.TelegramMessage
 import com.thorinhood.botFarm.engine.scheduling.SchedulingManager
 import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
@@ -20,13 +19,13 @@ class SubjectService(
 ) : Logging {
 
     @Async
-    fun rescheduleSubject(session: Session<Long>, subject: Subject) {
+    fun rescheduleSubject(session: Session, subject: Subject) {
         schedulingManager.removeTask(subject.scheduleConfig.taskId)
         scheduleSubject(session, subject)
     }
 
     @Async
-    fun scheduleSubject(session: Session<Long>, subject: Subject) {
+    fun scheduleSubject(session: Session, subject: Subject) {
         schedulingManager.addTask(
             subject.scheduleConfig,
             session.sessionId,

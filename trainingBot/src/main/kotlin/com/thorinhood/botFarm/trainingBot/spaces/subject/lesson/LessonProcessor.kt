@@ -20,7 +20,7 @@ class LessonProcessor(
 ) : BaseProcessor(
     "lesson", ProcSpace.LESSON
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         val lesson : Lesson = session[ArgKey.LESSON]
         if (lesson.getCurrentTask().answers.contains(update.message()?.text()?.lowercase())) {
             val previousTask = lesson.removeCurrentTask()
@@ -59,7 +59,7 @@ class LessonProcessor(
         }
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         !isUpdateMessageEqualsLabel(update, "Закончить занятие") &&
                 !isUpdateMessageEqualsLabel(update, "Не знаю")
 }

@@ -1,7 +1,6 @@
 package com.thorinhood.botFarm.trainingBot.spaces.subject.add
 
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove
 import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
@@ -15,7 +14,7 @@ class StartAddingSubjectProcessor : BaseProcessor(
     "start_adding_subject",
     ProcSpace.DEFAULT
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         return ProcessResult(
             null,
             Transition(
@@ -26,7 +25,7 @@ class StartAddingSubjectProcessor : BaseProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Добавить предмет")
 
 }

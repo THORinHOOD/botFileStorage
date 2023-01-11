@@ -15,10 +15,10 @@ class YandexEntityPageStrategy(
     private val yandexDisk: YandexDisk
 ) : BasePageStrategy<YandexEntity>(yandexEntityDescriptionStrategy) {
 
-    override fun paginationContextExtract(session: Session<Long>): PaginationContext<YandexEntity> =
+    override fun paginationContextExtract(session: Session): PaginationContext<YandexEntity> =
         YandexUtils.getContext(session)
 
-    override fun getElements(session: Session<Long>, pageCallback: PageCallback,
+    override fun getElements(session: Session, pageCallback: PageCallback,
                              paginationType: PaginationType): ElementsResponse<YandexEntity> =
         yandexDisk.getEntities(
             session.args[YandexConst.TOKEN] as String,

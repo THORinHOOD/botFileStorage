@@ -19,7 +19,7 @@ class StartSelectSubjectProcessor : BaseProcessor(
     "start_select_subject",
     ProcSpace.DEFAULT
 ) {
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         @Suppress("UNCHECKED_CAST")
         val subjects = session.args.getOrDefault(ArgKey.SUBJECTS, mutableMapOf<String, Subject>()) as AllSubjects
         val buttons = subjects.keys.map { subject ->
@@ -46,7 +46,7 @@ class StartSelectSubjectProcessor : BaseProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Перейти к предмету")
 
 }

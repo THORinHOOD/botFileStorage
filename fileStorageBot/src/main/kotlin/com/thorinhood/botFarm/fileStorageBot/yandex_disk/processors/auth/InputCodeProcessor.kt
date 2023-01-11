@@ -26,7 +26,7 @@ class InputCodeProcessor(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult {
         return ProcessResult(update.message()?.text()?.let { message ->
@@ -43,7 +43,7 @@ class InputCodeProcessor(
         Transition(ProcSpaces.DEFAULT))
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update)
 
 }

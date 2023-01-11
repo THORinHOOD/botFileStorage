@@ -26,7 +26,7 @@ class CreateFolderProcessor(
 ) {
 
     override fun processInner(
-        session: Session<Long>,
+        session: Session,
         update: Update
     ): ProcessResult =
         getEntities(session).merge(ProcessResult(update.message()?.text()?.let { folderName ->
@@ -40,7 +40,7 @@ class CreateFolderProcessor(
         } ?: listOf(),
         Transition(ProcSpaces.YANDEX_FILE_TREE)))
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update)
 
 }

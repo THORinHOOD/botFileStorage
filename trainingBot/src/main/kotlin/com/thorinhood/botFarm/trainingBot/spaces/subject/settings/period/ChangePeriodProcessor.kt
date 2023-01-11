@@ -20,7 +20,7 @@ class ChangePeriodProcessor(
     ProcSpace.CHANGE_PERIOD
 ) {
 
-    override fun processInner(session: Session<Long>, update: Update): ProcessResult {
+    override fun processInner(session: Session, update: Update): ProcessResult {
         val newPeriod = update.message()?.text()?.toLong() ?: throw Exception("Попробуй ещё раз")
         val subjects = session.get<AllSubjects>(ArgKey.SUBJECTS)
         val subject = subjects[session[ArgKey.SELECTED_SUBJECT]]!!
@@ -36,6 +36,6 @@ class ChangePeriodProcessor(
         )
     }
 
-    override fun isThisProcessorInner(session: Session<Long>, update: Update): Boolean =
+    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
         isNotCancel(update)
 }
