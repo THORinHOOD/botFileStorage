@@ -1,8 +1,11 @@
 version: '3'
 
 networks:
-  bot-net:
+  frontend:
     driver: bridge
+  backend:
+    driver: bridge
+    internal: true
 
 services:
   database:
@@ -15,9 +18,9 @@ services:
     volumes:
       - ./mongo-volume:/data/db
     ports:
-      - '27017-27019:27017-27019'
+      - '27017:27017'
     networks:
-      - bot-net
+      - backend
 
   trainingBotTelegram:
     image: 'thorinhood/trainingbot'
@@ -30,4 +33,5 @@ services:
       - '8080:8080'
       - '8090:8090'
     networks:
-      - bot-net
+      - backend
+      - frontend
