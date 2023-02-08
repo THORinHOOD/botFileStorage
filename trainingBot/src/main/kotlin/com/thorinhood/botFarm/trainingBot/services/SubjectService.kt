@@ -1,8 +1,10 @@
 package com.thorinhood.botFarm.trainingBot.services
 
 import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.botFarm.engine.data.services.SessionArgumentsDataService
+import com.thorinhood.botFarm.engine.data.services.TransactionsHistoryDataService
+import com.thorinhood.botFarm.engine.processors.data.Session
 import com.thorinhood.botFarm.engine.scheduling.SchedulingManager
-import com.thorinhood.botFarm.engine.sessions.Session
 import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
 import com.thorinhood.botFarm.trainingBot.domain.Subject
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
@@ -15,38 +17,49 @@ import org.springframework.stereotype.Service
 @Service
 class SubjectService(
     private val lessonService: LessonService,
-    private val schedulingManager: SchedulingManager
+    private val schedulingManager: SchedulingManager,
+    private val argumentsDataService: SessionArgumentsDataService,
+    private val transitionsHistoryDataService: TransactionsHistoryDataService
 ) : Logging {
 
     @Async
-    fun rescheduleSubject(session: Session, subject: Subject) {
+    fun rescheduleSubject(sessionId: Long, subject: Subject) {
         schedulingManager.removeTask(subject.scheduleConfig.taskId)
-        scheduleSubject(session, subject)
+        scheduleSubject(sessionId, subject)
     }
 
     @Async
-    fun scheduleSubject(session: Session, subject: Subject) {
+    fun scheduleSubject(sessionId: Long, subject: Subject) {
         schedulingManager.addTask(
             subject.scheduleConfig,
-            session.sessionId,
+            sessionId,
             mapOf("subject_name" to subject.name),
-            { innerSession, arguments ->
-                val allSubjects = innerSession.get<AllSubjects>(ArgKey.SUBJECTS)
-                if (innerSession.transitionsHistory.currentProcSpace() == ProcSpace.LESSON) {
-                    listOf(
-                        SendMessage(
-                            innerSession.sessionId,
-                        "${Emojis.HAND_WAVE}\nКажется ты пропустил занятие!"
-                        )
-                    )
-                } else {
-                    allSubjects[arguments["subject_name"]]?.let { innerSubject ->
-                        lessonService.startLesson(innerSession, innerSubject)
-                    } ?: listOf() // TODO scheduled subject that doesn't exist anymore
+            { innerSessionId, arguments ->
+                argumentsDataService.maintainWrap(innerSessionId) { sessionArguments ->
+                    val allSubjects = sessionArguments.get<AllSubjects>(ArgKey.SUBJECTS)
+                    transitionsHistoryDataService.workWith(innerSessionId) { transitionsHistory ->
+                        if (transitionsHistory.getCurrentProcSpace() == ProcSpace.LESSON) {
+                            listOf(
+                                SendMessage(
+                                    innerSessionId,
+                                    "${Emojis.HAND_WAVE}\nКажется ты пропустил занятие!"
+                                )
+                            )
+                        } else {
+                            allSubjects[arguments["subject_name"]]?.let {
+                                lessonService.startLesson(
+                                    Session(innerSessionId, transitionsHistory),
+                                    sessionArguments,
+                                    it
+                                )
+                            } ?: listOf() // TODO scheduled subject that doesn't exist anymore
+                        }
+                    }
                 }
             },
-            { innerSession ->
-                val innerSubjects = innerSession.get<AllSubjects>(ArgKey.SUBJECTS)
+            { innerSessionId ->
+                val sessionArguments = argumentsDataService.getBySessionId(innerSessionId)
+                val innerSubjects = sessionArguments.get<AllSubjects>(ArgKey.SUBJECTS)
                 innerSubjects[subject.name]?.scheduleConfig?.period ?: -1L
             })
     }

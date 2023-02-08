@@ -3,7 +3,9 @@ package com.thorinhood.botFarm.engine.processors
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.botFarm.engine.sessions.SessionsService
+import com.thorinhood.botFarm.engine.data.services.TransactionsHistoryDataService
+import com.thorinhood.botFarm.engine.extractSessionId
+import com.thorinhood.botFarm.engine.processors.data.Session
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Service
@@ -13,7 +15,7 @@ import java.io.StringWriter
 @Service
 class ProcessorsManager(
     @Processor processors: List<BaseProcessor>,
-    private val sessionsService: SessionsService,
+    private val transactionsHistoryDataService: TransactionsHistoryDataService,
     private val appContext: ApplicationContext
 ) : Logging {
 
@@ -30,33 +32,35 @@ class ProcessorsManager(
     }
 
     fun process(update: Update): List<BaseRequest<*, *>> {
-        val session = sessionsService.getSession(update)
+        val sessionId = update.extractSessionId()
+        val transitionsHistory = transactionsHistoryDataService.getBySessionId(sessionId)
+        val sessionProcSpace = transitionsHistory.getCurrentProcSpace()
+        val session = Session(sessionId, transitionsHistory)
         val processors = mutableListOf<BaseProcessor>()
-        if (!spaces.containsKey(session.procSpace)) {
-            logger.error("Can't find procSpace = ${session.procSpace}")
-            return ERROR_MESSAGE(session.sessionId)
+        if (!spaces.containsKey(sessionProcSpace)) {
+            logger.error("Can't find procSpace = $sessionProcSpace")
+            return ERROR_MESSAGE(sessionId)
         }
         if (spaces.containsKey("")) {
             processors.addAll(spaces[""]!!)
         }
-        processors.addAll(spaces[session.procSpace]!!)
+        processors.addAll(spaces[sessionProcSpace]!!)
         val foundProcessors = processors.filter { it.isThisProcessor(session, update) }.toSet()
         return if (foundProcessors.size > 1) {
-            logger.error("Found more than 1 processor \nprocSpace = ${session.procSpace}" +
+            logger.error("Found more than 1 processor \nprocSpace = $sessionProcSpace" +
                     "\nprocessors = ${foundProcessors.map { it.name }}")
-            ERROR_MESSAGE(session.sessionId)
+            ERROR_MESSAGE(sessionId)
         } else if (foundProcessors.isEmpty()) {
-            logger.error("Not found any processors \nprocSpace = ${session.procSpace}")
-            listOf(SendMessage(session.sessionId, "Что-то я тебя не понимаю"))
+            logger.error("Not found any processors \nprocSpace = $sessionProcSpace")
+            listOf(SendMessage(sessionId, "Что-то я тебя не понимаю"))
         } else {
             try {
-                val result = foundProcessors.first().process(session, update) {
-                    sessionsService.updateSession(it)
-                }
-                result
+                val messages = foundProcessors.first().process(session, update)
+                transactionsHistoryDataService.update(transitionsHistory)
+                messages
             } catch(e: Exception) {
                 error(e)
-                ERROR_MESSAGE(session.sessionId)
+                ERROR_MESSAGE(sessionId)
             }
         }
     }

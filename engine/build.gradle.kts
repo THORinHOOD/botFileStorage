@@ -37,6 +37,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
 
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+//    implementation("org.springframework.data:spring-data-mongodb:3.0.3.RELEASE")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

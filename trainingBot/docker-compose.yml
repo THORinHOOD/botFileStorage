@@ -12,9 +12,9 @@ services:
     image: 'mongo'
     container_name: 'mongo-container'
     environment:
-      - MONGO_INITDB_DATABASE=cash
-      - MONGO_INITDB_ROOT_USERNAME=root_user
-      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=training
+      - MONGO_INITDB_ROOT_USERNAME=asgar
+      - MONGO_INITDB_ROOT_PASSWORD=789801Asgar
     volumes:
       - ./mongo-volume:/data/db
     ports:

@@ -2,9 +2,12 @@ package com.thorinhood.botFarm.engine.processors
 
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.BaseRequest
+import com.thorinhood.botFarm.engine.data.entities.TransitionsHistory
+import com.thorinhood.botFarm.engine.data.services.SessionArgumentsDataService
 import com.thorinhood.botFarm.engine.processors.baseProcessors.BaseCancelProcessor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
-import com.thorinhood.botFarm.engine.sessions.Session
+import com.thorinhood.botFarm.engine.data.services.TransactionsHistoryDataService
+import com.thorinhood.botFarm.engine.processors.data.Session
 
 abstract class BaseProcessor(
     val name: String,
@@ -13,16 +16,14 @@ abstract class BaseProcessor(
 
     fun process(
         session: Session,
-        update: Update,
-        updateSession: (Session) -> Unit
+        update: Update
     ): List<BaseRequest<*, *>> {
         val result = processInner(session, update)
         val messages = result.messages?.toMutableList() ?: mutableListOf()
-        session.transitionsHistory.makeTransition(session.sessionId, result.transition)?.let {
-            messages.add(0, it)
+        session.transitionsHistory.makeTransition(session.sessionId, result.transition)?.let { message ->
+            messages.add(0, message)
         }
         result.transition?.postTransitionAction?.invoke(session)
-        updateSession(session)
         result.postProcessAction?.let {
             it(session)
         }
@@ -30,7 +31,7 @@ abstract class BaseProcessor(
     }
 
     fun isThisProcessor(session: Session, update: Update): Boolean {
-        if (session.transitionsHistory.currentProcSpace() != procSpace && procSpace != "") {
+        if (session.transitionsHistory.getCurrentProcSpace() != procSpace && procSpace != "") {
             return false
         }
         return isThisProcessorInner(session, update)

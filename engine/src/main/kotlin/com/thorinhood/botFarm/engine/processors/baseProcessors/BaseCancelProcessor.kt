@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.model.Update
 import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.data.BaseTransition
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
-import com.thorinhood.botFarm.engine.sessions.Session
+import com.thorinhood.botFarm.engine.processors.data.Session
 
 abstract class BaseCancelProcessor(
     name: String,

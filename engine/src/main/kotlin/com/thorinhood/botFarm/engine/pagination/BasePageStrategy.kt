@@ -7,7 +7,7 @@ import com.pengrad.telegrambot.model.request.ParseMode
 import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.botFarm.engine.sessions.Session
+import com.thorinhood.botFarm.engine.processors.data.Session
 
 import java.util.function.Predicate
 import kotlin.math.roundToInt
@@ -25,8 +25,7 @@ abstract class BasePageStrategy<T>(
         if (data[1] == "stop") {
             return listOf(AnswerCallbackQuery(callbackQuery.id()))
         }
-        val response = getElements(session,
-            PageCallback.fromList(data), paginationType)
+        val response = getElements(session, PageCallback.fromList(data), paginationType)
         return if (response.entities.isEmpty()) {
             listOf(AnswerCallbackQuery(callbackQuery.id()))
         } else {

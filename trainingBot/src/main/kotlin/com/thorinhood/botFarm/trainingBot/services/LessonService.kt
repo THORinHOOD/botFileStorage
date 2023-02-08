@@ -2,7 +2,9 @@ package com.thorinhood.botFarm.trainingBot.services
 
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.botFarm.engine.sessions.Session
+import com.thorinhood.botFarm.engine.data.entities.SessionArguments
+import com.thorinhood.botFarm.engine.data.entities.TransitionsHistory
+import com.thorinhood.botFarm.engine.processors.data.Session
 import com.thorinhood.botFarm.trainingBot.domain.*
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
@@ -18,16 +20,16 @@ class LessonService(
     @Value("\${google.table.api.key}") private val googleTableApiKey: String
 ) {
 
-    fun startLesson(session: Session) : List<BaseRequest<*, *>> {
-        val subjects = session.get<AllSubjects>(ArgKey.SUBJECTS)
-        val subject = subjects[session[ArgKey.SELECTED_SUBJECT]]!!
-        return startLesson(session, subject)
+    fun startLesson(session: Session, sessionArguments: SessionArguments) : List<BaseRequest<*, *>> {
+        val subjects = sessionArguments.get<AllSubjects>(ArgKey.SUBJECTS)
+        val subject = subjects[sessionArguments[ArgKey.SELECTED_SUBJECT]]!!
+        return startLesson(session, sessionArguments, subject)
     }
 
-    fun startLesson(session: Session, subject: Subject) : List<BaseRequest<*, *>> {
+    fun startLesson(session: Session, sessionArguments: SessionArguments, subject: Subject) : List<BaseRequest<*, *>> {
         session.transitionsHistory.processTransition(ProcSpace.LESSON)
         val lesson = makeLesson(subject) ?: throw Exception("Не получилось собрать задание")
-        session[ArgKey.LESSON] = lesson
+        sessionArguments[ArgKey.LESSON] = lesson
         return listOf(
             SendMessage(
                 session.sessionId,

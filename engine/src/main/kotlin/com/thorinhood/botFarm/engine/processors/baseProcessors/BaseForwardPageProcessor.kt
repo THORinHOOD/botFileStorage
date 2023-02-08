@@ -5,7 +5,7 @@ import com.thorinhood.botFarm.engine.pagination.BasePageStrategy
 import com.thorinhood.botFarm.engine.pagination.PaginationType
 import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.data.ProcessResult
-import com.thorinhood.botFarm.engine.sessions.Session
+import com.thorinhood.botFarm.engine.processors.data.Session
 
 abstract class BaseForwardPageProcessor<T>(
     private val basePageStrategy: BasePageStrategy<T>,

@@ -2,7 +2,7 @@ package com.thorinhood.botFarm.engine.pagination
 
 import com.pengrad.telegrambot.model.CallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
-import com.thorinhood.botFarm.engine.sessions.Session
+import com.thorinhood.botFarm.engine.processors.data.Session
 
 interface PageStrategy<T> {
     fun paginate(callbackQuery: CallbackQuery, session: Session, paginationType: PaginationType): List<BaseRequest<*, *>>

@@ -1,7 +1,6 @@
 package com.thorinhood.botFarm.engine.processors.data
 
 import com.thorinhood.botFarm.configs.TelegramMessage
-import com.thorinhood.botFarm.engine.sessions.Session
 
 class ProcessResult(
     val messages: List<TelegramMessage>?,

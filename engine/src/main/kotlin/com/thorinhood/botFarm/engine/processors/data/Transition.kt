@@ -3,7 +3,6 @@ package com.thorinhood.botFarm.engine.processors.data
 import com.pengrad.telegrambot.model.request.Keyboard
 import com.pengrad.telegrambot.model.request.ParseMode
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.botFarm.engine.sessions.Session
 
 
 abstract class BaseTransition(
