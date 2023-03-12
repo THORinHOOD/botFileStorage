@@ -1,56 +1,42 @@
 package com.thorinhood.botFarm.trainingBot.spaces.subject.select
 
-import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.model.request.KeyboardButton
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
+import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.botFarm.engine.data.entities.TransitionsHistoryConfigured
 import com.thorinhood.botFarm.engine.data.services.SessionArgumentsDataService
-import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.Processor
-import com.thorinhood.botFarm.engine.processors.data.ProcessResult
-import com.thorinhood.botFarm.engine.processors.data.Session
-import com.thorinhood.botFarm.engine.processors.data.Transition
-import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
+import com.thorinhood.botFarm.telegram.TelegramReceiveMessageWrapper
+import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.domain.Subject
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
+import java.util.function.Predicate
 
-@Processor
 class StartSelectSubjectProcessor(
     private val sessionArgumentsDataService: SessionArgumentsDataService
-) : BaseProcessor(
-    "start_select_subject",
-    ProcSpace.DEFAULT
-) {
-    override fun processInner(session: Session, update: Update): ProcessResult {
-        val buttons = sessionArgumentsDataService.maintainWrap(session.sessionId) { sessionArguments ->
+) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
+    override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var procSpace: String = ""
+
+    override fun process(
+        message: TelegramReceiveMessageWrapper,
+        transitionsHistory: TransitionsHistoryConfigured
+    ): List<TelegramSendMessage> {
+        val buttons = sessionArgumentsDataService.maintainWrap(message.getSessionId()) { sessionArguments ->
             val subjects = sessionArguments.getOrPut(ArgKey.SUBJECTS) { mutableMapOf<String, Subject>() }
             subjects.keys.map { subject ->
                 arrayOf(KeyboardButton(subject))
             }.toMutableList()
         }
         if (buttons.isEmpty()) {
-            return ProcessResult(
-                null,
-                Transition(
-                    ProcSpace.DEFAULT,
-                    "Не найдено ни одного предмета",
-                    KeyboardMarkups.DEFAULT_KEYBOARD
-                )
-            )
+            return listOf(SendMessage(message.getSessionId(), "Не найдено ни одного предмета")
+                .replyMarkup(KeyboardMarkups.DEFAULT_KEYBOARD))
         }
         buttons.add(arrayOf(KeyboardButton("Отмена")))
-        return ProcessResult(
-            null,
-            Transition(
-                ProcSpace.SELECT_SUBJECT,
-                "Выбери один из предметов",
-                ReplyKeyboardMarkup(*buttons.toTypedArray())
-            )
-        )
+        transitionsHistory.makeTransition(ProcSpace.SELECT_SUBJECT)
+        return listOf(SendMessage(message.getSessionId(), "Выбери один из предметов")
+            .replyMarkup(ReplyKeyboardMarkup(*buttons.toTypedArray())))
     }
-
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
-        isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Перейти к предмету")
-
 }

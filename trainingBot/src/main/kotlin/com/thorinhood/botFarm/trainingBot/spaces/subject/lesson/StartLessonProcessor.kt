@@ -1,37 +1,35 @@
 package com.thorinhood.botFarm.trainingBot.spaces.subject.lesson
 
-import com.pengrad.telegrambot.model.Update
+import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.botFarm.engine.data.entities.TransitionsHistoryConfigured
 import com.thorinhood.botFarm.engine.data.services.SessionArgumentsDataService
-import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.Processor
-import com.thorinhood.botFarm.engine.processors.data.ProcessResult
-import com.thorinhood.botFarm.engine.processors.data.Transition
+import com.thorinhood.botFarm.telegram.TelegramReceiveMessageWrapper
+import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.services.LessonService
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
-import com.thorinhood.botFarm.engine.processors.data.Session
+import java.util.function.Predicate
 
-@Processor
 class StartLessonProcessor(
     private val lessonService: LessonService,
     private val sessionArgumentsDataService: SessionArgumentsDataService
-) : BaseProcessor(
-    "start_lesson",
-    ProcSpace.IN_SUBJECT
-) {
-    override fun processInner(session: Session, update: Update): ProcessResult =
-        sessionArgumentsDataService.maintainWrap(session.sessionId) { args ->
-            ProcessResult(
-                lessonService.startLesson(session, args),
-                Transition(
-                    ProcSpace.LESSON,
-                    "Okaaaaay, let's go!",
-                    KeyboardMarkups.LESSON_KEYBOARD
-                )
-            )
+) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
+
+    override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var procSpace: String = ""
+
+    override fun process(
+        message: TelegramReceiveMessageWrapper,
+        transitionsHistoryConfigured: TransitionsHistoryConfigured
+    ): List<TelegramSendMessage> =
+        sessionArgumentsDataService.maintainWrap(message.getSessionId()) { args ->
+            transitionsHistoryConfigured.makeTransition(ProcSpace.LESSON)
+            listOf(
+                SendMessage(
+                    message.getSessionId(),
+                    "Okaaaaay, let's go!"
+                ).replyMarkup(KeyboardMarkups.LESSON_KEYBOARD),
+            ) + lessonService.startLesson(message.getSessionId(), transitionsHistoryConfigured, args)
         }
-
-
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
-        isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Начать занятие")
 }

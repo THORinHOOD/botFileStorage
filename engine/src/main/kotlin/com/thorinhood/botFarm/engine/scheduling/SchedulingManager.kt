@@ -1,18 +1,15 @@
 package com.thorinhood.botFarm.engine.scheduling
 
-import com.thorinhood.botFarm.configs.TelegramMessage
-import com.thorinhood.botFarm.engine.messages.MsgSender
+import com.thorinhood.botFarm.engine.messages.BotSender
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.scheduling.config.ScheduledTask
 import org.springframework.scheduling.config.ScheduledTaskRegistrar
 import org.springframework.scheduling.config.TriggerTask
-import org.springframework.stereotype.Service
 import java.util.*
 
-@Service
-class SchedulingManager(
+class SchedulingManager<IS, OS>(
     private val scheduledTaskRegistrar: ScheduledTaskRegistrar,
-    private val msgSender: MsgSender<TelegramMessage>
+    private val botSender: BotSender<OS, IS>?
 ) : Logging {
 
     private val scheduledTasks = mutableMapOf<String, ScheduledTask>()
@@ -21,7 +18,7 @@ class SchedulingManager(
         scheduleConfig: ScheduleConfig,
         sessionId: Long,
         arguments: Map<String, Any>,
-        task: (Long, Map<String, Any>) -> List<TelegramMessage>,
+        task: (Long, Map<String, Any>) -> List<IS>,
         getPeriod: (Long) -> Long
     ) {
         if (scheduledTasks.containsKey(scheduleConfig.taskId)) {
@@ -29,7 +26,7 @@ class SchedulingManager(
         }
         val triggerTask = TriggerTask({
             val messages = task(sessionId, arguments)
-            msgSender.sendMessages(messages)
+            botSender?.sendMessages(messages)
         }) { triggerContext ->
             val lastExecution = triggerContext.lastScheduledExecutionTime()
             val period = if (lastExecution == null) {
@@ -62,5 +59,4 @@ class SchedulingManager(
             logger.info("Tried to remove task that was already removed: $taskId")
         }
     }
-
 }

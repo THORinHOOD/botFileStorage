@@ -1,41 +1,43 @@
 package com.thorinhood.botFarm.trainingBot.spaces.subject.settings.size
 
-import com.pengrad.telegrambot.model.Update
+import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.botFarm.engine.data.entities.TransitionsHistoryConfigured
 import com.thorinhood.botFarm.engine.data.services.SessionArgumentsDataService
-import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.Processor
-import com.thorinhood.botFarm.engine.processors.data.ProcessResult
-import com.thorinhood.botFarm.engine.processors.data.Session
-import com.thorinhood.botFarm.engine.processors.data.Transition
+import com.thorinhood.botFarm.telegram.TelegramReceiveMessageWrapper
+import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
+import java.util.function.Predicate
 
-@Processor
 class ChangeSizeProcessor(
     private val sessionArgumentsDataService: SessionArgumentsDataService
-) : BaseProcessor(
-    "change_size",
-    ProcSpace.CHANGE_SIZE
-) {
+) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
+    override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var procSpace: String = ""
 
-    override fun processInner(session: Session, update: Update): ProcessResult {
-        val newSize = update.message()?.text()?.toInt() ?: throw Exception("Попробуй ещё раз")
-        sessionArgumentsDataService.maintainWrap(session.sessionId) { sessionArguments ->
-            val subjects = sessionArguments.get<AllSubjects>(ArgKey.SUBJECTS)
-            subjects[sessionArguments[ArgKey.SELECTED_SUBJECT]]!!.lessonSize = newSize
-        }
-        return ProcessResult(
-            null,
-            Transition(
-                ProcSpace.IN_SUBJECT,
-                "Теперь в каждом занятии будет $newSize вопросов",
-                KeyboardMarkups.SUBJECT_KEYBOARD
+    override fun process(
+        message: TelegramReceiveMessageWrapper,
+        transitionsHistoryConfigured: TransitionsHistoryConfigured
+    ): List<TelegramSendMessage> =
+        message.value.message()?.text()?.toIntOrNull()?.let { newSize ->
+            sessionArgumentsDataService.maintainWrap(message.getSessionId()) { sessionArguments ->
+                val subjects = sessionArguments.get<AllSubjects>(ArgKey.SUBJECTS)
+                subjects[sessionArguments[ArgKey.SELECTED_SUBJECT]]!!.lessonSize = newSize
+            }
+            transitionsHistoryConfigured.makeTransition(ProcSpace.IN_SUBJECT)
+            listOf(
+                SendMessage(
+                    message.getSessionId(),
+                    "Теперь в каждом занятии будет $newSize вопросов"
+                ).replyMarkup(KeyboardMarkups.SUBJECT_KEYBOARD)
+            )
+        } ?: listOf(
+            SendMessage(
+                message.getSessionId(),
+                "Странное сообщение ты мне прислал, пришли, что я тебя попросил ранее"
             )
         )
-    }
-
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
-        isNotCancel(update)
 }

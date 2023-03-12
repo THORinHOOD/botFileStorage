@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":telegram", "default"))
+    implementation(project(":engine", "default"))
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
@@ -34,4 +34,12 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.bootJar {
+    enabled = false
+}
+
+tasks.jar {
+    enabled = true
 }

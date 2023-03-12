@@ -3,8 +3,8 @@ package com.thorinhood.botFarm.trainingBot.services
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.botFarm.engine.data.services.SessionArgumentsDataService
 import com.thorinhood.botFarm.engine.data.services.TransactionsHistoryDataService
-import com.thorinhood.botFarm.engine.processors.data.Session
 import com.thorinhood.botFarm.engine.scheduling.SchedulingManager
+import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
 import com.thorinhood.botFarm.trainingBot.domain.Subject
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 @Service
 class SubjectService(
     private val lessonService: LessonService,
-    private val schedulingManager: SchedulingManager,
+    private val schedulingManager: SchedulingManager<TelegramSendMessage, TelegramSendMessage>,
     private val argumentsDataService: SessionArgumentsDataService,
     private val transitionsHistoryDataService: TransactionsHistoryDataService
 ) : Logging {
@@ -48,7 +48,8 @@ class SubjectService(
                         } else {
                             allSubjects[arguments["subject_name"]]?.let {
                                 lessonService.startLesson(
-                                    Session(innerSessionId, transitionsHistory),
+                                    innerSessionId,
+                                    transitionsHistory,
                                     sessionArguments,
                                     it
                                 )

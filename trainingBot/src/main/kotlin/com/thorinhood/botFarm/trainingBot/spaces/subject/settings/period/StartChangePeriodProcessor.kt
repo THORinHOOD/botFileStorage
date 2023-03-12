@@ -1,41 +1,40 @@
 package com.thorinhood.botFarm.trainingBot.spaces.subject.settings.period
 
-import com.pengrad.telegrambot.model.Update
+import com.pengrad.telegrambot.request.SendMessage
+import com.thorinhood.botFarm.engine.data.entities.TransitionsHistoryConfigured
 import com.thorinhood.botFarm.engine.data.services.SessionArgumentsDataService
-import com.thorinhood.botFarm.engine.processors.BaseProcessor
 import com.thorinhood.botFarm.engine.processors.Processor
-import com.thorinhood.botFarm.engine.processors.data.ProcessResult
-import com.thorinhood.botFarm.engine.processors.data.Session
-import com.thorinhood.botFarm.engine.processors.data.Transition
+import com.thorinhood.botFarm.telegram.TelegramReceiveMessageWrapper
+import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
-import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
+import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
+import java.util.function.Predicate
 
-@Processor
 class StartChangePeriodProcessor(
     private val sessionArgumentsDataService: SessionArgumentsDataService
-) : BaseProcessor(
-    "start_change_period",
-    ProcSpace.IN_SUBJECT
-) {
-    override fun processInner(session: Session, update: Update): ProcessResult {
-        val sessionArguments = sessionArgumentsDataService.getBySessionId(session.sessionId)
+) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
+
+    override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var procSpace: String = ""
+
+    override fun process(
+        message: TelegramReceiveMessageWrapper,
+        transitionsHistoryConfigured: TransitionsHistoryConfigured
+    ): List<TelegramSendMessage> {
+        val sessionArguments = sessionArgumentsDataService.getBySessionId(message.getSessionId())
         val subjects = sessionArguments.get<AllSubjects>(ArgKey.SUBJECTS)
         val subject = subjects[sessionArguments[ArgKey.SELECTED_SUBJECT]]!!
         val milliseconds = subject.scheduleConfig.period
-        return ProcessResult(
-            null,
-            Transition(
-                ProcSpace.CHANGE_PERIOD,
-                "Напиши, как часто надо приходить к тебе с заданиями (каждые N-минут).\n" +
+        transitionsHistoryConfigured.makeTransition(ProcSpace.CHANGE_PERIOD)
+
+        return listOf(
+            SendMessage(
+                message.getSessionId(), "Напиши, как часто надо приходить к тебе с заданиями (каждые N-минут).\n" +
                         "На данный момент я прихожу к тебе " +
-                        "каждые ${milliseconds/1000/60} минут",
-                KeyboardMarkups.CANCEL_KEYBOARD
-            )
+                        "каждые ${milliseconds / 1000 / 60} минут"
+            ).replyMarkup(KeyboardMarkups.CANCEL_KEYBOARD)
         )
     }
-
-    override fun isThisProcessorInner(session: Session, update: Update): Boolean =
-        isNotCancel(update) && isUpdateMessageEqualsLabel(update, "Изменить интервал выдачи заданий")
 }

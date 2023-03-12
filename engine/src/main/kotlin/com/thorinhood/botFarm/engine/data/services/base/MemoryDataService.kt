@@ -6,24 +6,23 @@ import kotlin.reflect.KClass
 @Suppress("UNCHECKED_CAST")
 class MemoryDataService : DataService {
 
-    private val allData: MutableMap<Long, Entity> = mutableMapOf()
+    private val allData: MutableMap<Long, MutableMap<KClass<*>, in Entity>> = mutableMapOf()
+    override fun <T : Entity> getOneBySessionId(sessionId: Long, clazz: KClass<T>): T? =
+        allData[sessionId]?.get(clazz) as? T
 
-    override fun <T: Entity> getOneBySessionId(sessionId: Long, clazz: KClass<T>, default: () -> T): T =
+    override fun <T : Entity> getOneBySessionId(sessionId: Long, clazz: KClass<T>, default: () -> T): T =
         getOneBySessionId(sessionId, clazz) ?: default.invoke()
 
-    override fun <T: Entity> getOneBySessionId(sessionId: Long, clazz: KClass<T>): T? =
-        allData[sessionId] as? T
-
-    override fun <T : Entity> getAll(clazz: KClass<T>): List<T> {
-        return allData.values as List<T>
-    }
+    override fun <T : Entity> getAll(clazz: KClass<T>): List<T> =
+        allData.values.flatMap { it.values } as List<T>
 
     override fun <T: Entity> update(data: T) : T {
-        allData[data.sessionId] = data as Entity
+        allData.putIfAbsent(data.sessionId, mutableMapOf())
+        allData[data.sessionId]!![data::class] = data as Entity
         return data
     }
 
     override fun <T: Entity> delete(data: T) {
-        allData.remove(data.sessionId)
+        allData[data.sessionId]?.remove(data::class)
     }
 }

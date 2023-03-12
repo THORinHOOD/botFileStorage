@@ -3,8 +3,7 @@ package com.thorinhood.botFarm.trainingBot.services
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
 import com.thorinhood.botFarm.engine.data.entities.SessionArguments
-import com.thorinhood.botFarm.engine.data.entities.TransitionsHistory
-import com.thorinhood.botFarm.engine.processors.data.Session
+import com.thorinhood.botFarm.engine.data.entities.TransitionsHistoryConfigured
 import com.thorinhood.botFarm.trainingBot.domain.*
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
@@ -20,30 +19,39 @@ class LessonService(
     @Value("\${google.table.api.key}") private val googleTableApiKey: String
 ) {
 
-    fun startLesson(session: Session, sessionArguments: SessionArguments) : List<BaseRequest<*, *>> {
+    fun startLesson(
+        sessionId: Long,
+        transitionsHistoryConfigured: TransitionsHistoryConfigured,
+        sessionArguments: SessionArguments
+    ): List<BaseRequest<*, *>> {
         val subjects = sessionArguments.get<AllSubjects>(ArgKey.SUBJECTS)
         val subject = subjects[sessionArguments[ArgKey.SELECTED_SUBJECT]]!!
-        return startLesson(session, sessionArguments, subject)
+        return startLesson(sessionId, transitionsHistoryConfigured, sessionArguments, subject)
     }
 
-    fun startLesson(session: Session, sessionArguments: SessionArguments, subject: Subject) : List<BaseRequest<*, *>> {
-        session.transitionsHistory.processTransition(ProcSpace.LESSON)
+    fun startLesson(
+        sessionId: Long,
+        transitionsHistoryConfigured: TransitionsHistoryConfigured,
+        sessionArguments: SessionArguments,
+        subject: Subject
+    ): List<BaseRequest<*, *>> {
+        transitionsHistoryConfigured.makeTransition(ProcSpace.LESSON)
         val lesson = makeLesson(subject) ?: throw Exception("Не получилось собрать задание")
         sessionArguments[ArgKey.LESSON] = lesson
         return listOf(
             SendMessage(
-                session.sessionId,
+                sessionId,
                 "Пора начинать занятие \"${subject.name}\"!"
             ).replyMarkup(KeyboardMarkups.LESSON_KEYBOARD),
-            makeCurrentTaskMessage(session.sessionId, lesson)
+            makeCurrentTaskMessage(sessionId, lesson)
         )
     }
 
-    fun makeCurrentTaskMessage(sessionId: Long, lesson: Lesson) : BaseRequest<*, *> {
+    fun makeCurrentTaskMessage(sessionId: Long, lesson: Lesson): BaseRequest<*, *> {
         return SendMessage(sessionId, "Переведи:\n${lesson.getCurrentTask().question}")
     }
 
-    fun makeLesson(subject: Subject) : Lesson? =
+    fun makeLesson(subject: Subject): Lesson? =
         getGoogleSheet(subject)?.let { sheet ->
             return Lesson(
                 (0 until subject.lessonSize)

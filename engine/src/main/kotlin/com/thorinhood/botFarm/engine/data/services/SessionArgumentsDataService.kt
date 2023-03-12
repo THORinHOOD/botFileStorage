@@ -7,7 +7,7 @@ class SessionArgumentsDataService(
     private val dataService: DataService
 ) : DataService by dataService {
 
-    fun <R> maintainWrap(sessionId: Long, process: (SessionArguments) -> R) =
+    fun <R : Any> maintainWrap(sessionId: Long, process: (SessionArguments) -> R) =
         maintainWrap(sessionId, SessionArguments::class, { getDefault(sessionId) }, process)
 
     fun getBySessionId(sessionId: Long) =

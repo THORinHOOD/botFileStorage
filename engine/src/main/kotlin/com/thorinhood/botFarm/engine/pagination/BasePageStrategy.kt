@@ -7,7 +7,6 @@ import com.pengrad.telegrambot.model.request.ParseMode
 import com.pengrad.telegrambot.request.AnswerCallbackQuery
 import com.pengrad.telegrambot.request.BaseRequest
 import com.pengrad.telegrambot.request.SendMessage
-import com.thorinhood.botFarm.engine.processors.data.Session
 
 import java.util.function.Predicate
 import kotlin.math.roundToInt
@@ -18,24 +17,24 @@ abstract class BasePageStrategy<T>(
 
     override fun paginate(
         callbackQuery: CallbackQuery,
-        session: Session,
+        sessionId: Long,
         paginationType: PaginationType
     ): List<BaseRequest<*, *>> {
         val data = callbackQuery.data().split("_")
         if (data[1] == "stop") {
             return listOf(AnswerCallbackQuery(callbackQuery.id()))
         }
-        val response = getElements(session, PageCallback.fromList(data), paginationType)
+        val response = getElements(sessionId, PageCallback.fromList(data), paginationType)
         return if (response.entities.isEmpty()) {
             listOf(AnswerCallbackQuery(callbackQuery.id()))
         } else {
-            buildPage(response, session, callbackQuery.id())
+            buildPage(response, sessionId, callbackQuery.id())
         }
     }
 
     override fun buildPage(
         response: ElementsResponse<T>,
-        session: Session,
+        sessionId: Long,
         callbackId: String?
     ): List<BaseRequest<*, *>> {
         var pagesCount = (response.total.toDouble()/response.limit).roundToInt()
@@ -45,7 +44,7 @@ abstract class BasePageStrategy<T>(
         val currentPage = response.offset/response.limit + 1
         val paginationInfo =
             PaginationInfo(currentPage - 1, pagesCount)
-        val paginationContext = paginationContextExtract(session)
+        val paginationContext = paginationContextExtract(sessionId)
         paginationContext.elementsMap.clear()
         val result = buildString {
             append(
@@ -68,7 +67,7 @@ abstract class BasePageStrategy<T>(
         val pageCallback = PageCallback(currentPage - 1, response.limit)
 
         responses.add(
-            SendMessage(session.sessionId, result)
+            SendMessage(sessionId, result)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(
                     InlineKeyboardMarkup(
@@ -82,8 +81,8 @@ abstract class BasePageStrategy<T>(
         return responses
     }
 
-    protected abstract fun paginationContextExtract(session: Session) : PaginationContext<T>
-    protected abstract fun getElements(session: Session, pageCallback: PageCallback, paginationType: PaginationType) : ElementsResponse<T>
+    protected abstract fun paginationContextExtract(sessionId: Long) : PaginationContext<T>
+    protected abstract fun getElements(sessionId: Long, pageCallback: PageCallback, paginationType: PaginationType) : ElementsResponse<T>
 
     private fun forwardButton(paginationInfo: PaginationInfo, pageCallback: PageCallback): InlineKeyboardButton =
         InlineKeyboardButton("Дальше")
