@@ -9,7 +9,6 @@ import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
-import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 import java.util.function.Predicate
 
 class StartChangePeriodProcessor(
@@ -17,6 +16,7 @@ class StartChangePeriodProcessor(
 ) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
 
     override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var defaultTransition: String? = null
     override var procSpace: String = ""
 
     override fun process(
@@ -27,8 +27,6 @@ class StartChangePeriodProcessor(
         val subjects = sessionArguments.get<AllSubjects>(ArgKey.SUBJECTS)
         val subject = subjects[sessionArguments[ArgKey.SELECTED_SUBJECT]]!!
         val milliseconds = subject.scheduleConfig.period
-        transitionsHistoryConfigured.makeTransition(ProcSpace.CHANGE_PERIOD)
-
         return listOf(
             SendMessage(
                 message.getSessionId(), "Напиши, как часто надо приходить к тебе с заданиями (каждые N-минут).\n" +

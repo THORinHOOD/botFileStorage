@@ -11,13 +11,13 @@ import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.domain.Subject
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
-import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 import java.util.function.Predicate
 
 class StartSelectSubjectProcessor(
     private val sessionArgumentsDataService: SessionArgumentsDataService
 ) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
     override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var defaultTransition: String? = null
     override var procSpace: String = ""
 
     override fun process(
@@ -35,7 +35,6 @@ class StartSelectSubjectProcessor(
                 .replyMarkup(KeyboardMarkups.DEFAULT_KEYBOARD))
         }
         buttons.add(arrayOf(KeyboardButton("Отмена")))
-        transitionsHistory.makeTransition(ProcSpace.SELECT_SUBJECT)
         return listOf(SendMessage(message.getSessionId(), "Выбери один из предметов")
             .replyMarkup(ReplyKeyboardMarkup(*buttons.toTypedArray())))
     }

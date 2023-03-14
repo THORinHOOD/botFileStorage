@@ -8,7 +8,6 @@ import com.thorinhood.botFarm.telegram.TelegramReceiveMessageWrapper
 import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.services.LessonService
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
-import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 import java.util.function.Predicate
 
 class StartLessonProcessor(
@@ -17,6 +16,7 @@ class StartLessonProcessor(
 ) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
 
     override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var defaultTransition: String? = null
     override var procSpace: String = ""
 
     override fun process(
@@ -24,7 +24,6 @@ class StartLessonProcessor(
         transitionsHistoryConfigured: TransitionsHistoryConfigured
     ): List<TelegramSendMessage> =
         sessionArgumentsDataService.maintainWrap(message.getSessionId()) { args ->
-            transitionsHistoryConfigured.makeTransition(ProcSpace.LESSON)
             listOf(
                 SendMessage(
                     message.getSessionId(),

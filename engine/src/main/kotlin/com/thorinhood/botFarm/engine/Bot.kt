@@ -93,12 +93,12 @@ class Space<IR, IS>(
             logger.error("Did not find processor for message in procSpace: $name")
             notFoundAnyProcessor?.let { listOf(it.invoke(innerMessage)) } ?: listOf()
         } else if (processors.isEmpty()) {
-            defaultProcessor!!.process(innerMessage, transitionsHistory)
+            executeProcessor(defaultProcessor!!, innerMessage, transitionsHistory)
         } else if (processors.size > 1) {
             logger.error("Found more than 1 processor in procSpace: $name, processors: $processors")
             listOf()
         } else {
-            processors.first().process(innerMessage, transitionsHistory)
+            executeProcessor(processors.first(), innerMessage, transitionsHistory)
         }
     }
 
@@ -114,6 +114,17 @@ class Space<IR, IS>(
         this.defaultProcessor = defaultProcessor
     }
 
+    private fun executeProcessor(
+        processor: Processor<IR, IS>,
+        innerMessage: IR,
+        transitionsHistory: TransitionsHistoryConfigured
+    ): List<IS> {
+        val messages = processor.process(innerMessage, transitionsHistory)
+        processor.defaultTransition?.let {
+            transitionsHistory.makeTransition(it)
+        }
+        return messages
+    }
 }
 
 fun <OR, IR, IS, OS> bot(

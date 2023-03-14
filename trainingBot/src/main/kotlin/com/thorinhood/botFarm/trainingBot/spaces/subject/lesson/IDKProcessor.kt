@@ -15,6 +15,7 @@ class IDKProcessor(
 ) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
 
     override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var defaultTransition: String? = null
     override var procSpace: String = ""
 
     override fun process(

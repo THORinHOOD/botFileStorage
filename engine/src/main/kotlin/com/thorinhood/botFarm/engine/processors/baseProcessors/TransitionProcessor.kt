@@ -12,6 +12,7 @@ open class TransitionProcessor<IR: HasSessionId, IS>(
 ): Processor<IR, IS> {
 
     override var matcher: Predicate<IR>? = null
+    override var defaultTransition: String? = null
     override var procSpace: String = ""
 
     override fun process(message: IR, transitionsHistoryConfigured: TransitionsHistoryConfigured): List<IS> {

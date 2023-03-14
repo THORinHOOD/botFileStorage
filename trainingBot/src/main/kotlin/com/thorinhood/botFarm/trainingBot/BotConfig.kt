@@ -81,6 +81,7 @@ class BotConfig : DisposableBean {
                 }
                 processor(StartSelectSubjectProcessor(sessionArgumentsDataService)) {
                     matcher = eq("Перейти к предмету")
+                    defaultTransition = ProcSpace.SELECT_SUBJECT
                 }
                 transition(
                     ProcSpace.INPUT_SUBJECT_NAME,
@@ -90,30 +91,41 @@ class BotConfig : DisposableBean {
                 )
             }
             space(ProcSpace.INPUT_SUBJECT_NAME) {
-                defaultProcessor(InputSubjectNameProcessor(sessionArgumentsDataService))
+                defaultProcessor(InputSubjectNameProcessor(sessionArgumentsDataService)) {
+                    defaultTransition = ProcSpace.INPUT_SUBJECT_GOOGLE_TABLE_ID
+                }
                 transitionToDefault("Окей, не будем", "Отмена")
             }
             space(ProcSpace.INPUT_SUBJECT_GOOGLE_TABLE_ID) {
-                defaultProcessor(InputSubjectGoogleTableIdProcessor(sessionArgumentsDataService))
+                defaultProcessor(InputSubjectGoogleTableIdProcessor(sessionArgumentsDataService)) {
+                    defaultTransition = ProcSpace.INPUT_SUBJECT_GOOGLE_TABLE_SHEET
+                }
                 transitionToDefault("Окей, не будем", "Отмена")
             }
             space(ProcSpace.INPUT_SUBJECT_GOOGLE_TABLE_SHEET) {
-                defaultProcessor(InputSubjectGoogleTableSheetProcessor(subjectService, sessionArgumentsDataService))
+                defaultProcessor(InputSubjectGoogleTableSheetProcessor(subjectService, sessionArgumentsDataService)) {
+                    defaultTransition = ProcSpace.DEFAULT
+                }
                 transitionToDefault("Окей, не будем", "Отмена")
             }
             space(ProcSpace.SELECT_SUBJECT) {
-                defaultProcessor(SelectSubjectProcessor(sessionArgumentsDataService))
+                defaultProcessor(SelectSubjectProcessor(sessionArgumentsDataService)) {
+                    defaultTransition = ProcSpace.IN_SUBJECT
+                }
                 transitionToDefault("Окей, не будем", "Назад")
             }
             space(ProcSpace.IN_SUBJECT) {
                 processor(StartChangePeriodProcessor(sessionArgumentsDataService)) {
                     matcher = eq("Изменить интервал выдачи заданий")
+                    defaultTransition = ProcSpace.CHANGE_PERIOD
                 }
                 processor(StartChangeSizeProcessor(sessionArgumentsDataService)) {
                     matcher = eq("Изменить кол-во заданий в выдаче")
+                    defaultTransition = ProcSpace.CHANGE_SIZE
                 }
                 processor(StartLessonProcessor(lessonService, sessionArgumentsDataService)) {
                     matcher = eq("Начать занятие")
+                    defaultTransition = ProcSpace.LESSON
                 }
                 transitionToDefault("Окей, что дальше?", "Назад") {
                     sessionArgumentsDataService.maintainWrap(it.getSessionId()) { args ->

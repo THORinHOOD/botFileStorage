@@ -17,6 +17,7 @@ class SelectSubjectProcessor(
     private val sessionArgumentsDataService: SessionArgumentsDataService
 ) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
     override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var defaultTransition: String? = null
     override var procSpace: String = ""
 
     override fun process(
@@ -39,7 +40,6 @@ class SelectSubjectProcessor(
                 return@maintainWrap listOf(SendMessage(message.getSessionId(), "Такого предмета нет, попробуй снова"))
             }
             args[ArgKey.SELECTED_SUBJECT] = subjectName
-            transitionsHistoryConfigured.makeTransition(ProcSpace.IN_SUBJECT)
             return@maintainWrap listOf(
                 SendMessage(
                     message.getSessionId(),

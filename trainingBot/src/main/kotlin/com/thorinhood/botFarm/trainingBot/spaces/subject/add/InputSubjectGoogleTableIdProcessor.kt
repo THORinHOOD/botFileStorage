@@ -7,7 +7,6 @@ import com.thorinhood.botFarm.engine.processors.Processor
 import com.thorinhood.botFarm.telegram.TelegramReceiveMessageWrapper
 import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
-import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 import com.thorinhood.botFarm.trainingBot.domain.Subject
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
 import java.util.function.Predicate
@@ -17,6 +16,7 @@ class InputSubjectGoogleTableIdProcessor(
 ) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
 
     override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var defaultTransition: String? = null
     override var procSpace: String = ""
 
     override fun process(
@@ -27,7 +27,6 @@ class InputSubjectGoogleTableIdProcessor(
         sessionArgumentsDataService.maintainWrap(message.getSessionId()) { args ->
             (args.get<Subject.Builder>(ArgKey.SUBJECT_BUILDER)).googleTableId(googleTableId)
         }
-        transitionsHistoryConfigured.makeTransition(ProcSpace.INPUT_SUBJECT_GOOGLE_TABLE_SHEET)
         return listOf(
             SendMessage(
                 message.getSessionId(),

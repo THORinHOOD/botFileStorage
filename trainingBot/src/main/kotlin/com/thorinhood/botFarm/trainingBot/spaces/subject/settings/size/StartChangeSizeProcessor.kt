@@ -9,7 +9,6 @@ import com.thorinhood.botFarm.telegram.TelegramSendMessage
 import com.thorinhood.botFarm.trainingBot.domain.AllSubjects
 import com.thorinhood.botFarm.trainingBot.statics.ArgKey
 import com.thorinhood.botFarm.trainingBot.statics.KeyboardMarkups
-import com.thorinhood.botFarm.trainingBot.statics.ProcSpace
 import java.util.function.Predicate
 
 class StartChangeSizeProcessor(
@@ -17,6 +16,7 @@ class StartChangeSizeProcessor(
 ) : Processor<TelegramReceiveMessageWrapper, TelegramSendMessage> {
 
     override var matcher: Predicate<TelegramReceiveMessageWrapper>? = null
+    override var defaultTransition: String? = null
     override var procSpace: String = ""
 
     override fun process(
@@ -25,7 +25,6 @@ class StartChangeSizeProcessor(
     ): List<TelegramSendMessage> {
         val sessionArguments = sessionArgumentsDataService.getBySessionId(message.getSessionId())
         val subjects = sessionArguments.get<AllSubjects>(ArgKey.SUBJECTS)
-        transitionsHistoryConfigured.makeTransition(ProcSpace.CHANGE_SIZE)
         return listOf(
             SendMessage(
                 message.getSessionId(),

@@ -7,5 +7,6 @@ import java.util.function.Predicate
 
 interface Processor<IR, IS>: HasProcSpace where IR: HasSessionId {
     var matcher: Predicate<IR>?
+    var defaultTransition: String?
     fun process(message: IR, transitionsHistoryConfigured: TransitionsHistoryConfigured): List<IS>
 }
